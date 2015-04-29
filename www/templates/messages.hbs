@@ -1,0 +1,17 @@
+<div id="messages">
+    {{#each message in controller}}
+        <div class="message">
+            <header>
+                <span class="pull-left">
+                    {{message.course_id.course_name}}
+                </span>
+                <span class="pull-right">
+                    {{message.date}}
+                </span>
+            </header>
+            <article>
+                {{message.body}}
+            </article>
+        </div>
+    {{/each}}
+</div>
