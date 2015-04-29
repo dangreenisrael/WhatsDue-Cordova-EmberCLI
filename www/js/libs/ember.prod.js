@@ -1,5 +1,3 @@
-import Ember from 'ember';
-
 /*!
  * @overview  Ember - JavaScript Application Framework
  * @copyright Copyright 2011-2014 Tilde Inc. and contributors
@@ -604,7 +602,7 @@ enifed("backburner.umd",
     if (typeof enifed === 'function' && enifed.amd) {
       enifed(function() { return Backburner; });
     } else if (typeof module !== 'undefined' && module.exports) {
-      ;
+      module.exports = Backburner;
     } else if (typeof this !== 'undefined') {
       this['Backburner'] = Backburner;
     }
@@ -1371,7 +1369,7 @@ enifed("container/container",
       */
       normalize: function(fullName) {
         return this.normalizeCache[fullName] || (
-          (this.normalizeCache[fullName] = this.normalizeFullName(fullName))
+          this.normalizeCache[fullName] = this.normalizeFullName(fullName)
         );
       },
 
@@ -2073,7 +2071,7 @@ enifed("ember-application/ext/controller",
         For example, when you define a controller:
 
         ```javascript
-        CommentsController = Ember.ArrayController.extend({
+        App.CommentsController = Ember.ArrayController.extend({
           needs: ['post']
         });
         ```
@@ -2083,20 +2081,20 @@ enifed("ember-application/ext/controller",
         `controllers` property:
 
         ```javascript
-        this.get('controllers.post'); // instance of PostController
+        this.get('controllers.post'); // instance of App.PostController
         ```
 
         Given that you have a nested controller (nested resource):
 
         ```javascript
-        CommentsNewController = Ember.ObjectController.extend({
+        App.CommentsNewController = Ember.ObjectController.extend({
         });
         ```
 
         When you define a controller that requires access to a nested one:
 
         ```javascript
-        IndexController = Ember.ObjectController.extend({
+        App.IndexController = Ember.ObjectController.extend({
           needs: ['commentsNew']
         });
         ```
@@ -2104,7 +2102,7 @@ enifed("ember-application/ext/controller",
         You will be able to get access to it:
 
         ```javascript
-        this.get('controllers.commentsNew'); // instance of CommentsNewController
+        this.get('controllers.commentsNew'); // instance of App.CommentsNewController
         ```
 
         This is only available for singleton controllers.
@@ -2146,10 +2144,10 @@ enifed("ember-application/ext/controller",
         property will be accessible by name through this property.
 
         ```javascript
-        CommentsController = Ember.ArrayController.extend({
+        App.CommentsController = Ember.ArrayController.extend({
           needs: ['post'],
           postTitle: function(){
-            var currentPost = this.get('controllers.post'); // instance of PostController
+            var currentPost = this.get('controllers.post'); // instance of App.PostController
             return currentPost.get('title');
           }.property('controllers.post.title')
         });
@@ -2235,7 +2233,7 @@ enifed("ember-application/system/application",
       For example, if you define a view class, it might look like this:
 
       ```javascript
-      MyView = Ember.View.extend();
+      App.MyView = Ember.View.extend();
       ```
 
       By default, calling `Ember.Application.create()` will automatically initialize
@@ -2478,7 +2476,7 @@ enifed("ember-application/system/application",
         ```javascript
         var App = Ember.Application.create();
 
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('posts');
         });
         ```
@@ -2535,11 +2533,11 @@ enifed("ember-application/system/application",
 
         ```javascript
         App = Ember.Application.create();
-        deferReadiness();
+        App.deferReadiness();
 
         jQuery.getJSON("/auth-token", function(token) {
-          token = token;
-          advanceReadiness();
+          App.token = token;
+          App.advanceReadiness();
         });
         ```
 
@@ -2573,19 +2571,19 @@ enifed("ember-application/system/application",
 
       /**
         Registers a factory that can be used for dependency injection (with
-        `inject`) or for service lookup. Each factory is registered with
+        `App.inject`) or for service lookup. Each factory is registered with
         a full name including two parts: `type:name`.
 
         A simple example:
 
         ```javascript
         var App = Ember.Application.create();
-        Orange  = Ember.Object.extend();
-        register('fruit:favorite', Orange);
+        App.Orange  = Ember.Object.extend();
+        App.register('fruit:favorite', App.Orange);
         ```
 
         Ember will resolve factories from the `App` namespace automatically.
-        For example `CarsController` will be discovered and returned if
+        For example `App.CarsController` will be discovered and returned if
         an application requests `controller:cars`.
 
         An example of registering a controller with a non-standard name:
@@ -2594,11 +2592,11 @@ enifed("ember-application/system/application",
         var App = Ember.Application.create(),
             Session  = Ember.Controller.extend();
 
-        register('controller:session', Session);
+        App.register('controller:session', Session);
 
         // The Session controller can now be treated like a normal controller,
         // despite its non-standard name.
-        ApplicationController = Ember.Controller.extend({
+        App.ApplicationController = Ember.Controller.extend({
           needs: ['session']
         });
         ```
@@ -2612,20 +2610,20 @@ enifed("ember-application/system/application",
         ```javascript
         var App = Ember.Application.create();
 
-        Person  = Ember.Object.extend();
-        Orange  = Ember.Object.extend();
-        Email   = Ember.Object.extend();
-        session = Ember.Object.create();
+        App.Person  = Ember.Object.extend();
+        App.Orange  = Ember.Object.extend();
+        App.Email   = Ember.Object.extend();
+        App.session = Ember.Object.create();
 
-        register('model:user', Person, {singleton: false });
-        register('fruit:favorite', Orange);
-        register('communication:main', Email, {singleton: false});
-        register('session', session, {instantiate: false});
+        App.register('model:user', App.Person, {singleton: false });
+        App.register('fruit:favorite', App.Orange);
+        App.register('communication:main', App.Email, {singleton: false});
+        App.register('session', App.session, {instantiate: false});
         ```
 
         @method register
         @param  fullName {String} type:name (e.g., 'model:user')
-        @param  factory {Function} (e.g., Person)
+        @param  factory {Function} (e.g., App.Person)
         @param  options {Object} (optional) disable instantiation or singleton usage
       **/
       register: function() {
@@ -2648,13 +2646,13 @@ enifed("ember-application/system/application",
             Session = Ember.Object.extend({ isAuthenticated: false });
 
         // A factory must be registered before it can be injected
-        register('session:main', Session);
+        App.register('session:main', Session);
 
         // Inject 'session:main' onto all factories of the type 'controller'
         // with the name 'session'
-        inject('controller', 'session', 'session:main');
+        App.inject('controller', 'session', 'session:main');
 
-        IndexController = Ember.Controller.extend({
+        App.IndexController = Ember.Controller.extend({
           isLoggedIn: Ember.computed.alias('session.isAuthenticated')
         });
         ```
@@ -2662,9 +2660,9 @@ enifed("ember-application/system/application",
         Injections can also be performed on specific factories.
 
         ```javascript
-        inject(<full_name or type>, <property name>, <full_name>)
-        inject('route', 'source', 'source:main')
-        inject('route:application', 'email', 'model:email')
+        App.inject(<full_name or type>, <property name>, <full_name>)
+        App.inject('route', 'source', 'source:main')
+        App.inject('route:application', 'email', 'model:email')
         ```
 
         It is important to note that injections can only be performed on
@@ -2713,7 +2711,7 @@ enifed("ember-application/system/application",
       _initialize: function() {
         if (this.isDestroyed) { return; }
 
-        // At this point, the Router must already be assigned
+        // At this point, the App.Router must already be assigned
         if (this.Router) {
           var container = this.__container__;
           container.unregister('router:main');
@@ -2752,7 +2750,7 @@ enifed("ember-application/system/application",
 
         module("acceptance test", {
           setup: function() {
-            reset();
+            App.reset();
           }
         });
 
@@ -2782,8 +2780,8 @@ enifed("ember-application/system/application",
         module("acceptance test", {
           setup: function() {
             run(function() {
-              reset();
-              deferReadiness();
+              App.reset();
+              App.deferReadiness();
             });
           }
         });
@@ -2792,7 +2790,7 @@ enifed("ember-application/system/application",
           ok(true, 'something before app is initialized');
 
           run(function() {
-            advanceReadiness();
+            App.advanceReadiness();
           });
           ok(true, 'something after app is initialized');
         });
@@ -3171,7 +3169,7 @@ enifed("ember-application/system/application",
 
       * templates are looked up on `Ember.TEMPLATES`
       * other names are looked up on the application after classifying the name.
-        For example, `controller:post` looks up `PostController` by default.
+        For example, `controller:post` looks up `App.PostController` by default.
       * if the default lookup fails, look for registered classes on the container
 
       This allows the application to register default injections in the container
@@ -3449,7 +3447,7 @@ enifed("ember-application/system/resolver",
       * templates are looked up on `Ember.TEMPLATES`
       * other names are looked up on the application after converting
         the name. For example, `controller:post` looks up
-        `PostController` by default.
+        `App.PostController` by default.
       * there are some nuances (see examples below)
 
       ### How Resolving Works
@@ -3491,20 +3489,20 @@ enifed("ember-application/system/resolver",
       'template:blogPost' //=> Ember.TEMPLATES['blogPost']
                           //   OR
                           //   Ember.TEMPLATES['blog_post']
-      'controller:post' //=> PostController
-      'controller:posts.index' //=> PostsIndexController
+      'controller:post' //=> App.PostController
+      'controller:posts.index' //=> App.PostsIndexController
       'controller:blog/post' //=> Blog.PostController
       'controller:basic' //=> Ember.Controller
-      'route:post' //=> PostRoute
-      'route:posts.index' //=> PostsIndexRoute
+      'route:post' //=> App.PostRoute
+      'route:posts.index' //=> App.PostsIndexRoute
       'route:blog/post' //=> Blog.PostRoute
       'route:basic' //=> Ember.Route
-      'view:post' //=> PostView
-      'view:posts.index' //=> PostsIndexView
+      'view:post' //=> App.PostView
+      'view:posts.index' //=> App.PostsIndexView
       'view:blog/post' //=> Blog.PostView
       'view:basic' //=> Ember.View
-      'foo:post' //=> PostFoo
-      'model:post' //=> Post
+      'foo:post' //=> App.PostFoo
+      'model:post' //=> App.Post
       ```
 
       @class DefaultResolver
@@ -3597,7 +3595,7 @@ enifed("ember-application/system/resolver",
 
       parseName: function(fullName) {
         return this._parseNameCache[fullName] || (
-          (this._parseNameCache[fullName] = this._parseName(fullName))
+          this._parseNameCache[fullName] = this._parseName(fullName)
         );
       },
 
@@ -4510,11 +4508,11 @@ enifed("ember-handlebars-compiler",
 
       ## Custom view helper example
 
-      Assuming a view subclass named `CalendarView` were defined, a helper
+      Assuming a view subclass named `App.CalendarView` were defined, a helper
       for rendering instances of this view could be registered as follows:
 
       ```javascript
-      Ember.Handlebars.helper('calendar', CalendarView):
+      Ember.Handlebars.helper('calendar', App.CalendarView):
       ```
 
       The above bound helper can be used inside of templates as follows:
@@ -5008,7 +5006,7 @@ enifed("ember-handlebars/controls",
       ## Bound:
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         firstName: "Stanley",
         entryNotAllowed: true
       });
@@ -5107,7 +5105,7 @@ enifed("ember-handlebars/controls",
       ## Bound:
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         isAdmin: true
       });
       ```
@@ -5207,12 +5205,12 @@ enifed("ember-handlebars/controls",
 
       Bound:
 
-      In the following example, the `writtenWords` property on `ApplicationController`
+      In the following example, the `writtenWords` property on `App.ApplicationController`
       will be updated live as the user types 'Lots of text that IS bound' into
       the text area of their browser's window.
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         writtenWords: "Lots of text that IS bound"
       });
       ```
@@ -5233,7 +5231,7 @@ enifed("ember-handlebars/controls",
       somewhere else on your screen, you could use `Ember.computed.oneWay`:
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         writtenWords: "Lots of text that IS bound",
         outputWrittenWords: Ember.computed.oneWay("writtenWords")
       });
@@ -5268,7 +5266,7 @@ enifed("ember-handlebars/controls",
       your really binding in both directions:
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         writtenWords: "Lots of text that IS bound",
         twoWayWrittenWords: Ember.computed.alias("writtenWords")
       });
@@ -5546,7 +5544,7 @@ enifed("ember-handlebars/controls/select",
       Example:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         names: ["Yehuda", "Tom"]
       });
       ```
@@ -5568,7 +5566,7 @@ enifed("ember-handlebars/controls/select",
       `value` property:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         selectedName: 'Tom',
         names: ["Yehuda", "Tom"]
       });
@@ -5605,7 +5603,7 @@ enifed("ember-handlebars/controls/select",
       element's text. Both paths must reference each object itself as `content`:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         programmers: [
           {firstName: "Yehuda", id: 1},
           {firstName: "Tom",    id: 2}
@@ -5633,7 +5631,7 @@ enifed("ember-handlebars/controls/select",
       can be bound to a property on another object:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         programmers: [
           {firstName: "Yehuda", id: 1},
           {firstName: "Tom",    id: 2}
@@ -5676,7 +5674,7 @@ enifed("ember-handlebars/controls/select",
       var yehuda = {firstName: "Yehuda", id: 1, bff4eva: 'tom'}
       var tom = {firstName: "Tom", id: 2, bff4eva: 'yehuda'};
 
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         selectedPerson: tom,
         programmers: [ yehuda, tom ]
       });
@@ -5710,7 +5708,7 @@ enifed("ember-handlebars/controls/select",
       results in there being no `<option>` with a `selected` attribute:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         selectedProgrammer: null,
         programmers: ["Yehuda", "Tom"]
       });
@@ -5739,7 +5737,7 @@ enifed("ember-handlebars/controls/select",
       with the `prompt` option:
 
       ```javascript
-      ApplicationController = Ember.ObjectController.extend({
+      App.ApplicationController = Ember.ObjectController.extend({
         selectedProgrammer: null,
         programmers: [ "Yehuda", "Tom" ]
       });
@@ -5869,7 +5867,7 @@ enifed("ember-handlebars/controls/select",
 
         ```javascript
         var App = Ember.Application.create();
-        var MySelect = Ember.Select.extend({
+        var App.MySelect = Ember.Select.extend({
           content: Ember.A([
               { id: 1, firstName: 'Yehuda' },
               { id: 2, firstName: 'Tom' }
@@ -6613,7 +6611,7 @@ enifed("ember-handlebars/ext",
       ```handlebars
       {{view "some-view"}}
       {{view view.someView}}
-      {{view SomeView}} {{! deprecated }}
+      {{view App.SomeView}} {{! deprecated }}
       ```
 
       A value is first checked to be a string- non-strings are presumed to be
@@ -8124,7 +8122,7 @@ enifed("ember-handlebars/helpers/collection",
 
       ```javascript
       App = Ember.Application.create();
-      ApplicationRoute = Ember.Route.extend({
+      App.ApplicationRoute = Ember.Route.extend({
         model: function(){
           return [{name: 'Yehuda'},{name: 'Tom'},{name: 'Peter'}];
         }
@@ -8157,13 +8155,13 @@ enifed("ember-handlebars/helpers/collection",
 
       ```javascript
       App = Ember.Application.create();
-      ApplicationRoute = Ember.Route.extend({
+      App.ApplicationRoute = Ember.Route.extend({
         model: function(){
           return [{name: 'Yehuda'},{name: 'Tom'},{name: 'Peter'}];
         }
       });
 
-      AnItemView = Ember.View.extend({
+      App.AnItemView = Ember.View.extend({
         template: Ember.Handlebars.compile("Greetings {{view.content.name}}")
       });
       ```
@@ -8190,7 +8188,7 @@ enifed("ember-handlebars/helpers/collection",
       {{/collection}}
       ```
 
-      This example would look for the class `MyCustomCollection`.
+      This example would look for the class `App.MyCustomCollection`.
 
       ### Forwarded `item.*`-named Options
 
@@ -8733,7 +8731,7 @@ enifed("ember-handlebars/helpers/each",
       Will use the following view for each item
 
       ```javascript
-      PersonView = Ember.View.extend({
+      App.PersonView = Ember.View.extend({
         tagName: 'li'
       });
       ```
@@ -8754,7 +8752,7 @@ enifed("ember-handlebars/helpers/each",
       as the previous one:
 
       ```javascript
-      PersonView = Ember.View.extend({
+      App.PersonView = Ember.View.extend({
         tagName: 'li',
         template: '{{name}}'
       });
@@ -8772,7 +8770,7 @@ enifed("ember-handlebars/helpers/each",
       case of the each helper.
 
       ```javascript
-      NoPeopleView = Ember.View.extend({
+      App.NoPeopleView = Ember.View.extend({
         tagName: 'li',
         template: 'No person is available, sorry'
       });
@@ -8799,7 +8797,7 @@ enifed("ember-handlebars/helpers/each",
       while any other property lookups are delegated to the model. An example:
 
       ```javascript
-      RecruitController = Ember.ObjectController.extend({
+      App.RecruitController = Ember.ObjectController.extend({
         isAvailableForHire: function() {
           return !this.get('isEmployed') && this.get('isSeekingWork');
         }.property('isEmployed', 'isSeekingWork')
@@ -9495,7 +9493,7 @@ enifed("ember-handlebars/helpers/view",
       specify a path to a custom view class.
 
       ```handlebars
-      {{#view "custom"}}{{! will look up CustomView }}
+      {{#view "custom"}}{{! will look up App.CustomView }}
         hello.
       {{/view}}
       ```
@@ -9505,14 +9503,14 @@ enifed("ember-handlebars/helpers/view",
 
       ```javascript
       MyApp = Ember.Application.create({});
-      MyOuterView = Ember.View.extend({
+      MyApp.OuterView = Ember.View.extend({
         innerViewClass: Ember.View.extend({
           classNames: ['a-custom-view-class-as-property']
         }),
         template: Ember.Handlebars.compile('{{#view view.innerViewClass}} hi {{/view}}')
       });
 
-      MyOuterView.create().appendTo('body');
+      MyApp.OuterView.create().appendTo('body');
       ```
 
       Will result in the following HTML:
@@ -9534,7 +9532,7 @@ enifed("ember-handlebars/helpers/view",
 
       ```javascript
       var App = Ember.Application.create();
-      WithTemplateDefinedView = Ember.View.extend({
+      App.WithTemplateDefinedView = Ember.View.extend({
         templateName: 'defined-template'
       });
       ```
@@ -10861,7 +10859,7 @@ enifed("ember-metal",
 
       ```javascript
       Ember.onerror = function(error) {
-        Ember.$.ajax('/report-error', 'POST', {
+        Em.$.ajax('/report-error', 'POST', {
           stack: error.stack,
           otherInformation: 'whatever app state you want to provide'
         });
@@ -11135,7 +11133,7 @@ enifed("ember-metal/binding",
     Ember.LOG_BINDINGS = false || !!Ember.ENV.LOG_BINDINGS;
 
     /**
-      Returns true if the provided path is global (e.g., `MyfooController.bar`)
+      Returns true if the provided path is global (e.g., `MyApp.fooController.bar`)
       instead of local (`foo.bar.baz`).
 
       @method isGlobalPath
@@ -11437,10 +11435,10 @@ enifed("ember-metal/binding",
       (see "One Way Bindings"):
 
       ```
-      valueBinding: "MysomeController.title"
+      valueBinding: "MyApp.someController.title"
       ```
 
-      This will create a binding from `MysomeController.title` to the `value`
+      This will create a binding from `MyApp.someController.title` to the `value`
       property of your object instance automatically. Now the two values will be
       kept in sync.
 
@@ -11454,10 +11452,10 @@ enifed("ember-metal/binding",
       could do:
 
       ```
-      bigTitlesBinding: Ember.Binding.oneWay("MypreferencesController.bigTitles")
+      bigTitlesBinding: Ember.Binding.oneWay("MyApp.preferencesController.bigTitles")
       ```
 
-      This way if the value of `MypreferencesController.bigTitles` changes the
+      This way if the value of `MyApp.preferencesController.bigTitles` changes the
       `bigTitles` property of your object will change also. However, if you
       change the value of your `bigTitles` property, it will not update the
       `preferencesController`.
@@ -11482,7 +11480,7 @@ enifed("ember-metal/binding",
       bind from while the `to` path points to the object/key you want to bind to.
 
       When you define a custom binding, you are usually describing the property
-      you want to bind from (such as `MysomeController.value` in the examples
+      you want to bind from (such as `MyApp.someController.value` in the examples
       above). When your object is created, it will automatically assign the value
       you want to bind `to` based on the name of your binding key. In the
       examples above, during init, Ember objects will effectively call
@@ -11511,11 +11509,11 @@ enifed("ember-metal/binding",
 
       ```javascript
       // Example 1
-      binding = Ember.Binding.from("someObject.value").to("value");
+      binding = Ember.Binding.from("App.someObject.value").to("value");
       binding.connect(this);
 
       // Example 2
-      binding = Ember.Binding.from("parentView.value").to("someObject.value");
+      binding = Ember.Binding.from("parentView.value").to("App.someObject.value");
       binding.connect(this);
       ```
 
@@ -11528,15 +11526,15 @@ enifed("ember-metal/binding",
       to setup your bindings on objects):
 
       ```javascript
-      Ember.bind(MyanotherObject, "value", "MysomeController.value");
+      Ember.bind(MyApp.anotherObject, "value", "MyApp.someController.value");
       ```
 
       Both of these code fragments have the same effect as doing the most friendly
       form of binding creation like so:
 
       ```javascript
-      MyanotherObject = Ember.Object.create({
-        valueBinding: "MysomeController.value",
+      MyApp.anotherObject = Ember.Object.create({
+        valueBinding: "MyApp.someController.value",
 
         // OTHER CODE FOR THIS OBJECT...
       });
@@ -12256,8 +12254,8 @@ enifed("ember-metal/computed",
       ```
       person: function() {
         var personId = this.get('personId');
-        return Person.create({ id: personId });
-      }.property().meta({ type: Person })
+        return App.Person.create({ id: personId });
+      }.property().meta({ type: App.Person })
       ```
 
       The hash that you pass to the `meta()` function will be saved on the
@@ -16166,7 +16164,7 @@ enifed("ember-metal/mixin",
       added to other classes. For instance,
 
       ```javascript
-      Editable = Ember.Mixin.create({
+      App.Editable = Ember.Mixin.create({
         edit: function() {
           console.log('starting to edit');
           this.set('isEditing', true);
@@ -16176,11 +16174,11 @@ enifed("ember-metal/mixin",
 
       // Mix mixins into classes by passing them as the first arguments to
       // .extend.
-      CommentView = Ember.View.extend(Editable, {
+      App.CommentView = Ember.View.extend(App.Editable, {
         template: Ember.Handlebars.compile('{{#if view.isEditing}}...{{else}}...{{/if}}')
       });
 
-      commentView = CommentView.create();
+      commentView = App.CommentView.create();
       commentView.edit(); // outputs 'starting to edit'
       ```
 
@@ -16194,17 +16192,17 @@ enifed("ember-metal/mixin",
 
       ```javascript
       //filters array will be shared amongst any object implementing mixin
-      Filterable = Ember.Mixin.create({
+      App.Filterable = Ember.Mixin.create({
         filters: Ember.A()
       });
 
       //filters will be a separate  array for every object implementing the mixin
-      Filterable = Ember.Mixin.create({
+      App.Filterable = Ember.Mixin.create({
         filters: Ember.computed(function(){return Ember.A();})
       });
 
       //filters will be created as a separate array during the object's initialization
-      Filterable = Ember.Mixin.create({
+      App.Filterable = Ember.Mixin.create({
         init: function() {
           this._super();
           this.set("filters", Ember.A());
@@ -16401,14 +16399,14 @@ enifed("ember-metal/mixin",
       Makes a method available via an additional name.
 
       ```javascript
-      Person = Ember.Object.extend({
+      App.Person = Ember.Object.extend({
         name: function() {
           return 'Tomhuda Katzdale';
         },
         moniker: Ember.aliasMethod('name')
       });
 
-      var goodGuy = Person.create();
+      var goodGuy = App.Person.create();
 
       goodGuy.name();    // 'Tomhuda Katzdale'
       goodGuy.moniker(); // 'Tomhuda Katzdale'
@@ -16520,7 +16518,7 @@ enifed("ember-metal/mixin",
       A `beforeObserver` is an alternative form of `.observesBefore()`.
 
       ```javascript
-      PersonView = Ember.View.extend({
+      App.PersonView = Ember.View.extend({
         friends: [{ name: 'Tom' }, { name: 'Stefan' }, { name: 'Kris' }],
 
         valueWillChange: Ember.beforeObserver('content.value', function(obj, keyName) {
@@ -18206,7 +18204,7 @@ enifed("ember-metal/run_loop",
       where all the DOM element operations happen). Example:
 
       ```javascript
-      MyCollectionView = Ember.CollectionView.extend({
+      App.MyCollectionView = Ember.CollectionView.extend({
         didInsertElement: function() {
           run.scheduleOnce('afterRender', this, 'processChildElements');
         },
@@ -19787,7 +19785,7 @@ enifed("ember-routing-handlebars/helpers/action",
       And application code
 
       ```javascript
-      ApplicationController = Ember.Controller.extend({
+      App.ApplicationController = Ember.Controller.extend({
         actions: {
           anActionName: function() {
           }
@@ -19806,7 +19804,7 @@ enifed("ember-routing-handlebars/helpers/action",
       ```
 
       Clicking "click me" will trigger the `anActionName` action of the
-      `ApplicationController`. In this case, no additional parameters will be passed.
+      `App.ApplicationController`. In this case, no additional parameters will be passed.
 
       If you provide additional parameters to the helper:
 
@@ -19896,7 +19894,7 @@ enifed("ember-routing-handlebars/helpers/action",
       ```
 
       ```javascript
-      ApplicationView = Ember.View.extend({
+      App.ApplicationView = Ember.View.extend({
         actions: {
           anActionName: function(){}
         }
@@ -20159,7 +20157,7 @@ enifed("ember-routing-handlebars/helpers/link_to",
         Example:
 
         ```javascript
-        MyLinkView = Ember.LinkView.extend({
+        App.MyLinkView = Ember.LinkView.extend({
           init: function() {
             this._super();
             Ember.Logger.log('Event is ' + this.get('eventName'));
@@ -20696,7 +20694,7 @@ enifed("ember-routing-handlebars/helpers/link_to",
       the model context of the linked route:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource("photoGallery", {path: "hamster-photos/:photo_id"});
       });
       ```
@@ -20721,7 +20719,7 @@ enifed("ember-routing-handlebars/helpers/link_to",
       route with the dynamic segments:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource("photoGallery", {path: "hamster-photos/:photo_id"}, function() {
           this.route("comment", {path: "comments/:comment_id"});
         });
@@ -20748,7 +20746,7 @@ enifed("ember-routing-handlebars/helpers/link_to",
       of the dynamic segment:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource("photoGallery", {path: "hamster-photos/:photo_id"});
       });
       ```
@@ -20982,14 +20980,14 @@ enifed("ember-routing-handlebars/helpers/outlet",
       ```
 
       By default, a template based on Ember's naming conventions will be rendered
-      into the `outlet` (e.g. `PostsRoute` will render the `posts` template).
+      into the `outlet` (e.g. `App.PostsRoute` will render the `posts` template).
 
       You can render a different template by using the `render()` method in the
       route's `renderTemplate` hook. The following will render the `favoritePost`
       template into the `outlet`.
 
       ``` javascript
-      PostsRoute = Ember.Route.extend({
+      App.PostsRoute = Ember.Route.extend({
         renderTemplate: function() {
           this.render('favoritePost');
         }
@@ -21008,7 +21006,7 @@ enifed("ember-routing-handlebars/helpers/outlet",
 
 
       ``` javascript
-      PostsRoute = Ember.Route.extend({
+      App.PostsRoute = Ember.Route.extend({
         renderTemplate: function() {
           this.render('favoritePost', { outlet: 'favoritePost' });
           this.render('posts', { outlet: 'posts' });
@@ -21024,7 +21022,7 @@ enifed("ember-routing-handlebars/helpers/outlet",
       ```
 
       ``` javascript
-      SectionContainer = Ember.ContainerView.extend({
+      App.SectionContainer = Ember.ContainerView.extend({
         tagName: 'section',
         classNames: ['special']
       });
@@ -21109,7 +21107,7 @@ enifed("ember-routing-handlebars/helpers/render",
       Example:
 
       ```javascript
-      NavigationController = Ember.Controller.extend({
+      App.NavigationController = Ember.Controller.extend({
         who: "world"
       });
       ```
@@ -21575,7 +21573,7 @@ enifed("ember-routing/ext/controller",
         resource tree.
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('blogPost', {path:':blogPostId'}, function(){
             this.resource('blogComment', {path: ':blogCommentId'});
           });
@@ -21648,7 +21646,7 @@ enifed("ember-routing/ext/controller",
         resource tree.
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('blogPost', {path:':blogPostId'}, function(){
             this.resource('blogComment', {path: ':blogCommentId'});
           });
@@ -21934,13 +21932,13 @@ enifed("ember-routing/location/api",
       Example:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource('posts', function() {
           this.route('new');
         });
       });
 
-      Router.reopen({
+      App.Router.reopen({
         location: 'hash'
       });
       ```
@@ -21955,13 +21953,13 @@ enifed("ember-routing/location/api",
       Example:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource('posts', function() {
           this.route('new');
         });
       });
 
-      Router.reopen({
+      App.Router.reopen({
         location: 'history'
       });
       ```
@@ -21983,13 +21981,13 @@ enifed("ember-routing/location/api",
       Example:
 
       ```javascript
-      Router.map(function() {
+      App.Router.map(function() {
         this.resource('posts', function() {
           this.route('new');
         });
       });
 
-      Router.reopen({
+      App.Router.reopen({
         location: 'auto'
       });
       ```
@@ -22009,7 +22007,7 @@ enifed("ember-routing/location/api",
 
       Using `NoneLocation` causes Ember to not store the applications URL state
       in the actual URL. This is generally used for testing purposes, and is one
-      of the changes made when calling `setupForTesting()`.
+      of the changes made when calling `App.setupForTesting()`.
 
       ## Location API
 
@@ -23154,7 +23152,7 @@ enifed("ember-routing/system/generate_controller",
       controller is generated.
 
       You can customize your generated controllers by defining
-      `ObjectController` or `ArrayController`.
+      `App.ObjectController` or `App.ArrayController`.
 
       @for Ember
       @method generateControllerFactory
@@ -23510,7 +23508,7 @@ enifed("ember-routing/system/route",
         changes or the route is exiting.
 
         ```js
-        ArticlesRoute = Ember.Route.extend({
+        App.ArticlesRoute = Ember.Route.extend({
           // ...
 
           resetController: function (controller, isExiting, transition) {
@@ -23571,15 +23569,15 @@ enifed("ember-routing/system/route",
 
         This is useful when multiple routes would benefit from using the same view
         because it doesn't require a custom `renderTemplate` method. For example,
-        the following routes will all render using the `PostsListView` view:
+        the following routes will all render using the `App.PostsListView` view:
 
         ```js
         var PostsList = Ember.Route.extend({
           viewName: 'postsList'
         });
 
-        PostsIndexRoute = PostsList.extend();
-        PostsArchivedRoute = PostsList.extend();
+        App.PostsIndexRoute = PostsList.extend();
+        App.PostsArchivedRoute = PostsList.extend();
         ```
 
         @property viewName
@@ -23601,8 +23599,8 @@ enifed("ember-routing/system/route",
           templateName: 'posts/list'
         });
 
-        PostsIndexRoute = PostsList.extend();
-        PostsArchivedRoute = PostsList.extend();
+        App.PostsIndexRoute = PostsList.extend();
+        App.PostsArchivedRoute = PostsList.extend();
         ```
 
         @property templateName
@@ -23616,7 +23614,7 @@ enifed("ember-routing/system/route",
         The name of the controller to associate with this route.
 
         By default, Ember will lookup a route's controller that matches the name
-        of the route (i.e. `PostController` for `PostRoute`). However,
+        of the route (i.e. `App.PostController` for `App.PostRoute`). However,
         if you would like to define a specific controller to use, you can do so
         using this property.
 
@@ -23643,7 +23641,7 @@ enifed("ember-routing/system/route",
         half-filled out:
 
         ```js
-        ContactFormRoute = Ember.Route.extend({
+        App.ContactFormRoute = Ember.Route.extend({
           actions: {
             willTransition: function(transition) {
               if (this.controller.get('userHasEnteredData')) {
@@ -23677,7 +23675,7 @@ enifed("ember-routing/system/route",
         state on the controller.
 
         ```js
-        LoginRoute = Ember.Route.extend({
+        App.LoginRoute = Ember.Route.extend({
           actions: {
             didTransition: function() {
               this.controller.get('errors.base').clear();
@@ -23698,7 +23696,7 @@ enifed("ember-routing/system/route",
         triggered the loading event is the second parameter.
 
         ```js
-        ApplicationRoute = Ember.Route.extend({
+        App.ApplicationRoute = Ember.Route.extend({
           actions: {
             loading: function(transition, route) {
               var view = Ember.View.create({
@@ -23733,7 +23731,7 @@ enifed("ember-routing/system/route",
         as well as any unhandled errors from child routes:
 
         ```js
-        AdminRoute = Ember.Route.extend({
+        App.AdminRoute = Ember.Route.extend({
           beforeModel: function() {
             return Ember.RSVP.reject("bad things!");
           },
@@ -23762,7 +23760,7 @@ enifed("ember-routing/system/route",
         `error` handler on `ApplicationRoute`:
 
         ```js
-        ApplicationRoute = Ember.Route.extend({
+        App.ApplicationRoute = Ember.Route.extend({
           actions: {
             error: function(error, transition) {
               this.controllerFor('banner').displayError(error.message);
@@ -23781,7 +23779,7 @@ enifed("ember-routing/system/route",
         Example
 
         ```javascript
-        FormRoute = Ember.Route.extend({
+        App.FormRoute = Ember.Route.extend({
           actions: {
             willTransition: function(transition) {
               if (this.controller.get('userHasEnteredData') &&
@@ -23955,7 +23953,7 @@ enifed("ember-routing/system/route",
         resource tree.
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('blogPost', {path:':blogPostId'}, function(){
             this.resource('blogComment', {path: ':blogCommentId'});
           });
@@ -23979,13 +23977,13 @@ enifed("ember-routing/system/route",
         Simple Transition Example
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.route("index");
           this.route("secret");
           this.route("fourOhFour", { path: "*:"});
         });
 
-        IndexRoute = Ember.Route.extend({
+        App.IndexRoute = Ember.Route.extend({
           actions: {
             moveToSecret: function(context){
               if (authorized()){
@@ -24000,13 +23998,13 @@ enifed("ember-routing/system/route",
         Transition to a nested route
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('articles', { path: '/articles' }, function() {
             this.route('new');
           });
         });
 
-        IndexRoute = Ember.Route.extend({
+        App.IndexRoute = Ember.Route.extend({
           actions: {
             transitionToNewArticle: function() {
               this.transitionTo('articles.new');
@@ -24018,14 +24016,14 @@ enifed("ember-routing/system/route",
         Multiple Models Example
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.route("index");
           this.resource('breakfast', {path:':breakfastId'}, function(){
             this.resource('cereal', {path: ':cerealId'});
           });
         });
 
-        IndexRoute = Ember.Route.extend({
+        App.IndexRoute = Ember.Route.extend({
           actions: {
             moveToChocolateCereal: function(){
               var cereal = { cerealId: "ChocolateYumminess"},
@@ -24104,12 +24102,12 @@ enifed("ember-routing/system/route",
         Example
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.route("index");
           this.route("secret");
         });
 
-        SecretRoute = Ember.Route.extend({
+        App.SecretRoute = Ember.Route.extend({
           afterModel: function() {
             if (!authorized()){
               this.replaceWith('index');
@@ -24137,11 +24135,11 @@ enifed("ember-routing/system/route",
         Example
 
         ```javascript
-        Router.map(function() {
+        App.Router.map(function() {
           this.route("index");
         });
 
-        ApplicationRoute = Ember.Route.extend({
+        App.ApplicationRoute = Ember.Route.extend({
           actions: {
             track: function(arg) {
               console.log(arg, 'was clicked');
@@ -24149,7 +24147,7 @@ enifed("ember-routing/system/route",
           }
         });
 
-        IndexRoute = Ember.Route.extend({
+        App.IndexRoute = Ember.Route.extend({
           actions: {
             trackIfDebug: function(arg) {
               if (debug) {
@@ -24237,16 +24235,16 @@ enifed("ember-routing/system/route",
         the server that is required to enter a route.
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           beforeModel: function(transition) {
-            if (!Post) {
+            if (!App.Post) {
               return Ember.$.getScript('/models/post.js');
             }
           }
         });
         ```
 
-        If `Post` doesn't exist in the above example,
+        If `App.Post` doesn't exist in the above example,
         `beforeModel` will use jQuery's `getScript`, which
         returns a promise that resolves after the server has
         successfully retrieved and executed the code from the
@@ -24258,9 +24256,9 @@ enifed("ember-routing/system/route",
         hook):
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           beforeModel: function(transition) {
-            if (!Post) {
+            if (!App.Post) {
               var self = this;
               return Ember.$.getScript('post.js').then(null, function(e) {
                 self.transitionTo('help');
@@ -24299,7 +24297,7 @@ enifed("ember-routing/system/route",
         resolved.
 
         ```js
-        PostsRoute = Ember.Route.extend({
+        App.PostsRoute = Ember.Route.extend({
           afterModel: function(posts, transition) {
             if (posts.get('length') === 1) {
               this.transitionTo('post.show', posts.get('firstObject'));
@@ -24365,7 +24363,7 @@ enifed("ember-routing/system/route",
         this route.
 
         ```js
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('post', {path: '/posts/:post_id'});
         });
         ```
@@ -24375,7 +24373,7 @@ enifed("ember-routing/system/route",
         By default, if your route has a dynamic segment ending in `_id`:
 
         * The model class is determined from the segment (`post_id`'s
-          class is `Post`)
+          class is `App.Post`)
         * The find method is called on the model class with the value of
           the dynamic segment.
 
@@ -24411,7 +24409,7 @@ enifed("ember-routing/system/route",
         Example
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           model: function(params) {
             return this.store.find('post', params.post_id);
           }
@@ -24516,11 +24514,11 @@ enifed("ember-routing/system/route",
         for the URL.
 
         ```js
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('post', {path: '/posts/:post_id'});
         });
 
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           model: function(params) {
             // the server returns `{ id: 12 }`
             return jQuery.getJSON("/posts/" + params.post_id);
@@ -24577,7 +24575,7 @@ enifed("ember-routing/system/route",
         `_super`:
 
         ```js
-        PhotosRoute = Ember.Route.extend({
+        App.PhotosRoute = Ember.Route.extend({
           model: function() {
             return this.store.find('photo');
           },
@@ -24607,19 +24605,19 @@ enifed("ember-routing/system/route",
         As an example, consider the router:
 
         ```js
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource('post', {path: '/posts/:post_id'});
         });
         ```
 
-        For the `post` route, a controller named `PostController` would
+        For the `post` route, a controller named `App.PostController` would
         be used if it is defined. If it is not defined, an `Ember.ObjectController`
         instance would be used.
 
         Example
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           setupController: function(controller, model) {
             controller.set('model', model);
           }
@@ -24643,7 +24641,7 @@ enifed("ember-routing/system/route",
         associated route or using `generateController`.
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           setupController: function(controller, post) {
             this._super(controller, post);
             this.controllerFor('posts').set('currentPost', post);
@@ -24682,7 +24680,7 @@ enifed("ember-routing/system/route",
         Example
 
         ```js
-        PostRoute = Ember.Route.extend({
+        App.PostRoute = Ember.Route.extend({
           setupController: function(controller, post) {
             this._super(controller, post);
             this.generateController('posts', post);
@@ -24714,13 +24712,13 @@ enifed("ember-routing/system/route",
         Example
 
         ```js
-        Router.map(function() {
+        App.Router.map(function() {
             this.resource('post', { path: '/post/:post_id' }, function() {
                 this.resource('comments');
             });
         });
 
-        CommentsRoute = Ember.Route.extend({
+        App.CommentsRoute = Ember.Route.extend({
             afterModel: function() {
                 this.set('post', this.modelFor('post'));
             }
@@ -24758,7 +24756,7 @@ enifed("ember-routing/system/route",
         alternative templates.
 
         ```js
-        PostsRoute = Ember.Route.extend({
+        App.PostsRoute = Ember.Route.extend({
           renderTemplate: function(controller, model) {
             var favController = this.controllerFor('favoritePost');
 
@@ -24862,7 +24860,7 @@ enifed("ember-routing/system/route",
 
         ```js
         // post route
-        PostRoute = Route.extend({
+        PostRoute = App.Route.extend({
           renderTemplate: function() {
             this.render(); // all defaults apply
           }
@@ -24957,7 +24955,7 @@ enifed("ember-routing/system/route",
         Example:
 
         ```js
-        ApplicationRoute = Route.extend({
+        App.ApplicationRoute = App.Route.extend({
           actions: {
             showModal: function(evt) {
               this.render(evt.modalName, {
@@ -25955,7 +25953,7 @@ enifed("ember-routing/system/router",
         supplied callback function using `this.resource` and `this.route`.
 
         ```javascript
-        Router.map(function({
+        App.Router.map(function({
           this.route('about');
           this.resource('article');
         }));
@@ -27307,12 +27305,12 @@ enifed("ember-runtime/computed/reduce_computed",
       Example
 
       ```javascript
-      PeopleController = Ember.ArrayController.extend({
+      App.PeopleController = Ember.ArrayController.extend({
         itemController: 'person',
 
         sortedPeople: Ember.computed.sort('@this.@each.reversedName', function(personA, personB) {
           // `reversedName` isn't defined on Person, but we have access to it via
-          // the item controller PersonController.  If we'd used
+          // the item controller App.PersonController.  If we'd used
           // `content.@each.reversedName` above, we would be getting the objects
           // directly and not have access to `reversedName`.
           //
@@ -27323,7 +27321,7 @@ enifed("ember-runtime/computed/reduce_computed",
         })
       });
 
-      PersonController = Ember.ObjectController.extend({
+      App.PersonController = Ember.ObjectController.extend({
         reversedName: function() {
           return reverse(get(this, 'name'));
         }.property('name')
@@ -28268,17 +28266,17 @@ enifed("ember-runtime/controllers/array_controller",
       request. Create an `Ember.ArrayController` and set its `model` property:
 
       ```javascript
-      MylistController = Ember.ArrayController.create();
+      MyApp.listController = Ember.ArrayController.create();
 
       $.get('people.json', function(data) {
-        MylistController.set('model', data);
+        MyApp.listController.set('model', data);
       });
       ```
 
       Then, create a view that binds to your new controller:
 
       ```handlebars
-      {{#each MylistController}}
+      {{#each MyApp.listController}}
         {{firstName}} {{lastName}}
       {{/each}}
       ```
@@ -28301,11 +28299,11 @@ enifed("ember-runtime/controllers/array_controller",
       ```
 
       ```javascript
-      PostsController = Ember.ArrayController.extend({
+      App.PostsController = Ember.ArrayController.extend({
         itemController: 'post'
       });
 
-      PostController = Ember.ObjectController.extend({
+      App.PostController = Ember.ObjectController.extend({
         // the `title` property will be proxied to the underlying post.
         titleLength: function() {
           return this.get('title').length;
@@ -28320,12 +28318,12 @@ enifed("ember-runtime/controllers/array_controller",
       For example:
 
       ```javascript
-      MyArrayController = Ember.ArrayController.extend({
+      App.MyArrayController = Ember.ArrayController.extend({
         lookupItemController: function( object ) {
           if (object.get('isSpecial')) {
-            return "special"; // use SpecialController
+            return "special"; // use App.SpecialController
           } else {
-            return "regular"; // use RegularController
+            return "regular"; // use App.RegularController
           }
         }
       });
@@ -28351,7 +28349,7 @@ enifed("ember-runtime/controllers/array_controller",
         For example:
 
         ```javascript
-        MyArrayController = Ember.ArrayController.extend({
+        App.MyArrayController = Ember.ArrayController.extend({
           itemController: Ember.ObjectController.extend({
             //Item Controller Implementation
           })
@@ -28373,12 +28371,12 @@ enifed("ember-runtime/controllers/array_controller",
         For example:
 
         ```javascript
-        MyArrayController = Ember.ArrayController.extend({
+        App.MyArrayController = Ember.ArrayController.extend({
           lookupItemController: function( object ) {
             if (object.get('isSpecial')) {
-              return "special"; // use SpecialController
+              return "special"; // use App.SpecialController
             } else {
-              return "regular"; // use RegularController
+              return "regular"; // use App.RegularController
             }
           }
         });
@@ -28731,7 +28729,7 @@ enifed("ember-runtime/ext/function",
         Computed properties allow you to treat a function like a property:
 
         ```javascript
-        MyPresident = Ember.Object.extend({
+        MyApp.President = Ember.Object.extend({
           firstName: '',
           lastName:  '',
 
@@ -28740,7 +28738,7 @@ enifed("ember-runtime/ext/function",
           }.property() // Call this flag to mark the function as a property
         });
 
-        var president = MyPresident.create({
+        var president = MyApp.President.create({
           firstName: 'Barack',
           lastName: 'Obama'
         });
@@ -28757,7 +28755,7 @@ enifed("ember-runtime/ext/function",
         about these dependencies like this:
 
         ```javascript
-        MyPresident = Ember.Object.extend({
+        MyApp.President = Ember.Object.extend({
           firstName: '',
           lastName:  '',
 
@@ -29246,7 +29244,7 @@ enifed("ember-runtime/mixins/action_handler",
         or mixins rather than just replace the entire hash, e.g.:
 
         ```js
-        CanDisplayBanner = Ember.Mixin.create({
+        App.CanDisplayBanner = Ember.Mixin.create({
           actions: {
             displayBanner: function(msg) {
               // ...
@@ -29254,7 +29252,7 @@ enifed("ember-runtime/mixins/action_handler",
           }
         });
 
-        WelcomeRoute = Ember.Route.extend(CanDisplayBanner, {
+        App.WelcomeRoute = Ember.Route.extend(App.CanDisplayBanner, {
           actions: {
             playMusic: function() {
               // ...
@@ -29274,7 +29272,7 @@ enifed("ember-runtime/mixins/action_handler",
         Component object:
 
         ```js
-        SongRoute = Ember.Route.extend({
+        App.SongRoute = Ember.Route.extend({
           actions: {
             myAction: function() {
               this.controllerFor("song");
@@ -29292,7 +29290,7 @@ enifed("ember-runtime/mixins/action_handler",
         Take for example the following routes:
 
         ```js
-        DebugRoute = Ember.Mixin.create({
+        App.DebugRoute = Ember.Mixin.create({
           actions: {
             debugRouteInformation: function() {
               console.debug("trololo");
@@ -29300,10 +29298,10 @@ enifed("ember-runtime/mixins/action_handler",
           }
         });
 
-        AnnoyingDebugRoute = Ember.Route.extend(DebugRoute, {
+        App.AnnoyingDebugRoute = Ember.Route.extend(App.DebugRoute, {
           actions: {
             debugRouteInformation: function() {
-              // also call the debugRouteInformation of mixed in DebugRoute
+              // also call the debugRouteInformation of mixed in App.DebugRoute
               this._super();
 
               // show additional annoyance
@@ -29320,20 +29318,20 @@ enifed("ember-runtime/mixins/action_handler",
         you must return `true` from the handler:
 
         ```js
-        Router.map(function() {
+        App.Router.map(function() {
           this.resource("album", function() {
             this.route("song");
           });
         });
 
-        AlbumRoute = Ember.Route.extend({
+        App.AlbumRoute = Ember.Route.extend({
           actions: {
             startPlaying: function() {
             }
           }
         });
 
-        AlbumSongRoute = Ember.Route.extend({
+        App.AlbumSongRoute = Ember.Route.extend({
           actions: {
             startPlaying: function() {
               // ...
@@ -29391,7 +29389,7 @@ enifed("ember-runtime/mixins/action_handler",
         Example
 
         ```js
-        WelcomeRoute = Ember.Route.extend({
+        App.WelcomeRoute = Ember.Route.extend({
           actions: {
             playTheme: function() {
                this.send('playMusic', 'theme.mp3');
@@ -31323,14 +31321,14 @@ enifed("ember-runtime/mixins/evented",
       This mixin allows for Ember objects to subscribe to and emit events.
 
       ```javascript
-      Person = Ember.Object.extend(Ember.Evented, {
+      App.Person = Ember.Object.extend(Ember.Evented, {
         greet: function() {
           // ...
           this.trigger('greet');
         }
       });
 
-      var person = Person.create();
+      var person = App.Person.create();
 
       person.on('greet', function() {
         console.log('Our person has greeted');
@@ -33126,7 +33124,7 @@ enifed("ember-runtime/mixins/target_action_support",
       and target will be retrieved from properties of the object. For example:
 
       ```javascript
-      SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
+      App.SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
         target: Ember.computed.alias('controller'),
         action: 'save',
         actionContext: Ember.computed.alias('context'),
@@ -33141,7 +33139,7 @@ enifed("ember-runtime/mixins/target_action_support",
       an optional object argument to `triggerAction` as well.
 
       ```javascript
-      SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
+      App.SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
         click: function() {
           this.triggerAction({
             action: 'save',
@@ -33158,7 +33156,7 @@ enifed("ember-runtime/mixins/target_action_support",
       to `triggerAction`, or a combination:
 
       ```javascript
-      SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
+      App.SaveButtonView = Ember.View.extend(Ember.TargetActionSupport, {
         target: Ember.computed.alias('controller'),
         click: function() {
           this.triggerAction({
@@ -33818,13 +33816,13 @@ enifed("ember-runtime/system/core_object",
         Example:
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           init: function() {
             alert('Name is ' + this.get('name'));
           }
         });
 
-        var steve = Person.create({
+        var steve = App.Person.create({
           name: "Steve"
         });
 
@@ -33856,17 +33854,17 @@ enifed("ember-runtime/system/core_object",
         property and a normal one:
 
         ```javascript
-        BarView = Ember.View.extend({
+        App.BarView = Ember.View.extend({
           someNonConcatenatedProperty: ['bar'],
           classNames: ['bar']
         });
 
-        FooBarView = BarView.extend({
+        App.FooBarView = App.BarView.extend({
           someNonConcatenatedProperty: ['foo'],
           classNames: ['foo']
         });
 
-        var fooBarView = FooBarView.create();
+        var fooBarView = App.FooBarView.create();
         fooBarView.get('someNonConcatenatedProperty'); // ['foo']
         fooBarView.get('classNames'); // ['ember-view', 'bar', 'foo']
         ```
@@ -33875,7 +33873,7 @@ enifed("ember-runtime/system/core_object",
         above example:
 
         ```javascript
-        var view = FooBarView.create({
+        var view = App.FooBarView.create({
           someNonConcatenatedProperty: ['baz'],
           classNames: ['baz']
         })
@@ -33885,7 +33883,7 @@ enifed("ember-runtime/system/core_object",
         Adding a single property that is not an array will just add it in the array:
 
         ```javascript
-        var view = FooBarView.create({
+        var view = App.FooBarView.create({
           classNames: 'baz'
         })
         view.get('classNames'); // ['ember-view', 'bar', 'foo', 'baz']
@@ -33985,31 +33983,31 @@ enifed("ember-runtime/system/core_object",
         objects.
 
         ```javascript
-        Person = Ember.Object.extend()
-        person = Person.create()
-        person.toString() //=> "<Person:ember1024>"
+        App.Person = Em.Object.extend()
+        person = App.Person.create()
+        person.toString() //=> "<App.Person:ember1024>"
         ```
 
         If the object's class is not defined on an Ember namespace, it will
         indicate it is a subclass of the registered superclass:
 
        ```javascript
-        Student = Person.extend()
+        Student = App.Person.extend()
         student = Student.create()
-        student.toString() //=> "<(subclass of Person):ember1025>"
+        student.toString() //=> "<(subclass of App.Person):ember1025>"
         ```
 
         If the method `toStringExtension` is defined, its return value will be
         included in the output.
 
         ```javascript
-        Teacher = Person.extend({
+        App.Teacher = App.Person.extend({
           toStringExtension: function() {
             return this.get('fullName');
           }
         });
-        teacher = Teacher.create()
-        teacher.toString(); //=> "<Teacher:ember1026:Tom Dale>"
+        teacher = App.Teacher.create()
+        teacher.toString(); //=> "<App.Teacher:ember1026:Tom Dale>"
         ```
 
         @method toString
@@ -34051,19 +34049,19 @@ enifed("ember-runtime/system/core_object",
         Creates a new subclass.
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           say: function(thing) {
             alert(thing);
            }
         });
         ```
 
-        This defines a new subclass of Ember.Object: `Person`. It contains one method: `say()`.
+        This defines a new subclass of Ember.Object: `App.Person`. It contains one method: `say()`.
 
         You can also create a subclass from any existing class by calling its `extend()`  method. For example, you might want to create a subclass of Ember's built-in `Ember.View` class:
 
         ```javascript
-        PersonView = Ember.View.extend({
+        App.PersonView = Ember.View.extend({
           tagName: 'li',
           classNameBindings: ['isAdministrator']
         });
@@ -34072,14 +34070,14 @@ enifed("ember-runtime/system/core_object",
         When defining a subclass, you can override methods but still access the implementation of your parent class by calling the special `_super()` method:
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           say: function(thing) {
             var name = this.get('name');
             alert(name + ' says: ' + thing);
           }
         });
 
-        Soldier = Person.extend({
+        App.Soldier = App.Person.extend({
           say: function(thing) {
             this._super(thing + ", sir!");
           },
@@ -34088,38 +34086,38 @@ enifed("ember-runtime/system/core_object",
           }
         });
 
-        var yehuda = Soldier.create({
+        var yehuda = App.Soldier.create({
           name: "Yehuda Katz"
         });
 
         yehuda.say("Yes");  // alerts "Yehuda Katz says: Yes, sir!"
         ```
 
-        The `create()` on line #17 creates an *instance* of the `Soldier` class. The `extend()` on line #8 creates a *subclass* of `Person`. Any instance of the `Person` class will *not* have the `march()` method.
+        The `create()` on line #17 creates an *instance* of the `App.Soldier` class. The `extend()` on line #8 creates a *subclass* of `App.Person`. Any instance of the `App.Person` class will *not* have the `march()` method.
 
         You can also pass `Mixin` classes to add additional properties to the subclass.
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           say: function(thing) {
             alert(this.get('name') + ' says: ' + thing);
           }
         });
 
-        SingingMixin = Mixin.create({
+        App.SingingMixin = Mixin.create({
           sing: function(thing){
             alert(this.get('name') + ' sings: la la la ' + thing);
           }
         });
 
-        BroadwayStar = Person.extend(SingingMixin, {
+        App.BroadwayStar = App.Person.extend(App.SingingMixin, {
           dance: function() {
             alert(this.get('name') + ' dances: tap tap tap tap ');
           }
         });
         ```
 
-        The `BroadwayStar` class contains three methods: `say()`, `sing()`, and `dance()`.
+        The `App.BroadwayStar` class contains three methods: `say()`, `sing()`, and `dance()`.
 
         @method extend
         @static
@@ -34176,13 +34174,13 @@ enifed("ember-runtime/system/core_object",
         containing values to initialize the newly instantiated object with.
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           helloWorld: function() {
             alert("Hi, my name is " + this.get('name'));
           }
         });
 
-        var tom = Person.create({
+        var tom = App.Person.create({
           name: 'Tom Dale'
         });
 
@@ -34196,7 +34194,7 @@ enifed("ember-runtime/system/core_object",
         instance during initialization:
 
         ```javascript
-        var noName = Person.create();
+        var noName = App.Person.create();
         noName.helloWorld(); // alerts undefined
         ```
 
@@ -34285,34 +34283,34 @@ enifed("ember-runtime/system/core_object",
         and not on any instance of that class.
 
         ```javascript
-        Person = Ember.Object.extend({
+        App.Person = Ember.Object.extend({
           name : "",
           sayHello : function(){
             alert("Hello. My name is " + this.get('name'));
           }
         });
 
-        Person.reopenClass({
+        App.Person.reopenClass({
           species : "Homo sapiens",
           createPerson: function(newPersonsName){
-            return Person.create({
+            return App.Person.create({
               name:newPersonsName
             });
           }
         });
 
-        var tom = Person.create({
+        var tom = App.Person.create({
           name : "Tom Dale"
         });
-        var yehuda = Person.createPerson("Yehuda Katz");
+        var yehuda = App.Person.createPerson("Yehuda Katz");
 
         tom.sayHello(); // "Hello. My name is Tom Dale"
         yehuda.sayHello(); // "Hello. My name is Yehuda Katz"
-        alert(Person.species); // "Homo sapiens"
+        alert(App.Person.species); // "Homo sapiens"
         ```
 
         Note that `species` and `createPerson` are *not* valid on the `tom` and `yehuda`
-        variables. They are only valid on `Person`.
+        variables. They are only valid on `App.Person`.
 
         To add functions and properties to instances of
         a constructor by extending the constructor's prototype
@@ -34358,8 +34356,8 @@ enifed("ember-runtime/system/core_object",
         ```javascript
         person: function() {
           var personId = this.get('personId');
-          return Person.create({ id: personId });
-        }.property().meta({ type: Person })
+          return App.Person.create({ id: personId });
+        }.property().meta({ type: App.Person })
         ```
 
         Once you've done this, you can retrieve the values saved to the computed
@@ -36741,7 +36739,7 @@ enifed("ember-views/mixins/view_target_action_support",
     For example:
 
     ```javascript
-    SaveButtonView = Ember.View.extend(Ember.ViewTargetActionSupport, {
+    App.SaveButtonView = Ember.View.extend(Ember.ViewTargetActionSupport, {
       action: 'save',
       click: function() {
         this.triggerAction(); // Sends the `save` action, along with the current context
@@ -36754,7 +36752,7 @@ enifed("ember-views/mixins/view_target_action_support",
     to `triggerAction` as well.
 
     ```javascript
-    SaveButtonView = Ember.View.extend(Ember.ViewTargetActionSupport, {
+    App.SaveButtonView = Ember.View.extend(Ember.ViewTargetActionSupport, {
       click: function() {
         this.triggerAction({
           action: 'save'
@@ -36907,7 +36905,7 @@ enifed("ember-views/system/event_dispatcher",
         `eventManager` on the view tree.
 
         ```javascript
-        var EventDispatcher = Ember.EventDispatcher.extend({
+        var EventDispatcher = Em.EventDispatcher.extend({
           events: {
               click       : 'click',
               focusin     : 'focusIn',
@@ -37943,7 +37941,7 @@ enifed("ember-views/views/collection_view",
 
       ```javascript
       var App = Ember.Application.create();
-      ItemListView = Ember.CollectionView.extend({
+      App.ItemListView = Ember.CollectionView.extend({
         classNames: ['a-collection'],
         content: ['A','B','C'],
         itemViewClass: Ember.View.extend({
@@ -37978,7 +37976,7 @@ enifed("ember-views/views/collection_view",
 
       ```javascript
       var App = Ember.Application.create();
-      UnorderedListView = Ember.CollectionView.create({
+      App.UnorderedListView = Ember.CollectionView.create({
         tagName: 'ul',
         content: ['A','B','C'],
         itemViewClass: Ember.View.extend({
@@ -38017,12 +38015,12 @@ enifed("ember-views/views/collection_view",
       `createChildView` method can be overidden:
 
       ```javascript
-      CustomCollectionView = Ember.CollectionView.extend({
+      App.CustomCollectionView = Ember.CollectionView.extend({
         createChildView: function(viewClass, attrs) {
           if (attrs.content.kind == 'album') {
-            viewClass = AlbumView;
+            viewClass = App.AlbumView;
           } else {
-            viewClass = SongView;
+            viewClass = App.SongView;
           }
           return this._super(viewClass, attrs);
         }
@@ -38038,7 +38036,7 @@ enifed("ember-views/views/collection_view",
 
       ```javascript
       var App = Ember.Application.create();
-      ListWithNothing = Ember.CollectionView.create({
+      App.ListWithNothing = Ember.CollectionView.create({
         classNames: ['nothing'],
         content: null,
         emptyView: Ember.View.extend({
@@ -38404,7 +38402,7 @@ enifed("ember-views/views/component",
       `hello` for the `app-profile` component:
 
       ```javascript
-      AppProfileComponent = Ember.Component.extend({
+      App.AppProfileComponent = Ember.Component.extend({
         actions: {
           hello: function(name) {
             console.log("Hello", name);
@@ -38542,7 +38540,7 @@ enifed("ember-views/views/component",
 
 
         ```javascript
-        PlayButtonComponent = Ember.Component.extend({
+        App.PlayButtonComponent = Ember.Component.extend({
           click: function(){
             if (this.get('isPlaying')) {
               this.sendAction('play');
@@ -38568,7 +38566,7 @@ enifed("ember-views/views/component",
 
 
         ```javascript
-        ApplicationController = Ember.Controller.extend({
+        App.ApplicationController = Ember.Controller.extend({
           actions: {
             musicStarted: function(){
               // called when the play button is clicked
@@ -38586,7 +38584,7 @@ enifed("ember-views/views/component",
         is assumed.
 
         ```javascript
-        NextButtonComponent = Ember.Component.extend({
+        App.NextButtonComponent = Ember.Component.extend({
           click: function(){
             this.sendAction();
           }
@@ -38599,7 +38597,7 @@ enifed("ember-views/views/component",
         ```
 
         ```javascript
-        ApplicationController = Ember.Controller.extend({
+        App.ApplicationController = Ember.Controller.extend({
           actions: {
             playNextSongInAlbum: function(){
               ...
@@ -40077,7 +40075,7 @@ enifed("ember-views/views/view",
 
       ```javascript
       var App = Ember.Application.create();
-      OuterView = Ember.View.extend({
+      App.OuterView = Ember.View.extend({
         template: Ember.Handlebars.compile("outer {{#view 'inner'}}inner{{/view}} outer"),
         eventManager: Ember.Object.create({
           mouseEnter: function(event, view) {
@@ -40088,7 +40086,7 @@ enifed("ember-views/views/view",
         })
       });
 
-      InnerView = Ember.View.extend({
+      App.InnerView = Ember.View.extend({
         click: function(event) {
           // will be called if rendered inside
           // an OuterView because OuterView's
@@ -41987,7 +41985,8 @@ enifed("morph/dom-helper/build-html-dom",
       detectAutoSelectedOption = function detectAutoSelectedOption(select, option, html) { //jshint ignore:line
         var selectedAttribute = option.getAttribute('selected');
         return select.selectedIndex === 0 && (
-                 (selectedAttribute === null || selectedAttribute !== '' && selectedAttribute.toLowerCase() !== 'selected')
+                 selectedAttribute === null ||
+                 ( selectedAttribute !== '' && selectedAttribute.toLowerCase() !== 'selected' )
                 );
       };
     }
@@ -47970,5 +47969,3 @@ enifed("rsvp/utils",
 requireModule("ember");
 
 })();
-
-export default undefined;

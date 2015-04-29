@@ -2665,7 +2665,7 @@ var __module11__ = (function(__dependency1__, __dependency2__) {
   };
 
   var reservedWords = (
-    ("break else new var" +
+    "break else new var" +
     " case finally return void" +
     " catch for switch while" +
     " continue function this with" +
@@ -2678,7 +2678,8 @@ var __module11__ = (function(__dependency1__, __dependency2__) {
     " char final native synchronized" +
     " class float package throws" +
     " const goto private transient" +
-    " debugger implements protected volatile" + " double import public let yield")
+    " debugger implements protected volatile" +
+    " double import public let yield"
   ).split(" ");
 
   var compilerWords = JavaScriptCompiler.RESERVED_WORDS = {};
@@ -2743,5 +2744,3 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
 
   return __module0__;
 })();
-
-export default undefined;

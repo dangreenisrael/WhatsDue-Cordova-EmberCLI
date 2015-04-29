@@ -3,6 +3,7 @@
  */
 
 var test = false;
+
 if (test == true){
     //var site = "http://stage.whatsdueapp.com/student";
     var site="http://test.whatsdueapp.com/app_dev.php/student";
@@ -41,6 +42,8 @@ function trackEvent(event, firstOption, firstValue, secondOption, secondValue, t
         //console.log(options);
     }
 }
+
+
 /** Bringing In Data from the server **/
 
 // This is for getting assignment info
@@ -54,6 +57,7 @@ function updateAssignments(context){
         'courses': "["+courses+"]"
     });
 }
+
 function updateCourses(context){
     var headers = {
     };
@@ -62,6 +66,7 @@ function updateCourses(context){
     }
     getUpdates("/all/courses", context, 'course', headers);
 }
+
 function addNotification(title, message, date){
     for (i = 0; i < 20; i++) {
         if (cordovaLoaded == true){
@@ -75,6 +80,7 @@ function addNotification(title, message, date){
         }
     }
 }
+
 /** This gets ALL different types of updates - DON'T fucking touch this **/
 function getUpdates(url, context, model, headers){
     var store = context.store;
@@ -110,7 +116,7 @@ function getUpdates(url, context, model, headers){
                             }
                             thisRecord.save().then(function (record) {
                                 var hash = window.location.hash.substr(1);
-                                var controller = __container__.lookup("controller:assignments");
+                                var controller = App.__container__.lookup("controller:assignments");
                                 if (hash == "/") {
                                     controller.send('getLatest');
                                 }
@@ -161,10 +167,13 @@ function getUpdates(url, context, model, headers){
         }
     });
 }
+
+
 /** Start editing again **/
 function setTitle(title){
     $('#page-title').html(title);
 }
+
 function setReminder(assignment, reminder, context){
     var duedate_seconds = moment(assignment.get('due_date')).format('X');
     var seconds_before = reminder.get('seconds_before');
@@ -201,6 +210,7 @@ function setReminder(assignment, reminder, context){
         );
     }
 }
+
 function removeSetReminders(setReminders){
     setReminders.forEach(function(setReminder){
         var reminderId = setReminder.get('id');
@@ -214,16 +224,22 @@ function removeSetReminders(setReminders){
         setReminder.destroyRecord();
     });
 }
+
 function primaryKey(name){
     localStorage.setItem(name, Number(localStorage.getItem(name)) +1 );
     return localStorage.getItem(name);
 }
+
+
 /* Location Info Class */
 function LocationInfo (data) {
     this.city = data.city;
     this.country = data.country;
     this.region = data.region;
 }
+
+
+
 $.ajax({
     url: 'http://ipinfo.io/json',
     type: 'GET',
@@ -233,12 +249,16 @@ $.ajax({
         trackEvent('App Opened', "City", locationInfo.city, "Region", locationInfo.region, "Country", locationInfo.country);
     }
 });
+
 function getSchool(){
     return localStorage.getItem('schoolName');
 }
+
 function setSchool(schoolName){
     localStorage.setItem('schoolName', schoolName);
 }
+
+
 function countInArray(haystack, needle) {
     var count = 0;
     for (var i = 0; i < haystack.length; i++) {
@@ -249,4 +269,4 @@ function countInArray(haystack, needle) {
     return count;
 }
 
-export default undefined;
+

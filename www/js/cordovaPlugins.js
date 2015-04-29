@@ -6,6 +6,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 document.addEventListener("resume", onResume, false);
 document.addEventListener("pause", onPause, false);
 var cordovaLoaded = false;
+
 function onDeviceReady() {
 
     cordovaLoaded = true;
@@ -20,15 +21,19 @@ function onDeviceReady() {
 
 
 }
+
 function onResume() {
     Localytics.resume();
     Localytics.upload();
 }
+
 function onPause() {
     Localytics.close();
     Localytics.upload();
 }
+
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
+
 function keyboardShowHandler(e){
     var newReminder = $('#new-reminder').position();
     if (typeof newReminder !== 'undefined') {
@@ -37,14 +42,17 @@ function keyboardShowHandler(e){
     }
 
 }
+
 window.addEventListener('native.keyboardhide', keyboardHideHandler);
+
 function keyboardHideHandler(e){
     //$('#reminders').css('margin-top', 0)
 }
+
+
 document.addEventListener("backbutton", onBackKeyDown, false);
+
 function onBackKeyDown() {
     $.modal.close();
     goHome();
 }
-
-export default undefined;

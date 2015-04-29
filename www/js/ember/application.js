@@ -1,9 +1,3 @@
-import DS from 'ember-data';
-import Ember from 'ember';
-
-var ApplicationAdapter = DS.LSAdapter.extend({
-    namespace: 'whatsdue'
-});
 /**
  * Created by dan on 2014-05-13.
  */
@@ -22,6 +16,8 @@ var loaderObj = {
         'reminders.hbs'
     ]
 };
+
+
 loadTemplates(loaderObj.templates);
 //This function loads all templates into the view
 function loadTemplates(templates) {
@@ -41,10 +37,13 @@ function loadTemplates(templates) {
         });
     })
 }
+
 var helperObj = {
     templates : [
     ]
 };
+
+
 loadHelpers(helperObj.templates);
 //This function loads all templates into the view
 function loadHelpers(templates) {
@@ -68,13 +67,33 @@ function loadHelpers(templates) {
         });
     })
 }
+
 var App = Ember.Application.create();
+
+App.ApplicationAdapter = DS.LSAdapter.extend({
+    namespace: 'whatsdue'
+});
+
+
+App.Pollster = Ember.Object.extend({
+    start: function(){
+        this.timer = setInterval(this.onPoll, 5000);
+    },
+    stop: function(){
+        clearInterval(this.timer);
+    },
+    onPoll: function(){
+        // This gets defined when its called
+    }
+});
+
 Ember.Handlebars.helper('icon', function(name, classes, id) {
     name = Handlebars.Utils.escapeExpression(name);
     id = Handlebars.Utils.escapeExpression(id);
     classes = Handlebars.Utils.escapeExpression(classes);
     return new Ember.Handlebars.SafeString('<img src="assets/icons/'+OS+'/'+name+'.png" id="'+id+'" class="'+classes+'"/>');
 });
+
 Ember.Handlebars.helper('linkify', function(text) {
     if (typeof text === "undefined") {
         return Ember.String.htmlSafe("");
@@ -89,5 +108,3 @@ Ember.Handlebars.helper('linkify', function(text) {
         return Ember.String.htmlSafe(linkify(text, options));
     }
 });
-
-export default ApplicationAdapter;

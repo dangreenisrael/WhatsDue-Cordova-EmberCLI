@@ -1,6 +1,10 @@
+
+
 $(document).ready(function (){
     readyFunction();
 });
+
+
 /* Start Moment */
 moment.locale('en', {
     calendar : {
@@ -27,6 +31,7 @@ moment.locale('en', {
     }
 
 });
+
 /* End Moment */
 
 /* Start Global Variables */
@@ -37,6 +42,8 @@ var page = {
     1 : - pageWidth,
     2 : - pageWidth * 2
 };
+
+
 /* End Global Variables */
 
 
@@ -46,14 +53,17 @@ var page = {
 function closest (event, selector){
     return $(event.target).closest(selector)
 }
+
 function animate(element){
     element.addClass('animate');
     setTimeout(function(){element.removeClass('animate')}, 300);
 }
+
 function fastAnimate(element){
     element.addClass('fastAnimate');
     setTimeout(function(){element.removeClass('fastAnimate')}, 100);
 }
+
 function customAnimate(element, miliseconds){
     element.css('transition','all '+miliseconds+'ms linear');
     setTimeout(function(){
@@ -61,6 +71,7 @@ function customAnimate(element, miliseconds){
     }, miliseconds+50);
 
 }
+
 function toggleMenu(){
     var element = $('#contentContainer');
 
@@ -79,18 +90,21 @@ function toggleMenu(){
     }
 
 }
+
 function goHome(){
     var element = $('#contentContainer');
     animate(element);
     element.css({"-webkit-transform": "translate3d(-33.33%,0,0) scale3d(1,1,1)", "overflow":"auto"});
     currentPage = 1;
 }
+
 function sliderSize(){
     var assignmentWidth;
     assignmentWidth = $(document).width() - 180;
     var style = '#newAssignments .slider .info { width:'+assignmentWidth+'px; }';
     $('#dynamicStyle').text(style);
 }
+
 /* End Helper Functions */
 function readyFunction(){
 
@@ -153,6 +167,8 @@ function readyFunction(){
         }
     });
 }
+
+
 function putBackable(){
     /* Click Events */
 
@@ -220,6 +236,7 @@ function putBackable(){
 
     }, 1)
 }
+
 function complete(element, ms){
     //customAnimate(element.parent('.slider'), ms);
     //element.parent('.slider').css('opacity','0');
@@ -227,6 +244,8 @@ function complete(element, ms){
       element.siblings('.reveal').click();
     }, ms+100)
 }
+
+
 function swipeRemove(){
     setTimeout(function() {
         ///*
@@ -345,6 +364,7 @@ function swipeRemove(){
 
     }, 1);
 }
+
 var swiperSet = false;
 function showWelcome(){
     var welcome = $('#welcome');
@@ -414,6 +434,8 @@ function showWelcome(){
             })
     }
 }
+
+
 function showSupport(){
     var content = $('#support');
     $.get( "http://whatsdueapp.com/live-content/support.php", function( data ) {
@@ -431,6 +453,8 @@ function showSupport(){
             });
         })
 }
+
+
 function makeSpinnable(){
     setTimeout( function(){
         $('.add-something img, .reveal img').on('click', function(element){
@@ -438,6 +462,7 @@ function makeSpinnable(){
         })
     }, 50);
 }
+
 function reminderTips(){
     var reminders = $('#reminders');
     var time = $('input.time');
@@ -449,6 +474,8 @@ function reminderTips(){
     }
 
 }
+
+
 function share(message){
     if (cordovaLoaded){
         window.plugins.socialsharing.share(message + "\n\nSent via ",
@@ -459,6 +486,7 @@ function share(message){
         console.log(message);
     }
 }
+
 function shareModal(assignment, course, message){
     $("#share-modal").modal({onShow: function (dialog) {
         // Access elements inside the dialog
@@ -485,7 +513,7 @@ function shareModal(assignment, course, message){
             $(".report", dialog.data).click(function () {
                 var subject="WhatsDue%20Change%20Report";
                 var body ="School:%20"+ getSchool() +"%0D%0ACourse:%20"+ course +"%0D%0AAssignment:%20" + assignment +"%0D%0A-------------------------------------------%0D%0APlease%20write%20your%20correction%20here:";
-                var location = 'mailto:aaron@whatsdueapp.com?subject='+subject+'&body='+body;
+                window.location='mailto:aaron@whatsdueapp.com?subject='+subject+'&body='+body;
                 $.modal.close();
                 trackEvent('Assignment Reported');
             });
@@ -496,6 +524,8 @@ function shareModal(assignment, course, message){
         }, 200)
     }});
 }
+
+
 function filter(textArea){
     $('#'+textArea).keyup(function(){
         var searchTerm = $(this).val().toUpperCase();
@@ -509,6 +539,7 @@ function filter(textArea){
         });
     });
 }
+
 /*
  * Extend jQuery to allow changing disabled state
  */
@@ -519,5 +550,3 @@ jQuery.fn.extend({
         });
     }
 });
-
-export default undefined;

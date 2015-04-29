@@ -17,6 +17,7 @@
  * under the License.
  */
 var pushNotification = window.plugins.pushNotification;
+
 var cordovaApp = {
     // Application Constructor
     initialize: function() {
@@ -31,28 +32,28 @@ var cordovaApp = {
     },
     // deviceready Event Handler
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'cordovareceivedEvent(...);'
+    // function, we must explicitly call 'cordovaApp.receivedEvent(...);'
     onDeviceReady: function() {
-        cordovareceivedEvent('deviceready');
+        cordovaApp.receivedEvent('deviceready');
         console.log('Device Ready');
 
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
 
-        //pushNotification.register(cordovasuccessHandler, cordovaerrorHandler,{"senderID":"577888563057","ecb":"cordovaonNotificatioLoaded});
+        //pushNotification.register(cordovaApp.successHandler, cordovaApp.errorHandler,{"senderID":"577888563057","ecb":"cordovaApp.onNotificatioLoaded});
         if ( device.platform == 'android' || device.platform == 'Android'){
             pushNotification.register(
-                cordovasuccessHandler,
-                cordovaerrorHandler,
+                cordovaApp.successHandler,
+                cordovaApp.errorHandler,
                 {
                     "senderID":"577888563057",
-                    "ecb":"cordovaonNotificationGCM"
+                    "ecb":"cordovaApp.onNotificationGCM"
                 });
         } else {
             pushNotification.register(
-                cordovatokenHandler,
-                cordovaerrorHandler,
+                cordovaApp.tokenHandler,
+                cordovaApp.errorHandler,
                 {
                     "badge":"true",
                     "sound":"true",
@@ -163,6 +164,4 @@ var cordovaApp = {
 }
     
 };
-cordovainitialize();
-
-export default undefined;
+cordovaApp.initialize();

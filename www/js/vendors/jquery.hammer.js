@@ -23,5 +23,3 @@
         };
     })(Hammer.Manager.prototype.emit);
 })(jQuery, Hammer, "hammer");
-
-export default undefined;
