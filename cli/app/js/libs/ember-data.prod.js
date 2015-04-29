@@ -1,3 +1,6 @@
+import Ember from 'ember';
+import DS from 'ember-data';
+
 (function(global){
 var enifed, requireModule, eriuqer, requirejs;
 
@@ -193,7 +196,7 @@ enifed("activemodel-adapter/system/active_model_adapter",
       For example, if you have a `Person` model:
 
       ```js
-      App.FamousPerson = DS.Model.extend({
+      FamousPerson = DS.Model.extend({
         firstName: DS.attr('string'),
         lastName: DS.attr('string'),
         occupation: DS.attr('string')
@@ -216,13 +219,13 @@ enifed("activemodel-adapter/system/active_model_adapter",
       Let's imagine that `Occupation` is just another model:
 
       ```js
-      App.Person = DS.Model.extend({
+      Person = DS.Model.extend({
         firstName: DS.attr('string'),
         lastName: DS.attr('string'),
         occupation: DS.belongsTo('occupation')
       });
 
-      App.Occupation = DS.Model.extend({
+      Occupation = DS.Model.extend({
         name: DS.attr('string'),
         salary: DS.attr('number'),
         people: DS.hasMany('person')
@@ -348,7 +351,7 @@ enifed("activemodel-adapter/system/active_model_serializer",
       For example, if you have a `Person` model:
 
       ```js
-      App.FamousPerson = DS.Model.extend({
+      FamousPerson = DS.Model.extend({
         firstName: DS.attr('string'),
         lastName: DS.attr('string'),
         occupation: DS.attr('string')
@@ -371,13 +374,13 @@ enifed("activemodel-adapter/system/active_model_serializer",
       Let's imagine that `Occupation` is just another model:
 
       ```js
-      App.Person = DS.Model.extend({
+      Person = DS.Model.extend({
         firstName: DS.attr('string'),
         lastName: DS.attr('string'),
         occupation: DS.belongsTo('occupation')
       });
 
-      App.Occupation = DS.Model.extend({
+      Occupation = DS.Model.extend({
         name: DS.attr('string'),
         salary: DS.attr('number'),
         people: DS.hasMany('person')
@@ -1128,7 +1131,7 @@ enifed("ember-data/adapters/rest_adapter",
       For example, if you have a `Person` model:
 
       ```js
-      App.Person = DS.Model.extend({
+      Person = DS.Model.extend({
         firstName: DS.attr('string'),
         lastName: DS.attr('string'),
         occupation: DS.attr('string')
@@ -1160,7 +1163,7 @@ enifed("ember-data/adapters/rest_adapter",
         namespace: 'api/1'
       });
       ```
-      Requests for `App.Person` would now target `/api/1/people/1`.
+      Requests for `Person` would now target `/api/1/people/1`.
 
       ### Host customization
 
@@ -1180,7 +1183,7 @@ enifed("ember-data/adapters/rest_adapter",
 
 
       ```js
-      App.ApplicationAdapter = DS.RESTAdapter.extend({
+      ApplicationAdapter = DS.RESTAdapter.extend({
         headers: {
           "API_KEY": "secret key",
           "ANOTHER_HEADER": "Some header value"
@@ -1193,7 +1196,7 @@ enifed("ember-data/adapters/rest_adapter",
       injected into an adapter by Ember's container.
 
       ```js
-      App.ApplicationAdapter = DS.RESTAdapter.extend({
+      ApplicationAdapter = DS.RESTAdapter.extend({
         headers: function() {
           return {
             "API_KEY": this.get("session.authToken"),
@@ -1211,7 +1214,7 @@ enifed("ember-data/adapters/rest_adapter",
       be recomputed with every request.
 
       ```js
-      App.ApplicationAdapter = DS.RESTAdapter.extend({
+      ApplicationAdapter = DS.RESTAdapter.extend({
         headers: function() {
           return {
             "API_KEY": Ember.get(document.cookie.match(/apiKey\=([^;]*)/), "1"),
@@ -1285,7 +1288,7 @@ enifed("ember-data/adapters/rest_adapter",
         });
         ```
 
-        Requests for `App.Post` would now target `/api/1/post/`.
+        Requests for `Post` would now target `/api/1/post/`.
 
         @property namespace
         @type {String}
@@ -1300,7 +1303,7 @@ enifed("ember-data/adapters/rest_adapter",
         });
         ```
 
-        Requests for `App.Post` would now target `https://api.example.com/post/`.
+        Requests for `Post` would now target `https://api.example.com/post/`.
 
         @property host
         @type {String}
@@ -1314,7 +1317,7 @@ enifed("ember-data/adapters/rest_adapter",
         customization](/api/data/classes/DS.RESTAdapter.html#toc_headers-customization).
 
         ```javascript
-        App.ApplicationAdapter = DS.RESTAdapter.extend({
+        ApplicationAdapter = DS.RESTAdapter.extend({
           headers: {
             "API_KEY": "secret key",
             "ANOTHER_HEADER": "Some header value"
@@ -1744,7 +1747,7 @@ enifed("ember-data/adapters/rest_adapter",
         endpoint of "/line_items/".
 
         ```js
-        App.ApplicationAdapter = DS.RESTAdapter.extend({
+        ApplicationAdapter = DS.RESTAdapter.extend({
           pathForType: function(type) {
             var decamelized = Ember.String.decamelize(type);
             return Ember.String.pluralize(decamelized);
@@ -1775,7 +1778,7 @@ enifed("ember-data/adapters/rest_adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.RESTAdapter.extend({
+        ApplicationAdapter = DS.RESTAdapter.extend({
           ajaxError: function(jqXHR) {
             var error = this._super(jqXHR);
 
@@ -1975,7 +1978,7 @@ enifed("ember-data/ember-initializer",
       This code initializes Ember-Data onto an Ember application.
 
       If an Ember.js developer defines a subclass of DS.Store on their application,
-      as `App.ApplicationStore` (or via a module system that resolves to `store:application`)
+      as `ApplicationStore` (or via a module system that resolves to `store:application`)
       this code will automatically instantiate it and make it available on the
       router.
 
@@ -1984,16 +1987,16 @@ enifed("ember-data/ember-initializer",
 
       For example, imagine an Ember.js application with the following classes:
 
-      App.ApplicationStore = DS.Store.extend({
+      ApplicationStore = DS.Store.extend({
         adapter: 'custom'
       });
 
-      App.PostsController = Ember.ArrayController.extend({
+      PostsController = Ember.ArrayController.extend({
         // ...
       });
 
-      When the application is initialized, `App.ApplicationStore` will automatically be
-      instantiated, and the instance of `App.PostsController` will have its `store`
+      When the application is initialized, `ApplicationStore` will automatically be
+      instantiated, and the instance of `PostsController` will have its `store`
       property set to that instance.
 
       Note that this code will only be run if the `ember-application` package is
@@ -2236,7 +2239,7 @@ enifed("ember-data/serializers/embedded_records_mixin",
       Below is an example of a per-type serializer ('post' type).
 
       ```js
-      App.PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
+      PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
         attrs: {
           author: { embedded: 'always' },
           comments: { serialize: 'ids' }
@@ -2375,7 +2378,7 @@ enifed("ember-data/serializers/embedded_records_mixin",
         Use a custom (type) serializer for the post model to configure embedded author
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
+        PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
           attrs: {
             author: {embedded: 'always'}
           }
@@ -2452,7 +2455,7 @@ enifed("ember-data/serializers/embedded_records_mixin",
         Use a custom (type) serializer for the post model to configure embedded comments
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
+        PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
           attrs: {
             comments: {embedded: 'always'}
           }
@@ -2489,7 +2492,7 @@ enifed("ember-data/serializers/embedded_records_mixin",
         To embed the `ids` for a related object (using a hasMany relationship):
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
+        PostSerializer = DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
           attrs: {
             comments: {serialize: 'ids', deserialize: 'records'}
           }
@@ -2723,7 +2726,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.ApplicationSerializer = DS.JSONSerializer.extend({
+        ApplicationSerializer = DS.JSONSerializer.extend({
           primaryKey: '_id'
         });
         ```
@@ -2744,14 +2747,14 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: DS.attr('string'),
           lastName: DS.attr('string'),
           occupation: DS.attr('string'),
           admin: DS.attr('boolean')
         });
 
-        App.PersonSerializer = DS.JSONSerializer.extend({
+        PersonSerializer = DS.JSONSerializer.extend({
           attrs: {
             admin: 'is_admin',
             occupation: {key: 'career'}
@@ -2765,7 +2768,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.PersonSerializer = DS.JSONSerializer.extend({
+        PersonSerializer = DS.JSONSerializer.extend({
           attrs: {
             admin: {serialize: false},
             occupation: {key: 'career'}
@@ -2826,7 +2829,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.ApplicationSerializer = DS.JSONSerializer.extend({
+        ApplicationSerializer = DS.JSONSerializer.extend({
           normalize: function(type, hash) {
             var fields = Ember.get(type, 'fields');
             fields.forEach(function(field) {
@@ -2865,7 +2868,7 @@ enifed("ember-data/serializers/json_serializer",
         For example, you might want to remove some extraneous data from the payload:
 
         ```js
-        App.ApplicationSerializer = DS.JSONSerializer.extend({
+        ApplicationSerializer = DS.JSONSerializer.extend({
           normalizePayload: function(payload) {
             delete payload.version;
             delete payload.status;
@@ -3016,7 +3019,7 @@ enifed("ember-data/serializers/json_serializer",
         For example, consider this model:
 
         ```javascript
-        App.Comment = DS.Model.extend({
+        Comment = DS.Model.extend({
           title: DS.attr(),
           body: DS.attr(),
 
@@ -3060,7 +3063,7 @@ enifed("ember-data/serializers/json_serializer",
         return a JSON hash of your choosing.
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           serialize: function(post, options) {
             var json = {
               POST_TTL: post.get('title'),
@@ -3084,7 +3087,7 @@ enifed("ember-data/serializers/json_serializer",
         and `eachRelationship` on the record.
 
         ```javascript
-        App.ApplicationSerializer = DS.JSONSerializer.extend({
+        ApplicationSerializer = DS.JSONSerializer.extend({
           serialize: function(record, options) {
             var json = {};
 
@@ -3132,7 +3135,7 @@ enifed("ember-data/serializers/json_serializer",
         JSON.
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           serialize: function(record, options) {
             var json = this._super.apply(this, arguments);
 
@@ -3185,7 +3188,7 @@ enifed("ember-data/serializers/json_serializer",
         For example, your server may expect underscored root objects.
 
         ```js
-        App.ApplicationSerializer = DS.RESTSerializer.extend({
+        ApplicationSerializer = DS.RESTSerializer.extend({
           serializeIntoHash: function(data, type, record, options) {
             var root = Ember.String.decamelize(type.typeKey);
             data[root] = this.serialize(record, options);
@@ -3212,7 +3215,7 @@ enifed("ember-data/serializers/json_serializer",
        write:
 
        ```javascript
-       App.ApplicationSerializer = DS.JSONSerializer.extend({
+       ApplicationSerializer = DS.JSONSerializer.extend({
          serializeAttribute: function(record, json, key, attributes) {
            json.attributes = json.attributes || {};
            this._super(record, json.attributes, key, attributes);
@@ -3255,7 +3258,7 @@ enifed("ember-data/serializers/json_serializer",
        Example
 
        ```javascript
-       App.PostSerializer = DS.JSONSerializer.extend({
+       PostSerializer = DS.JSONSerializer.extend({
          serializeBelongsTo: function(record, json, relationship) {
            var key = relationship.key;
 
@@ -3306,7 +3309,7 @@ enifed("ember-data/serializers/json_serializer",
        Example
 
        ```javascript
-       App.PostSerializer = DS.JSONSerializer.extend({
+       PostSerializer = DS.JSONSerializer.extend({
          serializeHasMany: function(record, json, relationship) {
            var key = relationship.key;
            if (key === 'comments') {
@@ -3354,7 +3357,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.CommentSerializer = DS.JSONSerializer.extend({
+        CommentSerializer = DS.JSONSerializer.extend({
           serializePolymorphicType: function(record, json, relationship) {
             var key = relationship.key,
                 belongsTo = get(record, key);
@@ -3587,7 +3590,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           extractSingle: function(store, type, payload) {
             payload.comments = payload._embedded.comment;
             delete payload._embedded;
@@ -3617,7 +3620,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           extractArray: function(store, type, payload) {
             return payload.map(function(json) {
               return this.extractSingle(store, type, json);
@@ -3651,7 +3654,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           extractMeta: function(store, type, payload) {
             if (payload && payload._pagination) {
               store.metaForType(type, payload._pagination);
@@ -3682,7 +3685,7 @@ enifed("ember-data/serializers/json_serializer",
         Example
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           extractErrors: function(store, type, payload, id) {
             if (payload && typeof payload === 'object' && payload._problems) {
               payload = payload._problems;
@@ -3715,7 +3718,7 @@ enifed("ember-data/serializers/json_serializer",
        Example
 
        ```javascript
-       App.ApplicationSerializer = DS.RESTSerializer.extend({
+       ApplicationSerializer = DS.RESTSerializer.extend({
          keyForAttribute: function(attr) {
            return Ember.String.underscore(attr).toUpperCase();
          }
@@ -3738,7 +3741,7 @@ enifed("ember-data/serializers/json_serializer",
        Example
 
         ```javascript
-        App.PostSerializer = DS.JSONSerializer.extend({
+        PostSerializer = DS.JSONSerializer.extend({
           keyForRelationship: function(key, relationship) {
              return 'rel_' + Ember.String.underscore(key);
           }
@@ -3815,7 +3818,7 @@ enifed("ember-data/serializers/rest_serializer",
       name in your model to a key in your JSON.
 
       ```js
-      App.ApplicationSerializer = DS.RESTSerializer.extend({
+      ApplicationSerializer = DS.RESTSerializer.extend({
         keyForAttribute: function(attr) {
           return Ember.String.underscore(attr).toUpperCase();
         }
@@ -3858,7 +3861,7 @@ enifed("ember-data/serializers/rest_serializer",
         You use `normalizeHash` to normalize just the comments:
 
         ```javascript
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           normalizeHash: {
             comments: function(hash) {
               hash.id = hash._id;
@@ -3910,9 +3913,9 @@ enifed("ember-data/serializers/rest_serializer",
 
         The `normalize` method will be called three times:
 
-        * With `App.Post`, `"posts"` and `{ id: 1, title: "Rails is omakase", ... }`
-        * With `App.Comment`, `"comments"` and `{ id: 1, body: "FIRST" }`
-        * With `App.Comment`, `"comments"` and `{ id: 2, body: "Rails is unagi" }`
+        * With `Post`, `"posts"` and `{ id: 1, title: "Rails is omakase", ... }`
+        * With `Comment`, `"comments"` and `{ id: 1, body: "FIRST" }`
+        * With `Comment`, `"comments"` and `{ id: 2, body: "Rails is unagi" }`
 
         You can use this method, for example, to normalize underscored keys to camelized
         or other general-purpose normalizations.
@@ -3924,7 +3927,7 @@ enifed("ember-data/serializers/rest_serializer",
         `id`, you can specify how to normalize just the comments:
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           normalizeHash: {
             comments: function(hash) {
               hash.id = hash._id;
@@ -3994,7 +3997,7 @@ enifed("ember-data/serializers/rest_serializer",
         into shape:
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           // First, restructure the top-level so it's organized by type
           extractSingle: function(store, type, payload, id) {
             var comments = payload._embedded.comment;
@@ -4129,7 +4132,7 @@ enifed("ember-data/serializers/rest_serializer",
         into shape:
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           // First, restructure the top-level so it's organized by type
           // and the comments are listed under a post's `comments` key.
           extractArray: function(store, type, payload) {
@@ -4305,7 +4308,7 @@ enifed("ember-data/serializers/rest_serializer",
         'fastCar' like so:
 
         ```js
-        App.ApplicationSerializer = DS.RESTSerializer.extend({
+        ApplicationSerializer = DS.RESTSerializer.extend({
           typeForRoot: function(root) {
             // 'response-fast-car' should become 'fast-car'
             var subRoot = root.substring(9);
@@ -4336,7 +4339,7 @@ enifed("ember-data/serializers/rest_serializer",
         For example, consider this model:
 
         ```js
-        App.Comment = DS.Model.extend({
+        Comment = DS.Model.extend({
           title: DS.attr(),
           body: DS.attr(),
 
@@ -4380,7 +4383,7 @@ enifed("ember-data/serializers/rest_serializer",
         return a JSON hash of your choosing.
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           serialize: function(post, options) {
             var json = {
               POST_TTL: post.get('title'),
@@ -4404,7 +4407,7 @@ enifed("ember-data/serializers/rest_serializer",
         and `eachRelationship` on the record.
 
         ```js
-        App.ApplicationSerializer = DS.RESTSerializer.extend({
+        ApplicationSerializer = DS.RESTSerializer.extend({
           serialize: function(record, options) {
             var json = {};
 
@@ -4452,7 +4455,7 @@ enifed("ember-data/serializers/rest_serializer",
         JSON.
 
         ```js
-        App.PostSerializer = DS.RESTSerializer.extend({
+        PostSerializer = DS.RESTSerializer.extend({
           serialize: function(record, options) {
             var json = this._super(record, options);
 
@@ -4481,7 +4484,7 @@ enifed("ember-data/serializers/rest_serializer",
         For example, your server may expect underscored root objects.
 
         ```js
-        App.ApplicationSerializer = DS.RESTSerializer.extend({
+        ApplicationSerializer = DS.RESTSerializer.extend({
           serializeIntoHash: function(data, type, record, options) {
             var root = Ember.String.decamelize(type.typeKey);
             data[root] = this.serialize(record, options);
@@ -4582,7 +4585,7 @@ enifed("ember-data/system/adapter",
       Example
 
       ```javascript
-      App.ApplicationAdapter = DS.RESTAdapter.extend({
+      ApplicationAdapter = DS.RESTAdapter.extend({
         ajaxError: function(jqXHR) {
           var error = this._super(jqXHR);
 
@@ -4639,7 +4642,7 @@ enifed("ember-data/system/adapter",
         // ...your code here
       });
 
-      App.ApplicationAdapter = MyAdapter;
+      ApplicationAdapter = MyAdapter;
       ```
 
       Model-specific adapters can be created by assigning your adapter
@@ -4650,7 +4653,7 @@ enifed("ember-data/system/adapter",
         // ...Post-specific adapter code goes here
       });
 
-      App.PostAdapter = MyPostAdapter;
+      PostAdapter = MyPostAdapter;
       ```
 
       `DS.Adapter` is an abstract base class that you should override in your
@@ -4709,7 +4712,7 @@ enifed("ember-data/system/adapter",
         Here is an example `find` implementation:
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           find: function(store, type, id) {
             var url = [type.typeKey, id].join('/');
 
@@ -4740,7 +4743,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           findAll: function(store, type, sinceToken) {
             var url = type;
             var query = { since: sinceToken };
@@ -4773,7 +4776,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           findQuery: function(store, type, query) {
             var url = type;
             return new Ember.RSVP.Promise(function(resolve, reject) {
@@ -4814,7 +4817,7 @@ enifed("ember-data/system/adapter",
 
         ```javascript
         generateIdForRecord: function(store, record) {
-          var uuid = App.generateUUIDWithStatisticallyLowOddsOfCollision();
+          var uuid = generateUUIDWithStatisticallyLowOddsOfCollision();
           return uuid;
         }
         ```
@@ -4832,7 +4835,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           createRecord: function(store, type, record) {
             var data = this.serialize(record, { includeId: true });
             var url = type;
@@ -4860,7 +4863,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           createRecord: function(store, type, record) {
             var data = this.serialize(record, { includeId: true });
             var url = type;
@@ -4899,7 +4902,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           updateRecord: function(store, type, record) {
             var data = this.serialize(record, { includeId: true });
             var id = record.get('id');
@@ -4939,7 +4942,7 @@ enifed("ember-data/system/adapter",
         Example
 
         ```javascript
-        App.ApplicationAdapter = DS.Adapter.extend({
+        ApplicationAdapter = DS.Adapter.extend({
           deleteRecord: function(store, type, record) {
             var data = this.serialize(record, { includeId: true });
             var id = record.get('id');
@@ -5432,13 +5435,13 @@ enifed("ember-data/system/model/attributes",
 
         ```javascript
 
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: attr('string'),
           lastName: attr('string'),
           birthday: attr('date')
         });
 
-        var attributes = Ember.get(App.Person, 'attributes')
+        var attributes = Ember.get(Person, 'attributes')
 
         attributes.forEach(function(name, meta) {
           console.log(name, meta);
@@ -5478,13 +5481,13 @@ enifed("ember-data/system/model/attributes",
         Example
 
         ```javascript
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: attr(),
           lastName: attr('string'),
           birthday: attr('date')
         });
 
-        var transformedAttributes = Ember.get(App.Person, 'transformedAttributes')
+        var transformedAttributes = Ember.get(Person, 'transformedAttributes')
 
         transformedAttributes.forEach(function(field, type) {
           console.log(field, type);
@@ -5532,13 +5535,13 @@ enifed("ember-data/system/model/attributes",
         Example
 
         ```javascript
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: attr('string'),
           lastName: attr('string'),
           birthday: attr('date')
         });
 
-        App.Person.eachAttribute(function(name, meta) {
+        Person.eachAttribute(function(name, meta) {
           console.log(name, meta);
         });
 
@@ -5581,13 +5584,13 @@ enifed("ember-data/system/model/attributes",
         Example
 
         ```javascript
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: attr(),
           lastName: attr('string'),
           birthday: attr('date')
         });
 
-        App.Person.eachTransformedAttribute(function(name, type) {
+        Person.eachTransformedAttribute(function(name, type) {
           console.log(name, type);
         });
 
@@ -5660,7 +5663,7 @@ enifed("ember-data/system/model/attributes",
       ```javascript
       var attr = DS.attr;
 
-      App.User = DS.Model.extend({
+      User = DS.Model.extend({
         username: attr('string'),
         email: attr('string'),
         verified: attr('boolean', {defaultValue: false})
@@ -5741,7 +5744,7 @@ enifed("ember-data/system/model/errors",
       For Example, if you had an `User` model that looked like this:
 
       ```javascript
-      App.User = DS.Model.extend({
+      User = DS.Model.extend({
         username: attr('string'),
         email: attr('string')
       });
@@ -5973,13 +5976,13 @@ enifed("ember-data/system/model/errors",
         Example:
 
         ```javascript
-        App.User = DS.Model.extend({
+        User = DS.Model.extend({
           email: DS.attr('string'),
           twoFactorAuth: DS.attr('boolean'),
           phone: DS.attr('string')
         });
 
-        App.UserEditRoute = Ember.Route.extend({
+        UserEditRoute = Ember.Route.extend({
           actions: {
             save: function(user) {
                if (!user.get('twoFactorAuth')) {
@@ -6015,7 +6018,7 @@ enifed("ember-data/system/model/errors",
         Example:
 
         ```javascript
-        App.UserEditRoute = Ember.Route.extend({
+        UserEditRoute = Ember.Route.extend({
           actions: {
             retrySave: function(user) {
                user.get('errors').clear();
@@ -6040,7 +6043,7 @@ enifed("ember-data/system/model/errors",
         Checks if there is error messages for the given attribute.
 
         ```javascript
-        App.UserEditRoute = Ember.Route.extend({
+        UserEditRoute = Ember.Route.extend({
           actions: {
             save: function(user) {
                if (user.get('errors').has('email')) {
@@ -6091,13 +6094,13 @@ enifed("ember-data/system/model/model",
 
     function splitOnDot(name) {
       return _splitOnDotCache[name] || (
-        _splitOnDotCache[name] = name.split('.')
+        (_splitOnDotCache[name] = name.split('.'))
       );
     }
 
     function extractPivotName(name) {
       return _extractPivotNameCache[name] || (
-        _extractPivotNameCache[name] = splitOnDot(name)[0]
+        (_extractPivotNameCache[name] = splitOnDot(name)[0])
       );
     }
 
@@ -6517,13 +6520,13 @@ enifed("ember-data/system/model/model",
           another record somewhere
           For example if there was
           ```
-            App.Comment = DS.Model.extend({
+            Comment = DS.Model.extend({
               name: DS.attr()
             })
           ```
           but there is also
           ```
-            App.Post = DS.Model.extend({
+            Post = DS.Model.extend({
               name: DS.attr(),
               comments: DS.hasMany('comment')
             })
@@ -6657,7 +6660,7 @@ enifed("ember-data/system/model/model",
         Example
 
         ```javascript
-        App.ModelDeleteRoute = Ember.Route.extend({
+        ModelDeleteRoute = Ember.Route.extend({
           actions: {
             softDelete: function() {
               this.controller.get('model').deleteRecord();
@@ -6684,7 +6687,7 @@ enifed("ember-data/system/model/model",
         Example
 
         ```javascript
-        App.ModelDeleteRoute = Ember.Route.extend({
+        ModelDeleteRoute = Ember.Route.extend({
           actions: {
             delete: function() {
               var controller = this.controller;
@@ -6846,7 +6849,7 @@ enifed("ember-data/system/model/model",
         Example
 
         ```javascript
-        App.Mascot = DS.Model.extend({
+        Mascot = DS.Model.extend({
           name: attr('string')
         });
 
@@ -7051,7 +7054,7 @@ enifed("ember-data/system/model/model",
         Example
 
         ```javascript
-        App.ModelViewRoute = Ember.Route.extend({
+        ModelViewRoute = Ember.Route.extend({
           actions: {
             reload: function() {
               this.controller.get('model').reload().then(function(model) {
@@ -8590,17 +8593,17 @@ enifed("ember-data/system/record_arrays/many_array",
       defined:
 
       ```javascript
-      App.Post = DS.Model.extend({
+      Post = DS.Model.extend({
         comments: DS.hasMany('comment')
       });
 
-      App.Comment = DS.Model.extend({
+      Comment = DS.Model.extend({
         post: DS.belongsTo('post')
       });
       ```
 
-      If you created a new instance of `App.Post` and added
-      a `App.Comment` record to its `comments` has-many
+      If you created a new instance of `Post` and added
+      a `Comment` record to its `comments` has-many
       relationship, you would expect the comment's `post`
       property to be set to the post that contained
       the has-many.
@@ -8992,11 +8995,11 @@ enifed("ember-data/system/relationships/belongs_to",
       `DS.belongsTo`:
 
       ```javascript
-      App.User = DS.Model.extend({
+      User = DS.Model.extend({
         profile: DS.belongsTo('profile')
       });
 
-      App.Profile = DS.Model.extend({
+      Profile = DS.Model.extend({
         user: DS.belongsTo('user')
       });
       ```
@@ -9006,11 +9009,11 @@ enifed("ember-data/system/relationships/belongs_to",
       `DS.belongsTo` in combination with `DS.hasMany`, like this:
 
       ```javascript
-      App.Post = DS.Model.extend({
+      Post = DS.Model.extend({
         comments: DS.hasMany('comment')
       });
 
-      App.Comment = DS.Model.extend({
+      Comment = DS.Model.extend({
         post: DS.belongsTo('post')
       });
       ```
@@ -9167,12 +9170,12 @@ enifed("ember-data/system/relationships/ext",
         For example, if you define a model like this:
 
        ```javascript
-        App.Post = DS.Model.extend({
+        Post = DS.Model.extend({
           comments: DS.hasMany('comment')
         });
        ```
 
-        Calling `App.Post.typeForRelationship('comments')` will return `App.Comment`.
+        Calling `Post.typeForRelationship('comments')` will return `Comment`.
 
         @method typeForRelationship
         @static
@@ -9194,17 +9197,17 @@ enifed("ember-data/system/relationships/ext",
         For example, if you define models like this:
 
        ```javascript
-          App.Post = DS.Model.extend({
+          Post = DS.Model.extend({
             comments: DS.hasMany('message')
           });
 
-          App.Message = DS.Model.extend({
+          Message = DS.Model.extend({
             owner: DS.belongsTo('post')
           });
         ```
 
-        App.Post.inverseFor('comments') -> {type: App.Message, name:'owner', kind:'belongsTo'}
-        App.Message.inverseFor('owner') -> {type: App.Post, name:'comments', kind:'hasMany'}
+        Post.inverseFor('comments') -> {type: Message, name:'owner', kind:'belongsTo'}
+        Message.inverseFor('owner') -> {type: Post, name:'comments', kind:'hasMany'}
 
         @method inverseFor
         @static
@@ -9310,7 +9313,7 @@ enifed("ember-data/system/relationships/ext",
         For example, given the following model definition:
 
         ```javascript
-        App.Blog = DS.Model.extend({
+        Blog = DS.Model.extend({
           users: DS.hasMany('user'),
           owner: DS.belongsTo('user'),
           posts: DS.hasMany('post')
@@ -9321,11 +9324,11 @@ enifed("ember-data/system/relationships/ext",
         relationships, like this:
 
         ```javascript
-        var relationships = Ember.get(App.Blog, 'relationships');
-        relationships.get(App.User);
+        var relationships = Ember.get(Blog, 'relationships');
+        relationships.get(User);
         //=> [ { name: 'users', kind: 'hasMany' },
         //     { name: 'owner', kind: 'belongsTo' } ]
-        relationships.get(App.Post);
+        relationships.get(Post);
         //=> [ { name: 'posts', kind: 'hasMany' } ]
         ```
 
@@ -9363,7 +9366,7 @@ enifed("ember-data/system/relationships/ext",
         definition:
 
         ```javascript
-        App.Blog = DS.Model.extend({
+        Blog = DS.Model.extend({
           users: DS.hasMany('user'),
           owner: DS.belongsTo('user'),
 
@@ -9374,7 +9377,7 @@ enifed("ember-data/system/relationships/ext",
         This property would contain the following:
 
         ```javascript
-        var relationshipNames = Ember.get(App.Blog, 'relationshipNames');
+        var relationshipNames = Ember.get(Blog, 'relationshipNames');
         relationshipNames.hasMany;
         //=> ['users', 'posts']
         relationshipNames.belongsTo;
@@ -9409,7 +9412,7 @@ enifed("ember-data/system/relationships/ext",
         For example, given a model with this definition:
 
         ```javascript
-        App.Blog = DS.Model.extend({
+        Blog = DS.Model.extend({
           users: DS.hasMany('user'),
           owner: DS.belongsTo('user'),
 
@@ -9420,8 +9423,8 @@ enifed("ember-data/system/relationships/ext",
         This property would contain the following:
 
         ```javascript
-        var relatedTypes = Ember.get(App.Blog, 'relatedTypes');
-        //=> [ App.User, App.Post ]
+        var relatedTypes = Ember.get(Blog, 'relatedTypes');
+        //=> [ User, Post ]
         ```
 
         @property relatedTypes
@@ -9459,7 +9462,7 @@ enifed("ember-data/system/relationships/ext",
         definition:
 
         ```javascript
-        App.Blog = DS.Model.extend({
+        Blog = DS.Model.extend({
           users: DS.hasMany('user'),
           owner: DS.belongsTo('user'),
 
@@ -9470,11 +9473,11 @@ enifed("ember-data/system/relationships/ext",
         This property would contain the following:
 
         ```javascript
-        var relationshipsByName = Ember.get(App.Blog, 'relationshipsByName');
+        var relationshipsByName = Ember.get(Blog, 'relationshipsByName');
         relationshipsByName.get('users');
-        //=> { key: 'users', kind: 'hasMany', type: App.User }
+        //=> { key: 'users', kind: 'hasMany', type: User }
         relationshipsByName.get('owner');
-        //=> { key: 'owner', kind: 'belongsTo', type: App.User }
+        //=> { key: 'owner', kind: 'belongsTo', type: User }
         ```
 
         @property relationshipsByName
@@ -9506,7 +9509,7 @@ enifed("ember-data/system/relationships/ext",
 
         ```javascript
 
-        App.Blog = DS.Model.extend({
+        Blog = DS.Model.extend({
           users: DS.hasMany('user'),
           owner: DS.belongsTo('user'),
 
@@ -9515,7 +9518,7 @@ enifed("ember-data/system/relationships/ext",
           title: DS.attr('string')
         });
 
-        var fields = Ember.get(App.Blog, 'fields');
+        var fields = Ember.get(Blog, 'fields');
         fields.forEach(function(kind, field) {
           console.log(field, kind);
         });
@@ -9650,11 +9653,11 @@ enifed("ember-data/system/relationships/has_many",
       `DS.belongsTo` in combination with `DS.hasMany`, like this:
 
       ```javascript
-      App.Post = DS.Model.extend({
+      Post = DS.Model.extend({
         comments: DS.hasMany('comment')
       });
 
-      App.Comment = DS.Model.extend({
+      Comment = DS.Model.extend({
         post: DS.belongsTo('post')
       });
       ```
@@ -9664,11 +9667,11 @@ enifed("ember-data/system/relationships/has_many",
       `DS.hasMany`:
 
       ```javascript
-      App.Post = DS.Model.extend({
+      Post = DS.Model.extend({
         tags: DS.hasMany('tag')
       });
 
-      App.Tag = DS.Model.extend({
+      Tag = DS.Model.extend({
         posts: DS.hasMany('post')
       });
       ```
@@ -9689,14 +9692,14 @@ enifed("ember-data/system/relationships/has_many",
       var belongsTo = DS.belongsTo,
           hasMany = DS.hasMany;
 
-      App.Comment = DS.Model.extend({
+      Comment = DS.Model.extend({
         onePost: belongsTo('post'),
         twoPost: belongsTo('post'),
         redPost: belongsTo('post'),
         bluePost: belongsTo('post')
       });
 
-      App.Post = DS.Model.extend({
+      Post = DS.Model.extend({
         comments: hasMany('comment', {
           inverse: 'redPost'
         })
@@ -10211,7 +10214,7 @@ enifed("ember-data/system/store",
       Define your application's store like this:
 
       ```javascript
-      MyApp.Store = DS.Store.extend();
+      MyStore = DS.Store.extend();
       ```
 
       Most Ember.js applications will only have a single `DS.Store` that is
@@ -10230,7 +10233,7 @@ enifed("ember-data/system/store",
       backend by specifying a custom adapter:
 
       ```javascript
-      MyApp.ApplicationAdapter = MyApp.CustomAdapter
+      MyApplicationAdapter = MyCustomAdapter
       ```
 
       You can learn more about writing a custom adapter by reading the `DS.Adapter`
@@ -10296,7 +10299,7 @@ enifed("ember-data/system/store",
 
         This can be specified as an instance, class, or string.
 
-        If you want to specify `App.CustomAdapter` as a string, do:
+        If you want to specify `CustomAdapter` as a string, do:
 
         ```js
         adapter: 'custom'
@@ -10366,7 +10369,7 @@ enifed("ember-data/system/store",
         Create a new record in the current store. The properties passed
         to this method are set on the newly created record.
 
-        To create a new instance of `App.Post`:
+        To create a new instance of `Post`:
 
         ```js
         store.createRecord('post', {
@@ -11398,7 +11401,7 @@ enifed("ember-data/system/store",
         For this model:
 
         ```js
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: DS.attr(),
           lastName: DS.attr(),
 
@@ -11483,7 +11486,7 @@ enifed("ember-data/system/store",
         serializer.
 
         ```js
-        App.ApplicationSerializer = DS.ActiveModelSerializer;
+        ApplicationSerializer = DS.ActiveModelSerializer;
 
         var pushData = {
           posts: [
@@ -11507,8 +11510,8 @@ enifed("ember-data/system/store",
         deserializing.
 
         ```js
-        App.ApplicationSerializer = DS.ActiveModelSerializer;
-        App.PostSerializer = DS.JSONSerializer;
+        ApplicationSerializer = DS.ActiveModelSerializer;
+        PostSerializer = DS.JSONSerializer;
         store.pushPayload('comment', pushData); // Will use the ApplicationSerializer
         store.pushPayload('post', pushData); // Will use the PostSerializer
         ```
@@ -11565,7 +11568,7 @@ enifed("ember-data/system/store",
         records.
 
         ```js
-        App.Person = DS.Model.extend({
+        Person = DS.Model.extend({
           firstName: DS.attr('string'),
           lastName: DS.attr('string')
         });
@@ -11721,13 +11724,13 @@ enifed("ember-data/system/store",
       /**
         Returns an instance of the serializer for a given type. For
         example, `serializerFor('person')` will return an instance of
-        `App.PersonSerializer`.
+        `PersonSerializer`.
 
-        If no `App.PersonSerializer` is found, this method will look
-        for an `App.ApplicationSerializer` (the default serializer for
+        If no `PersonSerializer` is found, this method will look
+        for an `ApplicationSerializer` (the default serializer for
         your entire application).
 
-        If no `App.ApplicationSerializer` is found, it will fall back
+        If no `ApplicationSerializer` is found, it will fall back
         to an instance of `DS.JSONSerializer`.
 
         @method serializerFor
@@ -12085,7 +12088,7 @@ enifed("ember-data/transforms/base",
 
       ```javascript
       // Converts centigrade in the JSON to fahrenheit in the app
-      App.TemperatureTransform = DS.Transform.extend({
+      TemperatureTransform = DS.Transform.extend({
         deserialize: function(serialized) {
           return (serialized *  1.8) + 32;
         },
@@ -12099,7 +12102,7 @@ enifed("ember-data/transforms/base",
 
       ```javascript
       var attr = DS.attr;
-      App.Requirement = DS.Model.extend({
+      Requirement = DS.Model.extend({
         name: attr('string'),
         temperature: attr('temperature')
       });
@@ -12162,7 +12165,7 @@ enifed("ember-data/transforms/boolean",
 
       ```javascript
       var attr = DS.attr;
-      App.User = DS.Model.extend({
+      User = DS.Model.extend({
         isAdmin: attr('boolean'),
         name: attr('string'),
         email: attr('string')
@@ -12205,7 +12208,7 @@ enifed("ember-data/transforms/date",
 
       ```javascript
       var attr = DS.attr;
-      App.Score = DS.Model.extend({
+      Score = DS.Model.extend({
         value: attr('number'),
         player: DS.belongsTo('player'),
         date: attr('date')
@@ -12288,7 +12291,7 @@ enifed("ember-data/transforms/number",
 
       ```javascript
       var attr = DS.attr;
-      App.Score = DS.Model.extend({
+      Score = DS.Model.extend({
         value: attr('number'),
         player: DS.belongsTo('player'),
         date: attr('date')
@@ -12326,7 +12329,7 @@ enifed("ember-data/transforms/string",
 
       ```javascript
       var attr = DS.attr;
-      App.User = DS.Model.extend({
+      User = DS.Model.extend({
         isAdmin: attr('boolean'),
         name: attr('string'),
         email: attr('string')
@@ -12857,3 +12860,5 @@ enifed("ember-inflector/system/string",
   });
  global.DS = requireModule('ember-data')['default'];
  })(this);
+
+export default undefined;

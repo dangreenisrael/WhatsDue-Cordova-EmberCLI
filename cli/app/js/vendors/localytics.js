@@ -711,7 +711,7 @@ var LocalyticsSession = function (appKey, options) {
       // Write callback to global scope if necessary
       if (!hasWinJS) {
         // This should mirror CALLBACK_METHOD
-        window.__localytics_callbacks__ = window.__localytics_callbacks__ || {};
+        var __localytics_callbacks__ = window.__localytics_callbacks__ || {};
         window.__localytics_callbacks__[namespace] = callbackFn;
       }
 
@@ -1054,3 +1054,5 @@ var LocalyticsSession = function (appKey, options) {
     return ref;
   }(window));
 };
+
+export default undefined;
