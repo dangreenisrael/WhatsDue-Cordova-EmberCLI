@@ -1,0 +1,100 @@
+<header id="appHeader">
+    {{icon-device "menu" "pull-left" "menuToggle"}}
+    {{icon-device "menu" "pull-right hide" "menuToggle"}}
+
+    <h1 id="page-title">
+        Assignments Due
+    </h1>
+</header>
+
+<div id="content">
+    <div id="contentContainer">
+    <div id="left" class="fastAnimate">
+        <div id="menu">
+            <ul id="leftMenu">
+
+                {{#link-to 'assignments' tagName='li'}}
+                    <div>
+                        {{icon-device "assignments"}}
+                    </div>
+                    <span>
+                        What's Due
+                    </span>
+                    <!--span class="whatsdue count"></span-->
+                {{/link-to}}
+
+                {{#link-to 'completedAssignments' tagName='li'}}
+                    <div>
+                        {{icon-device "completed"}}
+                    </div>
+                    <span>
+                        Completed
+                    </span>
+                {{/link-to}}
+
+
+                {{#link-to 'enrolled' tagName='li'}}
+                    <div>
+                        {{icon-device "courses"}}
+                    </div>
+                    <span>
+                        My Courses
+                    </span>
+                {{/link-to}}
+
+                {{#link-to 'reminders' tagName='li'}}
+
+                    <div>
+                        {{icon-device "reminders"}}
+                    </div>
+                    <span>
+                        Reminders
+                    </span>
+                {{/link-to}}
+
+                
+
+                {{#link-to 'support' tagName='li'}}
+
+                    <div>
+                        {{icon-device "info"}}
+                    </div>
+                    <span>
+                        Feedback &amp; Support
+                    </span>
+                {{/link-to}}
+
+            </ul>
+
+        </div>
+    </div>
+    <div id="middle">
+        {{outlet}}
+
+    </div>
+    <div id="right"></div>
+    </div>
+</div>
+
+<div id="welcome">
+
+</div>
+
+<div id="share-modal">
+    <h3>
+        <span class="assignment-name"></span>
+    </h3>
+
+
+
+    <div class="buttons">
+        <div class="button share">
+            Share
+        </div>
+
+        <div class="button close">
+            Cancel
+        </div>
+    </div>
+    <input type="hidden" class="message">
+</div>

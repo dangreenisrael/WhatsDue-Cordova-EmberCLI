@@ -1,6 +1,9 @@
+import DS from 'ember-data';
+import Ember from 'ember';
+
 /*global Ember*/
 /*global DS*/
-(function () {
+(function() {
   'use strict';
 
   DS.LSSerializer = DS.JSONSerializer.extend({
@@ -526,4 +529,6 @@
       }
     }
   });
-}());
+})();
+
+export default undefined;

@@ -1,0 +1,25 @@
+<div id="completedAssignments">
+    <div class="assignments-list">
+        {{#each assignment in filteredData}}
+        <div class="slider">
+            <div class="reveal" {{action 'unRemoveAssignment' assignment}}>
+                <div class="full">
+                    <span class="helper"></span>
+                    {{icon-device "back"}}
+                </div>
+            </div>
+            <div class="putBackable fastAnimate">
+                <div class="info">
+                    <div class="title">
+                        {{assignment.assignment_name}}
+                    </div>
+                    {{icon-device "minus-red"}}
+
+                    <div class="course">
+                        {{assignment.course_id.course_name}}</div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
