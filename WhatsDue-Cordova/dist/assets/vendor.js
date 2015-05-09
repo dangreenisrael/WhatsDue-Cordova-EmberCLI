@@ -81267,7 +81267,393 @@ moment.locale('en', {
     }
 });
 
-;
+;/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
+var cordovaApp = {
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    pushNotification: null,
+    // deviceready Event Handler
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'cordovaApp.receivedEvent(...);'
+    onDeviceReady: function() {
+        cordovaApp.receivedEvent('deviceready');
+        console.log('Device Ready');
+        this.pushNotification = window.plugins.pushNotification;
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+
+        //pushNotification.register(cordovaApp.successHandler, cordovaApp.errorHandler,{"senderID":"577888563057","ecb":"cordovaApp.onNotificatioLoaded});
+        if ( device.platform == 'android' || device.platform == 'Android'){
+            this.pushNotification.register(
+                cordovaApp.successHandler,
+                cordovaApp.errorHandler,
+                {
+                    "senderID":"577888563057",
+                    "ecb":"cordovaApp.onNotificationGCM"
+                });
+        } else {
+            this.pushNotification.register(
+                cordovaApp.tokenHandler,
+                cordovaApp.errorHandler,
+                {
+                    "badge":"true",
+                    "sound":"true",
+                    "alert":"true",
+                    "ecb":"onNotificationAPN"
+                });
+        }
+    },
+    tokenHandler: function (result) {
+        // Your iOS push server needs to know the token before it can push to this device
+        // here is where you might want to send it the token for later use.
+        console.log('device token = ' + result);
+        console.log('device UUID = ' + device.uuid);
+        console.log('device name = ' + device.platform);
+        var postData = {
+            "uuid":      device.uuid,
+            "platform":  device.platform,
+            "pushId":    result,
+            "school":    getSchool()
+        };
+        //console.log(postData);
+        $.ajax({
+            url: site+"/students",
+            type: 'POST',
+            data: postData,
+            success: function (response) {
+                console.log(response);
+                localStorage.setItem("primaryKey", response.primaryKey)
+            },
+            error: function(response){
+                console.log(response)
+            }
+        });
+
+    },
+    successHandler: function(result) {
+        console.log('Success Handler = '+result)
+     },
+    errorHandler:function(error) {
+        alert('Error Handler = '+error);
+    },
+    /* These are for Push Notifications*/
+    onNotificationGCM: function(e) {
+        switch( e.event )
+        {
+            case 'registered':
+                    var postData = {
+                    "uuid":      device.uuid,
+                    "platform":  device.platform,
+                    "pushId":    e.regid
+                    };
+                    //console.log(postData);
+                    $.ajax({
+                        url: site+"/students",
+                        type: 'POST',
+                        data: postData,
+                        success: function (response) {
+                            //console.log(response);
+                            localStorage.setItem("primaryKey", response.primaryKey)
+                        }
+                    });
+                break;
+
+            case 'message':
+                console.log(e);
+                var data = e.payload;
+                if (data.assignmentId){
+                    // This deals with updated assignments
+                    var updatedAssignment = new CustomEvent('updatedAssignment');
+                    window.dispatchEvent(updatedAssignment);
+                    function alertDismissed() {
+                        window.location.hash = '/';
+                    }
+                    navigator.notification.alert(
+                        data.message,  // message
+                        alertDismissed,         // callback
+                        data.title,            // title
+                        'OK'                  // buttonName
+                    );
+                }
+                break;
+
+            case 'error':
+                console.log('GCM error = '+e.msg);
+                break;
+
+            default:
+                console.log('An unknown GCM event has occurred');
+                break;
+        }
+    },
+    onNotificationAPN: function (event) {
+    if ( event.alert )
+    {
+        navigator.notification.alert(event.alert);
+    }
+
+    if ( event.sound )
+    {
+        var snd = new Media(event.sound);
+        snd.play();
+    }
+
+    if ( event.badge )
+    {
+        this.pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
+    }
+}
+    
+};
+cordovaApp.initialize();
+
+;/**
+ * Created by dan on 2014-07-06.
+ */
+/* global Localytics */
+
+document.addEventListener("deviceready", onDeviceReady, false);
+document.addEventListener("resume", onResume, false);
+document.addEventListener("pause", onPause, false);
+var cordovaLoaded = false;
+
+function onDeviceReady() {
+
+    cordovaLoaded = true;
+    Ember.$('#contentContainer').css("-webkit-transform", "translate3d(-33.33333%,0,0) scale3d(1,1,1)");
+    setTimeout(readyFunction(), 500);
+    Ember.$('nav > .overdue').click();
+    Ember.$('nav > .due').click();
+    Localytics.init("343efcc05aba1feeedd4ce3-3f4a6c12-5e6b-11e4-4dc6-00a426b17dd8");
+    Localytics.resume();
+    Localytics.upload();
+    trackEvent('App Opened');
+
+
+}
+
+function onResume() {
+    Localytics.resume();
+    Localytics.upload();
+}
+
+function onPause() {
+    Localytics.close();
+    Localytics.upload();
+}
+
+window.addEventListener('native.keyboardshow', keyboardShowHandler);
+
+function keyboardShowHandler(e){
+    var newReminder = Ember.$('#new-reminder').position();
+    if (typeof newReminder !== 'undefined') {
+        var scrollTop = newReminder.top;
+        //Ember.$('#reminders').css('margin-top',-scrollTop)
+    }
+
+}
+
+window.addEventListener('native.keyboardhide', keyboardHideHandler);
+
+function keyboardHideHandler(e){
+    //Ember.$('#reminders').css('margin-top', 0)
+}
+
+
+document.addEventListener("backbutton", onBackKeyDown, false);
+
+function onBackKeyDown() {
+    Ember.$.modal.close();
+    goHome();
+}
+;define("ember-cli-cordova", ["ember-cli-cordova/index", "ember", "exports"], function(__index__, __Ember__, __exports__) {
+  "use strict";
+  __Ember__["default"].keys(__index__).forEach(function(key){
+    __exports__[key] = __index__[key];
+  });
+});
+
+define('ember-cli-cordova/initializers/in-app-livereload', ['exports', 'ember-cli-cordova/utils/redirect'], function (exports, redirect) {
+
+  'use strict';
+
+  var initialize = function(container, app, config) {
+    var url = config.cordova.emberUrl || 'http://localhost:4200';
+    return redirect['default'](url);
+  };
+
+  exports['default'] = {
+    name: 'cordova:in-app-livereload',
+    initialize: initialize
+  };
+
+  exports.initialize = initialize;
+
+});
+define('ember-cli-cordova/mixins/controllers/nav-bar', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Mixin.create({
+    nav: {
+      title: { },
+      leftButton: { },
+      rightButton: { }
+    },
+
+    actions: {
+      leftButton: function() {
+        var leftAction = this.get('nav.leftButton.action');
+
+        if(leftAction) {
+          leftAction();
+        }
+      },
+
+      rightButton: function() {
+        var rightAction = this.get('nav.rightButton.action');
+
+        if(rightAction) {
+          rightAction();
+        }
+      },
+
+      resetNavBar: function() {
+        this.set('nav', {
+          title: { },
+          leftButton: { },
+          rightButton: { }
+        });
+      }
+    }
+  });
+
+});
+define('ember-cli-cordova/mixins/routes/nav-bar', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Mixin.create({
+    _navController: Ember['default'].computed('nav.controller', function() {
+      var name = this.get('nav.controller') || 'application';
+
+      return this.controllerFor(name);
+    }),
+
+    afterModel: function(model) {
+      this._setDefaults();
+      this._setNavOptions(model);
+      this._setNavActions();
+
+      return this._super.apply(this, arguments);
+    },
+
+    // Since we are using so many nested paths this makes sure they are set to
+    // null values
+    _setDefaults: function() {
+      var ctrl = this.get('_navController');
+
+      if(!ctrl.get('nav')) {
+        ctrl.send('resetNavBar');
+
+      } else if(!ctrl.get('nav.title')) {
+        ctrl.set('nav.title', {});
+
+      } else if(!ctrl.get('nav.leftButton')) {
+        ctrl.set('nav.leftButton', {});
+
+      } else if(!ctrl.get('nav.rightButton')) {
+        ctrl.set('nav.rightButton', {});
+      }
+    },
+
+    _setNavOptions: function(model) {
+      var ctrl = this.get('_navController');
+
+      var navOptions = Ember['default'].A([
+        'title.text',
+        'leftButton.text', 'leftButton.icon',
+        'rightButton.text', 'rightButton.icon'
+      ]);
+
+      navOptions.forEach(function(key){
+        var optionPath = 'nav.' + key;
+        var value      = this.get(optionPath);
+
+        if (value) {
+          if(Ember['default'].typeOf(value) === 'function') {
+            value = value.call(this, model);
+          }
+
+          ctrl.set(optionPath, value);
+        }
+      }, this);
+    },
+
+    _setNavActions: function() {
+      var ctrl = this.get('_navController');
+
+      Ember['default'].A(['leftButton', 'rightButton']).forEach(function(button) {
+        var actionPath = 'nav.' + button + '.action';
+
+        var action = this.get(actionPath);
+        if (action) {
+          ctrl.set(actionPath, Ember['default'].run.bind(this, action));
+        }
+      }, this);
+    },
+
+    actions: {
+      willTransition: function() {
+        this.get('_navController').send('resetNavBar');
+        return this._super.apply(this, arguments);
+      }
+    }
+  });
+
+});
+define('ember-cli-cordova/utils/redirect', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = function(url) {
+    if(window.location.href.indexOf('file://') > -1) {
+      Ember['default'].run.later(function() {
+        window.location.replace(url);
+      }, 50);
+    }
+  }
+
+});
 ;/* jshint ignore:start */
 
 

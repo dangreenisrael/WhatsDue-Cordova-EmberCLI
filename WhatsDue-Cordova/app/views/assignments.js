@@ -29,9 +29,6 @@ var AssignmentsView = Ember.View.extend({
             var percent         = Math.abs(deltaX / pageWidth);
             var swiped          = percent > 0.3;
             var direction       = event.gesture.direction;
-            var width = this.activeElement.width();
-            var distanceRemaining = width - Math.abs(event.gesture.deltaX);
-            console.log(percent);
             ///* Prevent wonky scrolling */
             if (!swiped) {
                 console.log('Reset');
