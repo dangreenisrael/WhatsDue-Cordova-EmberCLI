@@ -1,0 +1,1 @@
+/Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/source/app/components/course-profile.js

@@ -1,0 +1,1 @@
+/Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/source/tmp/jshinter-tmp_dest_dir-nVH3bJib.tmp/test-helper.jshint.js
