@@ -23,12 +23,9 @@ app.import('bower_components/ember-hammer/ember-hammer.js');
 app.import("bower_components/ember-localstorage-adapter/localstorage_adapter.js");
 app.import('bower_components/moment/moment.js');
 
-
 app.import('vendor/custom-js/functions.js');
 app.import('vendor/custom-js/custom-ui.js');
 
-app.import('vendor/cordova-stuff/index.js');
-app.import('vendor/cordova-stuff/cordovaPlugins.js');
 
 
 //Everything goes before this
