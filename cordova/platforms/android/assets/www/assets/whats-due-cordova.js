@@ -313,7 +313,7 @@ define('whats-due-cordova/controllers/completed-assignments', ['exports', 'ember
     var CompletedAssignmentsController = Ember['default'].ArrayController.extend({
         filteredData: (function () {
             return this.get('model').filterBy('completed', true).sortBy('date_completed');
-        }).property('model.@each.archived'),
+        }).property('model.@each.completed'),
         sortAscending: false,
         actions: {
             unRemoveAssignment: function unRemoveAssignment(assignment) {
@@ -3718,8 +3718,8 @@ define('whats-due-cordova/views/unenrolled', function () {
 
 /* jshint ignore:start */
 
-define('source/config/environment', ['ember'], function(Ember) {
-  var prefix = 'source';
+define('whats-due-cordova/config/environment', ['ember'], function(Ember) {
+  var prefix = 'whats-due-cordova';
 /* jshint ignore:start */
 
 try {
@@ -3738,9 +3738,9 @@ catch(err) {
 });
 
 if (runningTests) {
-  require("source/tests/test-helper");
+  require("whats-due-cordova/tests/test-helper");
 } else {
-  require("source/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0."});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0."});
 }
 
 /* jshint ignore:end */

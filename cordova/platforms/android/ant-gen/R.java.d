@@ -1,6 +1,5 @@
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-gen/com/whatsdue/app/R.java \
  : /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/drawable/icon.png \
-/Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/drawable/screen.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/drawable-hdpi/ic_action_next_item.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/drawable-hdpi/ic_action_previous_item.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/drawable-hdpi/ic_action_remove.png \
@@ -28,7 +27,6 @@
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/values/strings.xml \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/res/xml/config.xml \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-build/res/drawable/icon.png \
-/Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-build/res/drawable/screen.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-build/res/drawable-hdpi/ic_action_next_item.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-build/res/drawable-hdpi/ic_action_previous_item.png \
 /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova/platforms/android/ant-build/res/drawable-hdpi/ic_action_remove.png \

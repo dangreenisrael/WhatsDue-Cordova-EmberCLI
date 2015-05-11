@@ -1,7 +1,7 @@
 {
   "name": "whats-due-cordova",
   "version": "0.0.0",
-  "description": "Small description for whats-due-cordova goes here",
+  "description": "A simple way for teachers to keep parents and students up to date",
   "private": true,
   "directories": {
     "doc": "doc",

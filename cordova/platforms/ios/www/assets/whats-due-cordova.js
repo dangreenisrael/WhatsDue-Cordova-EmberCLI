@@ -313,7 +313,7 @@ define('whats-due-cordova/controllers/completed-assignments', ['exports', 'ember
     var CompletedAssignmentsController = Ember['default'].ArrayController.extend({
         filteredData: (function () {
             return this.get('model').filterBy('completed', true).sortBy('date_completed');
-        }).property('model.@each.archived'),
+        }).property('model.@each.completed'),
         sortAscending: false,
         actions: {
             unRemoveAssignment: function unRemoveAssignment(assignment) {
@@ -3481,7 +3481,7 @@ define('whats-due-cordova/tests/views/assignments.jshint', function () {
 
   module('JSHint - views');
   test('views/assignments.js should pass jshint', function() { 
-    ok(false, 'views/assignments.js should pass jshint.\nviews/assignments.js: line 33, col 17, \'distanceRemaining\' is defined but never used.\n\n1 error'); 
+    ok(true, 'views/assignments.js should pass jshint.'); 
   });
 
 });
@@ -3579,8 +3579,8 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
                 var percent = Math.abs(deltaX / pageWidth);
                 var swiped = percent > 0.3;
                 var direction = event.gesture.direction;
-                var width = this.activeElement.width();
-                var distanceRemaining = width - Math.abs(event.gesture.deltaX);
+                // var width = this.activeElement.width();
+                // var distanceRemaining = width - Math.abs(event.gesture.deltaX);
                 console.log(percent);
                 ///* Prevent wonky scrolling */
                 if (!swiped) {
@@ -3740,7 +3740,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0.f49c8eab"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0."});
 }
 
 /* jshint ignore:end */
