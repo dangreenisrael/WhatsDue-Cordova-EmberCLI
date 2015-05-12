@@ -6,11 +6,8 @@ var Router = Ember.Router.extend({
 });
 
 export default Router.map(function() {
-    this.resource('enrolled', function(){
+    this.resource('courses', function(){
     });
-
-    //this.resource('unenrolled', function(){
-    //});
 
     this.resource('assignments', {path: '/'}, function(){
     });

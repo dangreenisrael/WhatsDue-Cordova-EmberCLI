@@ -1,7 +1,6 @@
 import Ember from 'ember';
 /* global CustomUI */
 
-console.log(CustomUI);
 var AssignmentsRoute = Ember.Route.extend({
     model: function() {
         //CustomFunctions.updateAssignments(this);

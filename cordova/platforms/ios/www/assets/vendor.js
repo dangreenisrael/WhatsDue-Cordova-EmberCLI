@@ -80563,11 +80563,8 @@ if (typeof emberHammerOptions !== 'undefined') {
 ;/**
  * Created by dan on 2014-05-15.
  */
-
-    var cordovaLoaded = false;
+console.log(localStorage);
 var CustomFunctions = {
-
-    /// Start
     test: false,
     site: function(){
         if (this.test == true) {
@@ -80577,20 +80574,16 @@ var CustomFunctions = {
             return "http://admin.whatsdueapp.com/student";
         }
     },
-
     /*
      Analytics
      */
-
     trackEvent: function(event, firstOption, firstValue, secondOption, secondValue, thirdOption, thirdValue) {
-
         firstOption = firstOption || null;
         firstValue = firstValue || null;
         secondOption = secondOption || null;
         secondValue = secondValue || null;
         thirdOption = thirdOption || null;
         thirdValue = thirdValue || null;
-
         var options = {};
         if (firstOption != null) {
             options[firstOption] = firstValue;
@@ -80601,12 +80594,11 @@ var CustomFunctions = {
                 }
             }
         }
-        if (cordovaLoaded == true) {
+        if (typeof cordovaLoaded != 'undefined') {
             Localytics.tagEvent(event, options, 0);
-            // console.log('tracked' + event);
         } else {
-            //console.log(event);
-            //console.log(options);
+            console.log('tracked' + event);
+
         }
     },
 
@@ -80634,7 +80626,7 @@ var CustomFunctions = {
 
     addNotification: function(title, message, date) {
         for (i = 0; i < 20; i++) {
-            if (cordovaLoaded == true) {
+            if (typeof cordovaLoaded != 'undefined') {
                 window.plugin.notification.local.add({
                     title: title,
                     message: message,
@@ -80681,15 +80673,15 @@ var CustomFunctions = {
                                 }
                                 thisRecord.save().then(function (record) {
                                     var hash = window.location.hash.substr(1);
-                                    if (hash == "/") {
-                                        context.send('getLatest');
-                                    }
+                                    //if (hash == "/") {
+                                    //    context.send('getLatest');
+                                    //}
                                     CustomUI.swipeRemove();
                                     CustomUI.sliderSize();
                                     if (model == 'assignment') {
                                         /* Remove Old Reminders */
                                         context.store.find('setReminder', {'assignment': record.get('id')}).then(function (setReminders) {
-                                            removeSetReminders(setReminders);
+                                            CustomFunctions.removeSetReminders(setReminders);
                                             /* Set New Reminders */
                                             context.store.find('reminder').then(function (reminders) {
                                                 reminders.get('content').forEach(function (reminder) {
@@ -80744,7 +80736,7 @@ var CustomFunctions = {
         if (!(moment(alarm_date).isBefore(new Date()))) {
             var message = assignment.get('assignment_name') + " is due in " + reminder.get('time_before');
 
-            if (cordovaLoaded == true) {
+            if (typeof cordovaLoaded != 'undefined') {
                 assignment.get('course_id').then(function (course) {
                     window.plugin.notification.local.add({
                         id: reminder_id,
@@ -80774,7 +80766,7 @@ var CustomFunctions = {
     removeSetReminders: function (setReminders) {
         setReminders.forEach(function (setReminder) {
             var reminderId = setReminder.get('id');
-            if (cordovaLoaded == true) {
+            if (typeof cordovaLoaded != 'undefined') {
                 window.plugin.notification.local.cancel(reminderId, function () {
                     // The notification has been canceled
                 });
@@ -80797,7 +80789,6 @@ var CustomFunctions = {
         user.city = data.city;
         user.country = data.country;
         user.region = data.region;
-        console.log(user);
         return user;
     },
     countInArray: function(haystack, needle) {
@@ -80810,8 +80801,6 @@ var CustomFunctions = {
         return count;
     }
 };
-
-
 ;/* Start Moment */
 
 /* End Moment */
@@ -80872,7 +80861,7 @@ var CustomUI = {
             currentPage = 1;
             element.css({"-webkit-transform": "translate3d(-33.333%,0,0) scale3d(1,1,1)", "overflow": "visible"});
         }
-        if (cordovaLoaded == true) {
+        if (typeof cordovaLoaded != 'undefined') {
             cordova.plugins.Keyboard.close();
         }
 
@@ -80968,106 +80957,17 @@ var CustomUI = {
     },
     swipeRemove: function() {
         setTimeout(function () {
-        ///*
-        // * Swipe to Delete
-        // */
-        //var removable = document.getElementsByClassName("removable");
-        //var removableOptions = {domEvents: true};
-        //var removeHammer = [];
-        //for (var i = 0; i < removable.length; ++i) {
-        //    removeHammer[i] = new Hammer(removable[i], removableOptions);
-        //
-        //    removeHammer[i].off('tap press').on('tap press', function (event) {
-        //        event.srcEvent.cancelBubble = true;
-        //        var element = CustomUI.closest(event, '.removable');
-        //        var course = $.trim(element.find('.course').text());
-        //        var assignment = $.trim(element.find('.title').text());
-        //        var dueTime = $.trim(element.find('.time-due').text());
-        //        var dueDate = $.trim(element.find('.date-due').val());
-        //        var message = dueDate + " at " + dueTime + ":\n\n" + assignment + " is due for " + course;
-        //        CustomUI.shareModal(assignment, course, message);
-        //    });
-        //
-        //
-        //    removeHammer[i].off('panend').on('panend', function (event) {
-        //        $(document).unbind('touchmove');
-        //        event.srcEvent.cancelBubble = true;
-        //        var element = CustomUI.closest(event, '.removable');
-        //        var deltaX = event.deltaX;
-        //        var deltaY = event.deltaY;
-        //        var width = element.width();
-        //        var limit = (width / 3);
-        //        var distanceRemaining = width - Math.abs(event.deltaX);
-        //        var velocityX = Math.abs(event.velocityX);
-        //        var transitionMs = distanceRemaining / velocityX;
-        //        if ((Math.abs(deltaX) >= width) && (Math.abs(deltaX) > Math.abs(deltaY))) {
-        //            CustomUI.customAnimate(element, transitionMs);
-        //            CustomUI.complete(element, 1)
-        //        } else if ((Math.abs(deltaX) > limit) && (Math.abs(deltaX) > Math.abs(deltaY))) {
-        //            CustomUI.customAnimate(element, transitionMs);
-        //            if (deltaX > 0) {
-        //                element.css({
-        //                    "-webkit-transform": "translate3d(101%,0,0) scale3d(1,1,1)",
-        //                    "opacity": 0
-        //                });
-        //            } else {
-        //                element.css({
-        //                    "-webkit-transform": "translate3d(-101%,0,0) scale3d(1,1,1)",
-        //                    "opacity": 0
-        //                });
-        //            }
-        //
-        //            CustomUI.complete(element, transitionMs);
-        //        }
-        //        else {
-        //            CustomUI.fastAnimate(element);
-        //            element.css({
-        //                "-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)",
-        //                "opacity": 1
-        //            });
-        //        }
-        //
-        //
-        //    });
-        //    //
-        //    removeHammer[i].off('pan').on('pan', function (event) {
-        //        event.srcEvent.cancelBubble = true;
-        //        var timestamp = Date.now();
-        //        var deltaX = event.deltaX;
-        //        var deltaY = event.deltaY;
-        //        var percent = 1 - Math.abs(deltaX / pageWidth);
-        //        var element = CustomUI.closest(event, '.removable');
-        //        element.css({
-        //            "-webkit-transform": "translate3d(" + deltaX + "px,0,0) scale3d(1,1,1)",
-        //            "opacity": percent
-        //        });
-        //        ///* Prevent wonky scrolling */
-        //        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        //            //fastAnimate(element);
-        //            //element.css({
-        //            //    "-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)",
-        //            //    "opacity": 1
-        //            //});
-        //        } else {
-        //            $(document).bind('touchmove', function (e) {
-        //                e.preventDefault();
-        //            });
-        //        }
-        //
-        //    });
-        //}
 
 
         Ember.$('nav > .due').on('click', function () {
-            $('#assignments-due').show();
-            $('#assignments-overdue').hide();
+            Ember.$('#assignments-due').show();
+            Ember.$('#assignments-overdue').hide();
 
         });
         Ember.$('nav > .overdue').on('click', function () {
-            $('#assignments-due').hide();
-            $('#assignments-overdue').show();
+            Ember.$('#assignments-due').hide();
+            Ember.$('#assignments-overdue').show();
         });
-
 
     }, 1);
     },
@@ -81109,7 +81009,7 @@ var CustomUI = {
         }
     },
     share: function(message) {
-        if (cordovaLoaded) {
+        if (typeof cordovaLoaded != 'undefined') {
             window.plugins.socialsharing.share(message + "\n\nSent via ",
                 null,
                 null, //'http://whatsdueapp.com/img/logo-text-white.png',
@@ -81222,7 +81122,7 @@ var CustomUI = {
                     "-webkit-transform":"translate3d(0,0,0) scale3d(1,1,1)",
                     "opacity":1
                 });
-                if(cordovaLoaded==true){
+                if(typeof cordovaLoaded != 'undefined'){
                     cordova.plugins.Keyboard.close();
                 }
             }

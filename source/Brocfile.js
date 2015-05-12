@@ -2,7 +2,18 @@
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
-var app = new EmberApp();
+
+var app = new EmberApp({
+    minifyCSS: {
+        enabled: true
+    },
+    minifyJS: {
+        enabled: false
+    },
+    fingerprint: {
+        enabled: false
+    }
+});
 
 // Use `app.import` to add additional libraries to the generated
 // output files.
@@ -16,6 +27,7 @@ var app = new EmberApp();
 // modules that you would like to import into your application
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
+
 app.import('vendor/vendors/ba-linkify.min.js');
 app.import('bower_components/hammerjs/hammer.js');
 app.import('bower_components/ember-hammer/ember-hammer.js');
@@ -26,6 +38,7 @@ app.import('bower_components/moment/moment.js');
 app.import('vendor/custom-js/functions.js');
 app.import('vendor/custom-js/custom-ui.js');
 
+app.import('vendor/custom-js/LS-LF-migration.js');
 
 
 //Everything goes before this

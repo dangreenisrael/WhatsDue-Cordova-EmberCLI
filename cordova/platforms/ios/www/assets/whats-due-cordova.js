@@ -2,6 +2,39 @@
 
 /* jshint ignore:end */
 
+define('whats-due-cordova/adapter-temp/assignment', ['exports', 'ember-data'], function (exports, DS) {
+
+	'use strict';
+
+	var AssignmentAdapter = DS['default'].LSAdapter.extend({});
+
+	exports['default'] = AssignmentAdapter;
+
+	// namespace: 'whatsdue-assignment'
+
+});
+define('whats-due-cordova/adapter-temp/course', ['exports', 'ember-data'], function (exports, DS) {
+
+	'use strict';
+
+	var CourseAdapter = DS['default'].LSAdapter.extend({});
+
+	exports['default'] = CourseAdapter;
+
+	//namespace: 'whatsdue-courses'
+
+});
+define('whats-due-cordova/adapter-temp/reminder', ['exports', 'ember-data'], function (exports, DS) {
+
+	'use strict';
+
+	var ReminderAdapter = DS['default'].LSAdapter.extend({});
+
+	exports['default'] = ReminderAdapter;
+
+	//  namespace: 'whatsdue-reminder'
+
+});
 define('whats-due-cordova/adapters/application', ['exports', 'ember-data'], function (exports, DS) {
 
   'use strict';
@@ -15,39 +48,6 @@ define('whats-due-cordova/adapters/application', ['exports', 'ember-data'], func
   });
 
   exports['default'] = ApplicationAdapter;
-
-});
-define('whats-due-cordova/adapters/assignment', ['exports', 'ember-data'], function (exports, DS) {
-
-    'use strict';
-
-    var AssignmentAdapter = DS['default'].LSAdapter.extend({
-        namespace: 'whatsdue-assignment'
-    });
-
-    exports['default'] = AssignmentAdapter;
-
-});
-define('whats-due-cordova/adapters/course', ['exports', 'ember-data'], function (exports, DS) {
-
-  'use strict';
-
-  var CourseAdapter = DS['default'].LSAdapter.extend({
-    namespace: 'whatsdue-courses'
-  });
-
-  exports['default'] = CourseAdapter;
-
-});
-define('whats-due-cordova/adapters/reminder', ['exports', 'ember-data'], function (exports, DS) {
-
-    'use strict';
-
-    var ReminderAdapter = DS['default'].LSAdapter.extend({
-        namespace: 'whatsdue-reminder'
-    });
-
-    exports['default'] = ReminderAdapter;
 
 });
 define('whats-due-cordova/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initializers', 'whats-due-cordova/config/environment'], function (exports, Ember, Resolver, loadInitializers, config) {
@@ -113,7 +113,6 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
                 context: this,
                 success: function success(data) {
                     var locationInfo = CustomFunctions.LocationInfo(data);
-                    console.log(locationInfo);
                     CustomFunctions.trackEvent('App Opened', 'City', locationInfo.city, 'Region', locationInfo.region, 'Country', locationInfo.country);
                 }
             });
@@ -133,7 +132,7 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
                     counter = counter + 1;
                     if (counter < totalRecords) {
                         console.log(counter);
-                        context.store.find('setReminder', { reminder: reminder.get('id') }).then(function (setReminders) {
+                        context.store.find('setReminder', { 'reminder': reminder.get('id') }).then(function (setReminders) {
                             CustomFunctions.removeSetReminders(setReminders);
                             reminder.destroyRecord();
                         });
@@ -144,56 +143,52 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
             /*
              *  This deals with the iOS 64 Reminder limit & Default Reminders
              */
-            //var cordovaInitiated = setInterval(function() {
-            //        if (cordovaLoaded) {
-            //
-            //
-            //
-            //            /*First Run*/
-            //            if (localStorage.getItem('course_code_update') !== 'updated'){
-            //                var reminder = context.store.createRecord('reminder', {
-            //                    id: CustomFunctions.primaryKey('reminders'),
-            //                    seconds_before: 86400 // 1 day
-            //                });
-            //                reminder.save();
-            //                context.store.find('assignment', {completed: false}).then(function (assignments) {
-            //                    assignments.get('content').forEach(function (assignment) {
-            //                        CustomFunctions.setReminder(assignment, reminder, context);
-            //                    });
-            //                });
-            //            }
-            //
-            //            window.plugin.notification.local.cancelAll(function () {
-            //                context.store.find('reminder');
-            //                context.store.find('assignment').then(function(){
-            //                    CustomUI.swipeRemove();
-            //                });
-            //                context.store.find('course');
-            //                context.store.find('setReminder').then(
-            //                    function (reminders) {
-            //                        reminders.filterBy('future').sortBy('timestamp').forEach(function (item, index) {
-            //                            if (index >= 60) {
-            //                                return null;
-            //                            }
-            //                            var title = item.get('assignment').get('course_id').get('course_name');
-            //                            var message = item.get('assignment').get('assignment_name') + " is due in " + item.get('reminder').get('time_before');
-            //                            var reminderId = item.get('id');
-            //                            var date = item.get('alarm_date_object');
-            //                            // All notifications have been canceled
-            //                            window.plugin.notification.local.add({
-            //                                id: reminderId,
-            //                                date: date,
-            //                                message: message,
-            //                                title: title
-            //                            });
-            //                        });
-            //                    });
-            //            });
-            //
-            //            clearInterval(cordovaInitiated);
-            //        }
-            //    },
-            //    5);
+            var cordovaInitiated = setInterval(function () {
+                if (typeof cordovaLoaded !== 'undefined') {
+
+                    /*First Run*/
+                    if (localStorage.getItem('course_code_update') !== 'updated') {
+                        var reminder = context.store.createRecord('reminder', {
+                            id: CustomFunctions.primaryKey('reminders'),
+                            seconds_before: 86400 // 1 day
+                        });
+                        reminder.save();
+                        context.store.find('assignment', { completed: false }).then(function (assignments) {
+                            assignments.get('content').forEach(function (assignment) {
+                                CustomFunctions.setReminder(assignment, reminder, context);
+                            });
+                        });
+                    }
+
+                    window.plugin.notification.local.cancelAll(function () {
+                        context.store.find('reminder');
+                        context.store.find('assignment').then(function () {
+                            CustomUI.swipeRemove();
+                        });
+                        context.store.find('course');
+                        context.store.find('setReminder').then(function (reminders) {
+                            reminders.filterBy('future').sortBy('timestamp').forEach(function (item, index) {
+                                if (index >= 60) {
+                                    return null;
+                                }
+                                var title = item.get('assignment').get('course_id').get('course_name');
+                                var message = item.get('assignment').get('assignment_name') + ' is due in ' + item.get('reminder').get('time_before');
+                                var reminderId = item.get('id');
+                                var date = item.get('alarm_date_object');
+                                // All notifications have been canceled
+                                window.plugin.notification.local.add({
+                                    id: reminderId,
+                                    date: date,
+                                    message: message,
+                                    title: title
+                                });
+                            });
+                        });
+                    });
+
+                    clearInterval(cordovaInitiated);
+                }
+            }, 5);
 
             /*
              * First Run
@@ -217,7 +212,7 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
             }
 
             if (localStorage.getItem('courses') == null) {
-                this.transitionToRoute('enrolled').then(function () {});
+                this.transitionToRoute('courses').then(function () {});
             }
 
             /*
@@ -289,7 +284,7 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember'], functi
             removeAssignment: function removeAssignment(assignment) {
                 console.log('removed');
                 CustomFunctions.trackEvent('Assignment Completed');
-                this.store.find('setReminder', { assignment: assignment.get('id') }).then(function (setReminders) {
+                this.store.find('setReminder', { 'assignment': assignment.get('id') }).then(function (setReminders) {
                     CustomFunctions.removeSetReminders(setReminders);
                 });
                 assignment.set('completed', true);
@@ -334,11 +329,11 @@ define('whats-due-cordova/controllers/completed-assignments', ['exports', 'ember
     exports['default'] = CompletedAssignmentsController;
 
 });
-define('whats-due-cordova/controllers/enrolled', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
-    var EnrolledController = Ember['default'].ArrayController.extend({
+    var CoursesController = Ember['default'].ArrayController.extend({
         model: [],
         filteredData: (function () {
             this.set('sortProperties', 'admin_id');
@@ -363,7 +358,7 @@ define('whats-due-cordova/controllers/enrolled', ['exports', 'ember'], function 
                         Ember['default'].$.ajax({
                             url: CustomFunctions.site() + '/courses/' + resp.course.id + '/enrolls',
                             type: 'POST',
-                            data: { primaryKey: localStorage.getItem('primaryKey') },
+                            data: { 'primaryKey': localStorage.getItem('primaryKey') },
                             success: function success() {
                                 if (!context.store.hasRecordForId('course', resp.course.id)) {
                                     context.store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and readding
@@ -371,8 +366,8 @@ define('whats-due-cordova/controllers/enrolled', ['exports', 'ember'], function 
                                     course.save();
 
                                     CustomFunctions.getUpdates('/assignments', context, 'assignment', {
-                                        courses: '[' + course.get('id') + ']',
-                                        sendAll: true
+                                        'courses': '[' + course.get('id') + ']',
+                                        'sendAll': true
                                     }, true);
 
                                     // Add course to local storage;
@@ -404,11 +399,11 @@ define('whats-due-cordova/controllers/enrolled', ['exports', 'ember'], function 
                 Ember['default'].$.ajax({
                     url: CustomFunctions.site() + '/courses/' + course.get('id') + '/unenrolls',
                     type: 'POST',
-                    data: { primaryKey: localStorage.getItem('primaryKey') },
+                    data: { 'primaryKey': localStorage.getItem('primaryKey') },
                     success: function success() {
-                        context.store.find('assignment', { course_id: course.get('id') }).then(function (assignments) {
+                        context.store.find('assignment', { 'course_id': course.get('id') }).then(function (assignments) {
                             assignments.content.forEach(function (assignment) {
-                                this.store.find('setReminder', { assignment: assignment.get('id') }).then(function (setReminders) {
+                                this.store.find('setReminder', { 'assignment': assignment.get('id') }).then(function (setReminders) {
                                     CustomFunctions.removeSetReminders(setReminders);
                                     console.log('destroyed Reminder');
                                 });
@@ -443,7 +438,7 @@ define('whats-due-cordova/controllers/enrolled', ['exports', 'ember'], function 
         }
     });
 
-    exports['default'] = EnrolledController;
+    exports['default'] = CoursesController;
 
 });
 define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function (exports, Ember) {
@@ -502,7 +497,7 @@ define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function
             },
             remove: function remove(reminder) {
                 console.log(reminder);
-                this.store.find('setReminder', { reminder: reminder.get('id') }).then(function (setReminders) {
+                this.store.find('setReminder', { 'reminder': reminder.get('id') }).then(function (setReminders) {
                     CustomFunctions.removeSetReminders(setReminders);
                     reminder.destroyRecord();
                 }, function () {
@@ -522,59 +517,6 @@ define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function
     });
 
     exports['default'] = RemindersController;
-
-});
-define('whats-due-cordova/controllers/unenrolled', ['exports', 'ember', 'customFunctions'], function (exports, Ember, CustomFunctions) {
-
-    'use strict';
-
-    var UnenrolledController = Ember['default'].ArrayController.extend({
-        model: [],
-        filteredData: (function () {
-            return this.get('model').filterBy('enrolled', false);
-        }).property('model.@each.enrolled'),
-        actions: {
-            addCourse: function addCourse(course) {
-                var context = this;
-                //if (cordovaLoaded){
-                //    cordova.plugins.Keyboard.close();
-                //}
-                Ember['default'].$.ajax({
-                    url: CustomFunctions['default'].site + '/courses/' + course.get('id') + '/enrolls',
-                    type: 'POST',
-                    data: { primaryKey: localStorage.getItem('primaryKey') },
-                    success: function success() {
-                        course.set('enrolled', true);
-                        course.save();
-
-                        CustomFunctions['default'].getUpdates('/assignments', context, 'assignment', {
-                            courses: '[' + course.get('id') + ']',
-                            sendAll: true
-                        }, true);
-
-                        // Add course to local storage;
-                        var courses = localStorage.getItem('courses');
-                        if (courses !== null) {
-                            courses = courses + ',' + course.get('id');
-                            localStorage.setItem('courses', courses);
-                        } else {
-                            localStorage.setItem('courses', course.get('id'));
-                        }
-                        //
-                        context.transitionToRoute('enrolled').then(function () {
-                            CustomFunctions['default'].trackEvent('Course Added', 'Course Name', course.get('course_name'), 'Username', course.get('admin_id'));
-                        });
-                    },
-                    error: function error() {
-                        alert('Are you connected to the Internet?');
-                        CustomFunctions['default'].trackEvent('Course Adding Failed');
-                    }
-                });
-            }
-        }
-    });
-
-    exports['default'] = UnenrolledController;
 
 });
 define('whats-due-cordova/helpers/assignment-divider', ['exports', 'ember'], function (exports, Ember) {
@@ -863,10 +805,7 @@ define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/confi
     });
 
     exports['default'] = Router.map(function () {
-        this.resource('enrolled', function () {});
-
-        //this.resource('unenrolled', function(){
-        //});
+        this.resource('courses', function () {});
 
         this.resource('assignments', { path: '/' }, function () {});
 
@@ -886,7 +825,6 @@ define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (e
 
     'use strict';
 
-    console.log(CustomUI);
     var AssignmentsRoute = Ember['default'].Route.extend({
         model: function model() {
             //CustomFunctions.updateAssignments(this);
@@ -924,18 +862,18 @@ define('whats-due-cordova/routes/completed-assignments', ['exports', 'ember'], f
     exports['default'] = CompletedAssignmentsRoute;
 
 });
-define('whats-due-cordova/routes/enrolled', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/routes/courses', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
-    var EnrolledRoute = Ember['default'].Route.extend({
+    var CoursesRoute = Ember['default'].Route.extend({
         model: function model() {
             CustomUI.setTitle('My Courses');
             return this.store.find('course');
         }
     });
 
-    exports['default'] = EnrolledRoute;
+    exports['default'] = CoursesRoute;
 
 });
 define('whats-due-cordova/routes/messages', ['exports', 'ember'], function (exports, Ember) {
@@ -979,19 +917,15 @@ define('whats-due-cordova/routes/support', ['exports', 'ember', 'customUI'], fun
     exports['default'] = SupportRoute;
 
 });
-define('whats-due-cordova/routes/unenrolled', ['exports', 'ember', 'customFunctions', 'customUI'], function (exports, Ember, CustomFunctions, CustomUI) {
+define('whats-due-cordova/serializers/application', ['exports', 'ember-data'], function (exports, DS) {
 
-    'use strict';
+	'use strict';
 
-    var UnenrolledRoute = Ember['default'].Route.extend({
-        model: function model() {
-            CustomFunctions['default'].updateCourses(this);
-            CustomUI['default'].setTitle('Add Courses');
-            return this.store.find('course');
-        }
-    });
+	/**
+	 * Created by dan on 2014-05-13.
+	 */
 
-    exports['default'] = UnenrolledRoute;
+	exports['default'] = DS['default'].LSSerializer.extend();
 
 });
 define('whats-due-cordova/templates/application', ['exports'], function (exports) {
@@ -1467,7 +1401,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
         inline(env, morph1, context, "icon-device", ["menu", "pull-right hide", "menuToggle"], {});
         block(env, morph2, context, "link-to", ["assignments"], {"tagName": "li"}, child0, null);
         block(env, morph3, context, "link-to", ["completedAssignments"], {"tagName": "li"}, child1, null);
-        block(env, morph4, context, "link-to", ["enrolled"], {"tagName": "li"}, child2, null);
+        block(env, morph4, context, "link-to", ["courses"], {"tagName": "li"}, child2, null);
         block(env, morph5, context, "link-to", ["reminders"], {"tagName": "li"}, child3, null);
         block(env, morph6, context, "link-to", ["support"], {"tagName": "li"}, child4, null);
         content(env, morph7, context, "outlet");
@@ -2120,7 +2054,7 @@ define('whats-due-cordova/templates/completed-assignments', ['exports'], functio
   }()));
 
 });
-define('whats-due-cordova/templates/enrolled', ['exports'], function (exports) {
+define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
 
   'use strict';
 
@@ -2889,216 +2823,34 @@ define('whats-due-cordova/templates/support', ['exports'], function (exports) {
   }()));
 
 });
-define('whats-due-cordova/templates/unenrolled', ['exports'], function (exports) {
+define('whats-due-cordova/tests/adapter-temp/assignment.jshint', function () {
 
   'use strict';
 
-  exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.11.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("li");
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","reveal");
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","putBackable fastAnimate keep");
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","info");
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createComment("");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","courseName");
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                    ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","instructorName");
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                    ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","hidden courseCode");
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, get = hooks.get, inline = hooks.inline, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var element0 = dom.childAt(fragment, [1]);
-          var element1 = dom.childAt(element0, [1]);
-          var element2 = dom.childAt(element0, [3, 1]);
-          var morph0 = dom.createMorphAt(element1,1,1);
-          var morph1 = dom.createMorphAt(element2,1,1);
-          var morph2 = dom.createMorphAt(dom.childAt(element2, [3]),1,1);
-          var morph3 = dom.createMorphAt(dom.childAt(element2, [5]),1,1);
-          var morph4 = dom.createMorphAt(dom.childAt(element0, [5]),1,1);
-          element(env, element0, context, "bind-attr", [], {"class": "course.hidden :hidden :slider :left-box"});
-          element(env, element1, context, "action", ["addCourse", get(env, context, "course")], {});
-          inline(env, morph0, context, "icon-device", ["cloud-white", "pull-left"], {});
-          inline(env, morph1, context, "icon-device", ["plus-big"], {});
-          content(env, morph2, context, "course.course_name");
-          content(env, morph3, context, "course.instructor_name");
-          content(env, morph4, context, "course.course_code");
-          return fragment;
-        }
-      };
-    }());
-    return {
-      isHTMLBars: true,
-      revision: "Ember@1.11.1",
-      blockParams: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      build: function build(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","courses");
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("input");
-        dom.setAttribute(el2,"id","search");
-        dom.setAttribute(el2,"class","search");
-        dom.setAttribute(el2,"type","text");
-        dom.setAttribute(el2,"maxlength","6");
-        dom.setAttribute(el2,"placeholder","Enter Course Code");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","send-syllabus");
-        dom.setAttribute(el2,"style","display: none");
-        var el3 = dom.createTextNode("\n        ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("\n        Aww Shucks,\n        we don't have your syllabus!!!\n        ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n        ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","btn btn-blue");
-        var el4 = dom.createTextNode("\n            COMPLAIN\n        ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("ul");
-        dom.setAttribute(el2,"class","list");
-        var el3 = dom.createTextNode("\n\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("    ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, element = hooks.element, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var element3 = dom.childAt(fragment, [0]);
-        var element4 = dom.childAt(element3, [3]);
-        var morph0 = dom.createMorphAt(dom.childAt(element3, [5]),1,1);
-        element(env, element4, context, "action", ["sendSyllabi"], {});
-        block(env, morph0, context, "each", [get(env, context, "filteredData")], {"keyword": "course"}, child0, null);
-        return fragment;
-      }
-    };
-  }()));
+  module('JSHint - adapter-temp');
+  test('adapter-temp/assignment.js should pass jshint', function() { 
+    ok(true, 'adapter-temp/assignment.js should pass jshint.'); 
+  });
+
+});
+define('whats-due-cordova/tests/adapter-temp/course.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapter-temp');
+  test('adapter-temp/course.js should pass jshint', function() { 
+    ok(true, 'adapter-temp/course.js should pass jshint.'); 
+  });
+
+});
+define('whats-due-cordova/tests/adapter-temp/reminder.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapter-temp');
+  test('adapter-temp/reminder.js should pass jshint', function() { 
+    ok(true, 'adapter-temp/reminder.js should pass jshint.'); 
+  });
 
 });
 define('whats-due-cordova/tests/adapters/application.jshint', function () {
@@ -3108,36 +2860,6 @@ define('whats-due-cordova/tests/adapters/application.jshint', function () {
   module('JSHint - adapters');
   test('adapters/application.js should pass jshint', function() { 
     ok(true, 'adapters/application.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/adapters/assignment.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapters');
-  test('adapters/assignment.js should pass jshint', function() { 
-    ok(true, 'adapters/assignment.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/adapters/course.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapters');
-  test('adapters/course.js should pass jshint', function() { 
-    ok(true, 'adapters/course.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/adapters/reminder.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapters');
-  test('adapters/reminder.js should pass jshint', function() { 
-    ok(true, 'adapters/reminder.js should pass jshint.'); 
   });
 
 });
@@ -3191,13 +2913,13 @@ define('whats-due-cordova/tests/controllers/completed-assignments.jshint', funct
   });
 
 });
-define('whats-due-cordova/tests/controllers/enrolled.jshint', function () {
+define('whats-due-cordova/tests/controllers/courses.jshint', function () {
 
   'use strict';
 
   module('JSHint - controllers');
-  test('controllers/enrolled.js should pass jshint', function() { 
-    ok(true, 'controllers/enrolled.js should pass jshint.'); 
+  test('controllers/courses.js should pass jshint', function() { 
+    ok(true, 'controllers/courses.js should pass jshint.'); 
   });
 
 });
@@ -3208,16 +2930,6 @@ define('whats-due-cordova/tests/controllers/reminders.jshint', function () {
   module('JSHint - controllers');
   test('controllers/reminders.js should pass jshint', function() { 
     ok(true, 'controllers/reminders.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/controllers/unenrolled.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers');
-  test('controllers/unenrolled.js should pass jshint', function() { 
-    ok(true, 'controllers/unenrolled.js should pass jshint.'); 
   });
 
 });
@@ -3398,13 +3110,13 @@ define('whats-due-cordova/tests/routes/completed-assignments.jshint', function (
   });
 
 });
-define('whats-due-cordova/tests/routes/enrolled.jshint', function () {
+define('whats-due-cordova/tests/routes/courses.jshint', function () {
 
   'use strict';
 
   module('JSHint - routes');
-  test('routes/enrolled.js should pass jshint', function() { 
-    ok(true, 'routes/enrolled.js should pass jshint.'); 
+  test('routes/courses.js should pass jshint', function() { 
+    ok(true, 'routes/courses.js should pass jshint.'); 
   });
 
 });
@@ -3438,13 +3150,13 @@ define('whats-due-cordova/tests/routes/support.jshint', function () {
   });
 
 });
-define('whats-due-cordova/tests/routes/unenrolled.jshint', function () {
+define('whats-due-cordova/tests/serializers/application.jshint', function () {
 
   'use strict';
 
-  module('JSHint - routes');
-  test('routes/unenrolled.js should pass jshint', function() { 
-    ok(true, 'routes/unenrolled.js should pass jshint.'); 
+  module('JSHint - serializers');
+  test('serializers/application.js should pass jshint', function() { 
+    ok(true, 'serializers/application.js should pass jshint.'); 
   });
 
 });
@@ -3495,13 +3207,13 @@ define('whats-due-cordova/tests/views/completed-assignments.jshint', function ()
   });
 
 });
-define('whats-due-cordova/tests/views/enrolled.jshint', function () {
+define('whats-due-cordova/tests/views/courses.jshint', function () {
 
   'use strict';
 
   module('JSHint - views');
-  test('views/enrolled.js should pass jshint', function() { 
-    ok(true, 'views/enrolled.js should pass jshint.'); 
+  test('views/courses.js should pass jshint', function() { 
+    ok(true, 'views/courses.js should pass jshint.'); 
   });
 
 });
@@ -3522,16 +3234,6 @@ define('whats-due-cordova/tests/views/support.jshint', function () {
   module('JSHint - views');
   test('views/support.js should pass jshint', function() { 
     ok(true, 'views/support.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/unenrolled.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/unenrolled.js should pass jshint', function() { 
-    ok(true, 'views/unenrolled.js should pass jshint.'); 
   });
 
 });
@@ -3565,11 +3267,14 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
             drag: function drag(event) {
                 // do something like send an event down the controller/route chain
                 var x = event.gesture.deltaX;
-                var percent = 1 - Math.abs(x / pageWidth);
-                this.activeElement.css({
-                    '-webkit-transform': 'translate3d(' + x + 'px,0,0) scale3d(1,1,1)',
-                    opacity: percent
-                });
+                var y = event.gesture.deltaY;
+                if (x > y * 2) {
+                    var percent = 1 - Math.abs(x / pageWidth);
+                    this.activeElement.css({
+                        '-webkit-transform': 'translate3d(' + x + 'px,0,0) scale3d(1,1,1)',
+                        'opacity': percent
+                    });
+                }
                 return false; // return `false` to stop bubbling
             },
             release: function release(event) {
@@ -3579,8 +3284,6 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
                 var percent = Math.abs(deltaX / pageWidth);
                 var swiped = percent > 0.3;
                 var direction = event.gesture.direction;
-                // var width = this.activeElement.width();
-                // var distanceRemaining = width - Math.abs(event.gesture.deltaX);
                 console.log(percent);
                 ///* Prevent wonky scrolling */
                 if (!swiped) {
@@ -3589,10 +3292,10 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
                     CustomUI.customAnimate(this.activeElement, percent * 750);
                     this.activeElement.css({
                         '-webkit-transform': 'translate3d(0,0,0) scale3d(1,1,1)',
-                        opacity: 1
+                        'opacity': 1
                     });
                 } else {
-                    CustomUI.complete(this.activeElement, (1 - percent) * 500);
+                    CustomUI.complete(this.activeElement, (1 - percent) * 250);
                     var position;
                     if (direction === 'left') {
                         position = '-100%';
@@ -3601,7 +3304,7 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
                     }
                     this.activeElement.css({
                         '-webkit-transform': 'translate3d(' + position + ',0,0) scale3d(1,1,1)',
-                        opacity: 0
+                        'opacity': 0
                     });
                 }
                 return false; // return `false` to stop bubbling
@@ -3628,7 +3331,7 @@ define('whats-due-cordova/views/completed-assignments', ['exports', 'ember'], fu
     exports['default'] = CompletedAssignmentsView;
 
 });
-define('whats-due-cordova/views/enrolled', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/views/courses', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
@@ -3683,35 +3386,6 @@ define('whats-due-cordova/views/support', ['exports', 'ember', 'customUI'], func
     exports['default'] = SupportView;
 
 });
-define('whats-due-cordova/views/unenrolled', function () {
-
-	'use strict';
-
-	//import Ember from 'ember';
-	//import CustomUI from 'customUI';
-	//import CustomFunctions from 'customFunctions';
-	//
-	//var UnenrolledView = Ember.View.extend({
-	//    contentDidChange: function() {
-	//        CustomFunctions.putBackable();
-	//    }.observes('controller.filteredData'),
-	//    afterRender: function(){
-	//        if (cordovaLoaded === true){
-	//            setTimeout(function(){
-	//                cordova.plugins.Keyboard.show();
-	//                Ember.$('#search').focus();
-	//            }, 500);
-	//        }
-	//        CustomUI.makeSpinnable();
-	//        setTimeout(function() {
-	//            filter('search');
-	//        }, 1);
-	//    }
-	//});
-	//
-	//export default UnenrolledView;
-
-});
 /* jshint ignore:start */
 
 /* jshint ignore:end */
@@ -3740,7 +3414,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0."});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.715c6666"});
 }
 
 /* jshint ignore:end */

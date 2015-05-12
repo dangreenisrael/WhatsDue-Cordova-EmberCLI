@@ -58,7 +58,7 @@ var CustomUI = {
             currentPage = 1;
             element.css({"-webkit-transform": "translate3d(-33.333%,0,0) scale3d(1,1,1)", "overflow": "visible"});
         }
-        if (cordovaLoaded == true) {
+        if (typeof cordovaLoaded != 'undefined') {
             cordova.plugins.Keyboard.close();
         }
 
@@ -154,106 +154,17 @@ var CustomUI = {
     },
     swipeRemove: function() {
         setTimeout(function () {
-        ///*
-        // * Swipe to Delete
-        // */
-        //var removable = document.getElementsByClassName("removable");
-        //var removableOptions = {domEvents: true};
-        //var removeHammer = [];
-        //for (var i = 0; i < removable.length; ++i) {
-        //    removeHammer[i] = new Hammer(removable[i], removableOptions);
-        //
-        //    removeHammer[i].off('tap press').on('tap press', function (event) {
-        //        event.srcEvent.cancelBubble = true;
-        //        var element = CustomUI.closest(event, '.removable');
-        //        var course = $.trim(element.find('.course').text());
-        //        var assignment = $.trim(element.find('.title').text());
-        //        var dueTime = $.trim(element.find('.time-due').text());
-        //        var dueDate = $.trim(element.find('.date-due').val());
-        //        var message = dueDate + " at " + dueTime + ":\n\n" + assignment + " is due for " + course;
-        //        CustomUI.shareModal(assignment, course, message);
-        //    });
-        //
-        //
-        //    removeHammer[i].off('panend').on('panend', function (event) {
-        //        $(document).unbind('touchmove');
-        //        event.srcEvent.cancelBubble = true;
-        //        var element = CustomUI.closest(event, '.removable');
-        //        var deltaX = event.deltaX;
-        //        var deltaY = event.deltaY;
-        //        var width = element.width();
-        //        var limit = (width / 3);
-        //        var distanceRemaining = width - Math.abs(event.deltaX);
-        //        var velocityX = Math.abs(event.velocityX);
-        //        var transitionMs = distanceRemaining / velocityX;
-        //        if ((Math.abs(deltaX) >= width) && (Math.abs(deltaX) > Math.abs(deltaY))) {
-        //            CustomUI.customAnimate(element, transitionMs);
-        //            CustomUI.complete(element, 1)
-        //        } else if ((Math.abs(deltaX) > limit) && (Math.abs(deltaX) > Math.abs(deltaY))) {
-        //            CustomUI.customAnimate(element, transitionMs);
-        //            if (deltaX > 0) {
-        //                element.css({
-        //                    "-webkit-transform": "translate3d(101%,0,0) scale3d(1,1,1)",
-        //                    "opacity": 0
-        //                });
-        //            } else {
-        //                element.css({
-        //                    "-webkit-transform": "translate3d(-101%,0,0) scale3d(1,1,1)",
-        //                    "opacity": 0
-        //                });
-        //            }
-        //
-        //            CustomUI.complete(element, transitionMs);
-        //        }
-        //        else {
-        //            CustomUI.fastAnimate(element);
-        //            element.css({
-        //                "-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)",
-        //                "opacity": 1
-        //            });
-        //        }
-        //
-        //
-        //    });
-        //    //
-        //    removeHammer[i].off('pan').on('pan', function (event) {
-        //        event.srcEvent.cancelBubble = true;
-        //        var timestamp = Date.now();
-        //        var deltaX = event.deltaX;
-        //        var deltaY = event.deltaY;
-        //        var percent = 1 - Math.abs(deltaX / pageWidth);
-        //        var element = CustomUI.closest(event, '.removable');
-        //        element.css({
-        //            "-webkit-transform": "translate3d(" + deltaX + "px,0,0) scale3d(1,1,1)",
-        //            "opacity": percent
-        //        });
-        //        ///* Prevent wonky scrolling */
-        //        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        //            //fastAnimate(element);
-        //            //element.css({
-        //            //    "-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)",
-        //            //    "opacity": 1
-        //            //});
-        //        } else {
-        //            $(document).bind('touchmove', function (e) {
-        //                e.preventDefault();
-        //            });
-        //        }
-        //
-        //    });
-        //}
 
 
         Ember.$('nav > .due').on('click', function () {
-            $('#assignments-due').show();
-            $('#assignments-overdue').hide();
+            Ember.$('#assignments-due').show();
+            Ember.$('#assignments-overdue').hide();
 
         });
         Ember.$('nav > .overdue').on('click', function () {
-            $('#assignments-due').hide();
-            $('#assignments-overdue').show();
+            Ember.$('#assignments-due').hide();
+            Ember.$('#assignments-overdue').show();
         });
-
 
     }, 1);
     },
@@ -295,7 +206,7 @@ var CustomUI = {
         }
     },
     share: function(message) {
-        if (cordovaLoaded) {
+        if (typeof cordovaLoaded != 'undefined') {
             window.plugins.socialsharing.share(message + "\n\nSent via ",
                 null,
                 null, //'http://whatsdueapp.com/img/logo-text-white.png',
@@ -408,7 +319,7 @@ var CustomUI = {
                     "-webkit-transform":"translate3d(0,0,0) scale3d(1,1,1)",
                     "opacity":1
                 });
-                if(cordovaLoaded==true){
+                if(typeof cordovaLoaded != 'undefined'){
                     cordova.plugins.Keyboard.close();
                 }
             }

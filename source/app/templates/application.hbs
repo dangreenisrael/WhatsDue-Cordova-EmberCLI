@@ -2,7 +2,7 @@
     {{icon-device "menu" "pull-left" "menuToggle"}}
     {{icon-device "menu" "pull-right hide" "menuToggle"}}
 
-    <h1 id="page-title">
+    <h1 id="page-title" {{action 'test'}}>
         Assignments Due
     </h1>
 </header>
@@ -33,7 +33,7 @@
                 {{/link-to}}
 
 
-                {{#link-to 'enrolled' tagName='li'}}
+                {{#link-to 'courses' tagName='li'}}
                     <div>
                         {{icon-device "courses"}}
                     </div>

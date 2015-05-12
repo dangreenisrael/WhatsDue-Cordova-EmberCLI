@@ -4,7 +4,7 @@
 
 # Run Ember stuff
 cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/source;
-ember build;
+ember build --environment="development";
 
 # Get into Cordova directors
 cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova;

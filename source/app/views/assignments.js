@@ -15,11 +15,14 @@ var AssignmentsView = Ember.View.extend({
         drag: function (event) {
             // do something like send an event down the controller/route chain
             var x = event.gesture.deltaX;
-            var percent = 1 - Math.abs(x / pageWidth);
-            this.activeElement.css({
-                "-webkit-transform": "translate3d(" + x + "px,0,0) scale3d(1,1,1)",
-                "opacity": percent
-            });
+            var y = event.gesture.deltaY;
+            if (x > y*2){
+                var percent = 1 - Math.abs(x / pageWidth);
+                this.activeElement.css({
+                    "-webkit-transform": "translate3d(" + x + "px,0,0) scale3d(1,1,1)",
+                    "opacity": percent
+                });
+            }
             return false; // return `false` to stop bubbling
         },
         release: function (event) {
@@ -29,8 +32,6 @@ var AssignmentsView = Ember.View.extend({
             var percent         = Math.abs(deltaX / pageWidth);
             var swiped          = percent > 0.3;
             var direction       = event.gesture.direction;
-           // var width = this.activeElement.width();
-           // var distanceRemaining = width - Math.abs(event.gesture.deltaX);
             console.log(percent);
             ///* Prevent wonky scrolling */
             if (!swiped) {
@@ -42,7 +43,7 @@ var AssignmentsView = Ember.View.extend({
                     "opacity": 1
                 });
             } else {
-                CustomUI.complete(this.activeElement, (1-percent)*500 );
+                CustomUI.complete(this.activeElement, (1-percent)*250 );
                 var position;
                 if (direction === "left"){
                     position = "-100%";
