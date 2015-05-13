@@ -58,7 +58,7 @@ var CustomFunctions = {
     },
 
     updateCourses: function() {
-        var headers = {};   
+        var headers = {};
         this.getUpdates("/all/courses", 'course', headers);
     },
     updateCourseList: function(){
@@ -84,7 +84,7 @@ var CustomFunctions = {
         }
     },
 
-    setSetting(key, value){
+    setSetting: function(key, value){
         var settingExists = this.store.hasRecordForId('setting', key);
         if (settingExists) {
             // Update Record
@@ -101,7 +101,7 @@ var CustomFunctions = {
             }).save();
         }
     },
-    getSetting(key, callback){
+    getSetting: function(key, callback){
         var store = this.store;
         store.find('setting').then(function(){
             var settingExists = store.hasRecordForId('setting', key);

@@ -80,7 +80,7 @@ var cordovaApp = {
             data: postData,
             success: function (response) {
                 console.log(response);
-                window.localStorage.setItem("primaryKey", response.primaryKey)
+                CustomFunctions.setSetting("primaryKey", response.primaryKey);
             },
             error: function(response){
                 console.log(response)
@@ -110,8 +110,7 @@ var cordovaApp = {
                         type: 'POST',
                         data: postData,
                         success: function (response) {
-                            //console.log(response);
-                            window.localStorage.setItem("primaryKey", response.primaryKey)
+                            CustomFunctions.setSetting("primaryKey", response.primaryKey);
                         }
                     });
                 break;

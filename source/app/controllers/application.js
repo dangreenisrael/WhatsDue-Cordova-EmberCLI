@@ -2,6 +2,7 @@ import Ember from 'ember';
 /* global CustomFunctions */
 /* global CustomUI */
 /* global cordovaLoaded */
+/* global Migration */
 
 
 var ApplicationController = Ember.Controller.extend({
@@ -21,6 +22,7 @@ var ApplicationController = Ember.Controller.extend({
                 CustomFunctions.setSetting('timestamp_course', '0');
                 CustomFunctions.setSetting('timestamp_message', '0');
                 CustomFunctions.setSetting('return_user', true);
+                Migration.runMigration();
             }
         };
         CustomFunctions.getSetting('return_user', firstRun);
@@ -133,11 +135,10 @@ var ApplicationController = Ember.Controller.extend({
         });
 
 
-        /* Move to home course page if first run */
+        /* Move to course page if first run */
         var courseList = function (courses) {
             console.log(courses);
-            if (courses.length<2){
-                context.transitionToRoute('courses');
+            if (courses === null){
             }
         };
         CustomFunctions.getSetting('course_list', courseList);

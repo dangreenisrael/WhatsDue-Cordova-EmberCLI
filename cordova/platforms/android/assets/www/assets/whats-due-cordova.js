@@ -2,39 +2,6 @@
 
 /* jshint ignore:end */
 
-define('whats-due-cordova/adapter-temp/assignment', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var AssignmentAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = AssignmentAdapter;
-
-	// namespace: 'whatsdue-assignment'
-
-});
-define('whats-due-cordova/adapter-temp/course', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var CourseAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = CourseAdapter;
-
-	//namespace: 'whatsdue-courses'
-
-});
-define('whats-due-cordova/adapter-temp/reminder', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var ReminderAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = ReminderAdapter;
-
-	//  namespace: 'whatsdue-reminder'
-
-});
 define('whats-due-cordova/adapters/application', ['exports', 'ember-localforage-adapter/adapters/localforage'], function (exports, LFAdapter) {
 
 	'use strict';
@@ -102,18 +69,21 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
     var ApplicationController = Ember['default'].Controller.extend({
         actions: {
             test: function test() {
-                var metaData = this.store.metadataFor('course');
-                console.log(metaData);
+                this.transitionToRoute('assignments');
             }
         },
         init: function init() {
+            /* Start store injection */
             CustomFunctions.setStore(this);
+            /* End store injection */
+
             var firstRun = function firstRun(ran) {
                 if (ran === null) {
                     CustomFunctions.setSetting('timestamp_assignment', '0');
                     CustomFunctions.setSetting('timestamp_course', '0');
                     CustomFunctions.setSetting('timestamp_message', '0');
                     CustomFunctions.setSetting('return_user', true);
+                    Migration.runMigration();
                 }
             };
             CustomFunctions.getSetting('return_user', firstRun);
@@ -220,10 +190,10 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
                 CustomFunctions.updateAssignments(context);
             });
 
-            /* Move to home course page if first run */
+            /* Move to course page if first run */
             var courseList = function courseList(courses) {
                 console.log(courses);
-                if (courses.length < 2) {
+                if (courses === null) {
                     context.transitionToRoute('courses');
                 }
             };
@@ -2800,36 +2770,6 @@ define('whats-due-cordova/templates/support', ['exports'], function (exports) {
   }()));
 
 });
-define('whats-due-cordova/tests/adapter-temp/assignment.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapter-temp');
-  test('adapter-temp/assignment.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/assignment.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/adapter-temp/course.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapter-temp');
-  test('adapter-temp/course.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/course.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/adapter-temp/reminder.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - adapter-temp');
-  test('adapter-temp/reminder.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/reminder.js should pass jshint.'); 
-  });
-
-});
 define('whats-due-cordova/tests/adapters/application.jshint', function () {
 
   'use strict';
@@ -3391,7 +3331,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.715c6666"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.d287c306"});
 }
 
 /* jshint ignore:end */

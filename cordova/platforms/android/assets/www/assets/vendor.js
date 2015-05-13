@@ -83110,13 +83110,15 @@ var CustomFunctions = {
             CustomFunctions.getUpdates('/assignments', 'assignment', {
                 'courses': "[" + courses + "]"
             });
+            CustomFunctions.getUpdates('/messages', 'message', {
+                'courses': "[" + courses + "]"
+            });
         };
         CustomFunctions.getSetting('course_list', courseList);
     },
 
     updateCourses: function() {
         var headers = {};
-
         this.getUpdates("/all/courses", 'course', headers);
     },
     updateCourseList: function(){
@@ -83142,7 +83144,7 @@ var CustomFunctions = {
         }
     },
 
-    setSetting(key, value){
+    setSetting: function(key, value){
         var settingExists = this.store.hasRecordForId('setting', key);
         if (settingExists) {
             // Update Record
@@ -83159,7 +83161,7 @@ var CustomFunctions = {
             }).save();
         }
     },
-    getSetting(key, callback){
+    getSetting: function(key, callback){
         var store = this.store;
         store.find('setting').then(function(){
             var settingExists = store.hasRecordForId('setting', key);
@@ -83703,6 +83705,40 @@ moment.locale('en', {
     }
 });
 
+;/**
+ * Created by Dan on 5/12/15.
+ */
+
+var Migration = {
+    getCourses: function(){
+        var courses = localStorage.getItem('whatsdue-courses');
+        if (courses!= null){
+            return (JSON.parse(courses)).course.records;
+        }
+    },
+    getAssignments: function(course){
+        var assignments = localStorage.getItem('whatsdue-assignment');
+        if (assignments!= null){
+            return (JSON.parse(assignments)).assignment.records;
+        }
+    },
+    runMigration: function(){
+        var store = CustomFunctions.store;
+        // Add each course
+        Ember.$.each(this.getCourses(), function(index, course) {
+            var newCourse = store.createRecord('course', course).save();
+            // Add assignments for each course
+            Ember.$.each(Migration.getAssignments(), function(index, assignment) {
+                if (course.id === assignment.course_id){
+                    assignment.course_id = newCourse;
+                    store.createRecord('assignment', assignment).save();
+                }
+            });
+
+        });
+        CustomFunctions.updateCourseList();
+    }
+};
 ;define("ember-localforage-adapter", ["ember-localforage-adapter/index", "ember", "exports"], function(__index__, __Ember__, __exports__) {
   "use strict";
   __Ember__["default"].keys(__index__).forEach(function(key){
