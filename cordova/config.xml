@@ -15,7 +15,9 @@
     <preference name="DisallowOverscroll" value="false" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
+    <preference name="SplashScreenDelay" value="2000"/>
     <preference name="webviewbounce" value="true" />
+    <preference name="SplashMaintainAspectRatio" value="true" />
     
     <icon src="www/res/icon.png" />
     

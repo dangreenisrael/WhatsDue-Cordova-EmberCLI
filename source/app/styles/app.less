@@ -20,6 +20,9 @@
 @mainTopMargin: 62px;
 @headerTopPadding: 5px;
 
+@sliderHeight: 70px;
+@innerSliderHeight: 50px;
+
 .placeholder(...) {
   ::-webkit-input-placeholder {color:@arguments}
   ::-moz-placeholder {color:@arguments}
@@ -41,7 +44,6 @@ html {
   -webkit-user-select: none;
 }
 
-@sliderHeight: 50px;
 body{
   background-color:	#f2f2f2
 }
@@ -330,7 +332,7 @@ ul#leftMenu {
 
    > div:nth-child(2) {
     padding: 10px 20px;
-    min-height: @sliderHeight;
+    min-height: @innerSliderHeight;
     position: relative;
     border-bottom: 1px solid #d6d6d6;
     background-color: #f2f2f2;
@@ -340,7 +342,7 @@ ul#leftMenu {
     margin-left: 10px;
     display: inline-block;
     position: relative;
-    min-height: @sliderHeight;
+    min-height: @innerSliderHeight;
     padding-left: 10px;
     border-left: 1px solid #9d9d9d;
     width: 85%;
@@ -835,37 +837,29 @@ input.search::-webkit-input-placeholder {
   display:none;
 }
 
-/* Overlay */
-#simplemodal-overlay {
-  background-color: #000;
-}
 
-/* Container */
-#simplemodal-container {
-  color: @darkGrey;
-  background-color: white;
-  border: 3px solid #444;
-  padding: 30px 0;
-  height: 180px;
-  min-width: 260px !important;
-  border-radius: 5px;
-  position: relative;
-  h3 {
-    text-align: center;
-    font-size: 20px;
+/*
+ * Bootstrap Style Buttons
+ */
 
+.ember-modal-dialog {
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 10px #222;
+  padding: 10px 40px;
+  z-index: 50;
+  position: fixed;
+  .ember-modal-dialog-in-place {
+    position: relative;
   }
-
-  /* Buttons */
   .buttons {
-    width: 100%;
+    min-width: 200px;
     padding: 20px 0;
   }
   .button {
     display: inline-block;
     color: white;
     text-decoration: none;
-    background-color: @blue;
     border-radius: 5px;
     width: 90%;
     padding: 20px 0;
@@ -875,22 +869,62 @@ input.search::-webkit-input-placeholder {
     text-align: center;
     font-weight: 600;
   }
+  .share{
+    background-color: @blue;
+  }
+  .close{
+    background-color: lightgray;
+  }
+
 }
 
-/*
- * Bootstrap Style Buttons
- */
 
-.btn{
-  display: inline-block;
-  border-radius: 10px;
-  text-align: center;
-  padding: 20px;
-  font-weight: 900;
-  font-size: 18px;
+
+.ember-modal-overlay {
+  height: 100vh;
+  left: 0;
+  opacity: 0.5;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 50;
+  background-color: #808080;
 }
 
-.btn-blue{
-  background-color: @blue;
-  color: #ffffff;
-}
+
+
+
+/* Container */
+//.ember-modal-dialog  {
+//  color: @darkGrey;
+//  background-color: white;
+//  border: 3px solid #444;
+//  padding: 30px 0;
+//  border-radius: 5px;
+//  position: relative;
+//  h3 {
+//    text-align: center;
+//    font-size: 20px;
+//
+//  }
+//
+//  /* Buttons */
+//  .buttons {
+//    width: 100%;
+//    padding: 20px 0;
+//  }
+//  .button {
+//    display: inline-block;
+//    color: white;
+//    text-decoration: none;
+//    background-color: @blue;
+//    border-radius: 5px;
+//    width: 90%;
+//    padding: 20px 0;
+//    margin: 10px 5%;
+//    font-size: 20px;
+//    line-height: 16px;
+//    text-align: center;
+//    font-weight: 600;
+//  }
+//}

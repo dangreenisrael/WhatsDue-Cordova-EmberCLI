@@ -17,6 +17,7 @@ var ApplicationController = Ember.Controller.extend({
         /* End store injection */
 
         var firstRun = function (ran){
+            console.log(ran);
             if (ran === null){
                 CustomFunctions.setSetting('timestamp_assignment', '0');
                 CustomFunctions.setSetting('timestamp_course', '0');
@@ -65,7 +66,7 @@ var ApplicationController = Ember.Controller.extend({
          *  This deals with the iOS 64 Reminder limit & Default Reminders
          */
         var cordovaInitiated = setInterval(function () {
-                if (typeof cordovaLoaded !== 'undefined') {
+                if (cordovaLoaded === true) {
 
 
                     /*First Run*/

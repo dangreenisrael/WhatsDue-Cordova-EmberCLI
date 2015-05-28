@@ -11,8 +11,8 @@ var CoursesController = Ember.ArrayController.extend({
         addCourse: function(course_code) {
             var controller = this;
             var store = this.store;
-
             course_code = course_code.toUpperCase();
+            this.set('course_code', "");
             var addCourse = Ember.$('#addCourse');
             addCourse.find('button').addClass('disabled');
 

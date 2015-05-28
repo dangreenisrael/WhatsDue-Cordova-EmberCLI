@@ -14,43 +14,15 @@
             </span>
         </div>
     </nav>
-
     <div id="assignments-due" class="needsclick">
         {{firstOfDay}}
-
         <div class="arrow-up"></div>
-        {{#each assignment in due}}
-            {{assignment-divider assignment.daysAway totalDue}}
-            <div {{bind-attr class=":slider :left-box"}}>
-                <div {{action 'removeAssignment' assignment}} class="reveal"></div>
-                <div {{bind-attr class=":removable assignment.urgencyLabel"}}>
-                    <div class="time">
-                        <span class="from-now">
-                            {{assignment.fromNow}} ago
-                        </span>
-                        <span class="time-due">
-                            {{assignment.timeDue}}
-                        </span>
-                        <div class="course">
-                            {{ assignment.course_id.course_name }}
-                        </div>
-                    </div>
-                    <div class="info">
-
-                        <div class="title">
-                            {{assignment.assignment_name}}
-                        </div>
-                        <div class="description">
-                            {{linkify-descriptions assignment.description}}
-                        </div>
-
-                    </div>
-                    {{input class="date-due" type='hidden' value=assignment.daysAway}}
-
-                </div>
-            </div>
+        {{#each groupedCards}}
+            <div class="day-divider">{{key}}</div>
+                {{#each assignment in this}}
+                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                {{/each}}
         {{/each}}
-
     </div>
 
     <div id="assignments-overdue">
@@ -59,30 +31,7 @@
             Overdue
         </div>
         {{#each assignment in overdue}}
-            <div {{bind-attr class=":slider :left-box assignment.hidden"}}>
-                <div {{action 'removeAssignment' assignment}} class="reveal"></div>
-                <div {{bind-attr class=":removable :red assignment.urgencyLabel"}}>
-                    <div class="time">
-                        <span class="from-now">
-                            {{assignment.fromNow}}
-                        </span>
-                        <span class="time-due">
-                            {{assignment.fromNow}}
-                        </span>
-                        <div class="course">
-                            {{ assignment.course_id.course_name }}
-                        </div>
-                    </div>
-                    <div class="info">
-                        <div class="title">
-                            {{assignment.assignment_name}}
-                        </div>
-                        <div class="description">
-                            {{linkify-descriptions assignment.description}}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
         {{/each}}
     </div>
     <div class="static-content nothing-due hidden">
@@ -92,3 +41,18 @@
         </h2>
     </div>
 </div>
+{{#if isShowingModal}}
+    {{#modal-dialog close="toggleModal"
+    alignment="center"
+    translucentOverlay=true}}
+            <div class="buttons">
+                <div {{action 'share'}} class="button share">
+                    Share
+                </div>
+
+                <div {{action 'cancel'}} class="button close">
+                    Cancel
+                </div>
+            </div>
+    {{/modal-dialog}}
+{{/if}}

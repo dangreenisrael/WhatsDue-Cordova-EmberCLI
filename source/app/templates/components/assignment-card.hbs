@@ -1,0 +1,27 @@
+<div {{bind-attr class=":slider :left-box"}}>
+    <div {{action 'removeAssignment' assignment}} class="reveal"></div>
+    <div {{bind-attr class=":removable assignment.urgencyLabel"}}>
+        <div{{action 'toggleModal' assignment}}  class="time">
+                        <span class="from-now">
+                            {{assignment.fromNow}} ago
+                        </span>
+                        <span class="time-due">
+                            {{assignment.timeDue}}
+                        </span>
+            <div class="course">
+                {{ assignment.course_id.course_name }}
+            </div>
+        </div>
+        <div class="info">
+
+            <div {{action 'toggleModal' assignment}}  class="title">
+                {{assignment.assignment_name}}
+            </div>
+            <div class="description">
+                {{linkify-external assignment.description}}
+            </div>
+
+        </div>
+        {{input class="date-due" type='hidden' value=assignment.daysAway}}
+    </div>
+</div>

@@ -1,23 +1,14 @@
 import Ember from 'ember';
-/* global CustomFunctions */
+import groupBy from '../utils/group-by';
 
+/* global CustomFunctions */
 var AssignmentsController = Ember.ArrayController.extend({
     due:(function() {
-        var context = this;
-
-        setTimeout(function(){
-            var total = context.get('totalDue')+context.get('totalOverdue');
-            if(total === 0){
-                Ember.$('.nothing-due').removeClass('hidden');
-                Ember.$('.day-divider').addClass('hidden');
-
-            }else{
-                Ember.$('.nothing-due').addClass('hidden');
-                Ember.$('.day-divider').removeClass('hidden');
-
-            }
-        }, 5);
         return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',false).sortBy('due_date');
+    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    groupedCards: groupBy('due', 'daysAway'),
+    overdue:(function() {
+        return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',true).filterBy('hidden',false).sortBy('due_date');
     }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     totalDue: function() {
         return this.get('due.length');
@@ -25,12 +16,10 @@ var AssignmentsController = Ember.ArrayController.extend({
     totalOverdue: function() {
         return this.get('overdue.length');
     }.property('model.@each.due_date', 'model.@each.completed'),
-    overdue:(function() {
-        return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',true).filterBy('hidden',false).sortBy('due_date');
-    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    isShowingModal: false,
+    shareContent: "",
     actions: {
         removeAssignment: function(assignment) {
-            console.log('removed');
             CustomFunctions.trackEvent('Assignment Completed');
             this.store.find('setReminder',{'assignment': assignment.get('id')}).then(function(setReminders){
                 CustomFunctions.removeSetReminders(setReminders);
@@ -38,10 +27,23 @@ var AssignmentsController = Ember.ArrayController.extend({
             assignment.set('completed', true);
             assignment.set('date_completed', Date.now());
             assignment.save();
-            this.send('invalidateModel');
         },
-        getLatest: function() {
-            this.send('invalidateModel');
+        toggleModal: function(assignment){
+            console.log('Show Modal');
+            var context = this;
+            if (this.isShowingModal === false){
+                assignment.get('course_id').then(function(course){
+                    context.shareContent = assignment.get('daysAway') + " at " + assignment.get('timeDue') + ":\n\n" + assignment.get('assignment_name') + " is due for " + course.get('course_name');
+                });
+            }
+            this.toggleProperty('isShowingModal');
+        },
+        share: function(){
+            CustomFunctions.share(this.shareContent);
+            this.toggleProperty('isShowingModal');
+        },
+        cancel:function(){
+            this.toggleProperty('isShowingModal');
         }
     }
 });

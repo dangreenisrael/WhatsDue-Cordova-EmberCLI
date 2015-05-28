@@ -34,7 +34,6 @@ var CustomUI = {
     },
     customAnimate: function(element, ms) {
         element.css('transition', 'all '+ms+'ms linear');
-        console.log('all '+ms+'s linear');
         setTimeout(function () {
             element.css('transition', 'none');
         }, ms + 200);
@@ -42,7 +41,9 @@ var CustomUI = {
     complete: function(element, ms) {
         CustomUI.customAnimate(element, ms);
         setTimeout(function () {
-            element.siblings('.reveal').click();
+            console.log(element);
+            element.siblings('.reveal').trigger('tap');
+            element.remove();
         }, ms);
     },
     toggleMenu: function() {
@@ -58,7 +59,7 @@ var CustomUI = {
             currentPage = 1;
             element.css({"-webkit-transform": "translate3d(-33.333%,0,0) scale3d(1,1,1)", "overflow": "visible"});
         }
-        if (typeof cordovaLoaded != 'undefined') {
+        if (cordovaLoaded === true) {
             cordova.plugins.Keyboard.close();
         }
 
@@ -69,7 +70,6 @@ var CustomUI = {
         element.css({"-webkit-transform": "translate3d(-33.33%,0,0) scale3d(1,1,1)", "overflow": "auto"});
         currentPage = 1;
     },
-
     sliderSize: function() {
         var assignmentWidth;
         assignmentWidth = Ember.$(document).width() - 180;
@@ -77,17 +77,16 @@ var CustomUI = {
         Ember.$('#dynamicStyle').text(style);
     },
 
-/* End Helper Functions */
+    /* End Helper Functions */
 
     putBackable: function() {
-        /* Click Events */
-
+        /* tap Events */
         setTimeout(function () {
             var removeButton = $('.putBackable img');
             var putBackable = $('.putBackable');
-            removeButton.off('click');
+            removeButton.off('tap');
             putBackable.siblings('.reveal').off();
-            putBackable.not('.keep').siblings('.reveal').click(function () {
+            putBackable.not('.keep').siblings('.reveal').on('tap', function () {
                 $(this).parent('.slider');
                 var context = this;
                 setTimeout(function () {
@@ -95,7 +94,7 @@ var CustomUI = {
                 }, 1);
             });
 
-            removeButton.on('click', function (event) {
+            removeButton.on('tap', function (event) {
                 event.stopPropagation();
                 var parent = $(this).closest('.putBackable');
                 if (parent.hasClass('open')) {
@@ -109,7 +108,7 @@ var CustomUI = {
                 }
             });
 
-            putBackable.on('click', function () {
+            putBackable.on('tap', function () {
                 if (($(this).hasClass('open'))) {
                     $(this).removeClass('open');
                     $(this).css("-webkit-transform", "translate3d(0,0,0) scale3d(1,1,1)");
@@ -156,12 +155,12 @@ var CustomUI = {
         setTimeout(function () {
 
 
-        Ember.$('nav > .due').on('click', function () {
+        Ember.$('nav > .due').on('tap', function () {
             Ember.$('#assignments-due').show();
             Ember.$('#assignments-overdue').hide();
 
         });
-        Ember.$('nav > .overdue').on('click', function () {
+        Ember.$('nav > .overdue').on('tap', function () {
             Ember.$('#assignments-due').hide();
             Ember.$('#assignments-overdue').show();
         });
@@ -190,7 +189,7 @@ var CustomUI = {
 
     makeSpinnable: function() {
         setTimeout(function () {
-            $('.add-something img, .reveal img').on('click', function (element) {
+            $('.add-something img, .reveal img').on('tap', function (element) {
                 $(this).addClass('spin')
             })
         }, 50);
@@ -200,55 +199,45 @@ var CustomUI = {
         var time = $('input.time');
         if (!reminders.find('.putBackable').length) {
             reminders.find('.bubble').removeClass('hidden');
-            reminders.find('figure').on('click', function () {
+            reminders.find('figure').on('tap', function () {
                 reminders.find('.bubble').addClass('hidden');
             });
         }
     },
-    share: function(message) {
-        if (typeof cordovaLoaded != 'undefined') {
-            window.plugins.socialsharing.share(message + "\n\nSent via ",
-                null,
-                null, //'http://whatsdueapp.com/img/logo-text-white.png',
-                'http://whatsdueapp.com')
-        } else {
-            console.log(message);
-        }
-    },
     shareModal: function(assignment, course, message) {
-        $("#share-modal").modal({
+        Ember.$("#share-modal").modal({
         onShow: function (dialog) {
             // Access elements inside the dialog
-            $(".assignment-name", dialog.data).text(assignment);
+            Ember.$(".assignment-name", dialog.data).text(assignment);
 
             /* Prevent accidental click*/
             setTimeout(function () {
                 $(".button", dialog.data).hover(function () {
-                        $(this).css('opacity', '0.5')
+                        Ember.$(this).css('opacity', '0.5')
                     }, function () {
-                        $(this).css('opacity', '1')
+                        Ember.$(this).css('opacity', '1')
                     }
                 );
 
-                $(".share", dialog.data).click(function () {
-                    share(message);
+                $(".share", dialog.data).on('tap',function () {
+                    CustomUI.share(message);
                     setTimeout(function () {
-                            $.modal.close()
+                            Ember.$.modal.close()
                         },
                         20);
-                    trackEvent('Assignment Shared');
+                    CustomFunctions.trackEvent('Assignment Shared');
                     return false;
                 });
-                $(".report", dialog.data).click(function () {
+                $(".report", dialog.data).on('tap',function () {
                     var subject = "WhatsDue%20Change%20Report";
                     var body = "School:%20" + getSchool() + "%0D%0ACourse:%20" + course + "%0D%0AAssignment:%20" + assignment + "%0D%0A-------------------------------------------%0D%0APlease%20write%20your%20correction%20here:";
                     window.location = 'mailto:aaron@whatsdueapp.com?subject=' + subject + '&body=' + body;
-                    $.modal.close();
-                    trackEvent('Assignment Reported');
+                    Ember.$.modal.close();
+                    CustomFunctions.trackEvent('Assignment Reported');
                 });
-                $(".close", dialog.data).click(function () {
-                    $.modal.close();
-                    trackEvent('Assignment Reported');
+                $(".close", dialog.data).on('tap', function () {
+                    Ember.$.modal.close();
+                    CustomFunctions.trackEvent('Assignment Reported');
                 });
             }, 200)
         }
@@ -307,7 +296,7 @@ var CustomUI = {
 
         /* Toggles */
 
-        Ember.$('#menuToggle, #left').off('click').on('click', function(){
+        Ember.$('#menuToggle, #left').off('tap').on('tap', function(){
             console.log('toggle');
             CustomUI.toggleMenu();
         });
@@ -315,11 +304,7 @@ var CustomUI = {
 
         Ember.$('body').on({
             'touchmove': function(e) {
-                $('.removable').css({
-                    "-webkit-transform":"translate3d(0,0,0) scale3d(1,1,1)",
-                    "opacity":1
-                });
-                if(typeof cordovaLoaded != 'undefined'){
+                if(cordovaLoaded === true){
                     cordova.plugins.Keyboard.close();
                 }
             }

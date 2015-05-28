@@ -1,9 +1,6 @@
-import {
-  moduleFor,
-  test
-} from 'ember-qunit';
+import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('route:<%= dasherizedModuleName %>', {
+moduleFor('route:<%= dasherizedModuleName %>', '<%= friendlyTestDescription %>', {
   // Specify the other units that are required for this test.
   // needs: ['controller:foo']
 });

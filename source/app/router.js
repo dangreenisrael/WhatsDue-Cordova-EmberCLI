@@ -5,7 +5,7 @@ var Router = Ember.Router.extend({
   location: config.locationType
 });
 
-export default Router.map(function() {
+Router.map(function() {
     this.resource('courses', function(){
     });
 
@@ -28,4 +28,7 @@ export default Router.map(function() {
     this.resource('welcome', function(){
 
     });
+
 });
+
+export default Router;

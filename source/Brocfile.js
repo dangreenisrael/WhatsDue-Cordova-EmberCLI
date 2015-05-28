@@ -4,12 +4,12 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 
 var app = new EmberApp({
-    minifyCSS: {
-        enabled: true
-    },
-    minifyJS: {
-        enabled: false
-    },
+    //minifyCSS: {
+    //    enabled: true
+    //},
+    //minifyJS: {
+    //    enabled: true
+    //},
     fingerprint: {
         enabled: false
     }
@@ -27,18 +27,17 @@ var app = new EmberApp({
 // modules that you would like to import into your application
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
+app.import('vendor/cordova-stuff/push-notifications.js');
+app.import('vendor/cordova-stuff/cordova-plugins.js');
+app.import('vendor/cordova-stuff/index.js');
 
-app.import('vendor/vendors/ba-linkify.min.js');
-app.import('bower_components/hammerjs/hammer.js');
-app.import('bower_components/ember-hammer/ember-hammer.js');
-
-app.import("bower_components/ember-localstorage-adapter/localstorage_adapter.js");
 app.import('bower_components/moment/moment.js');
 
-app.import('vendor/custom-js/functions.js');
+app.import('vendor/custom-js/custom-functions.js');
 app.import('vendor/custom-js/custom-ui.js');
-
 app.import('vendor/custom-js/LS-LF-migration.js');
+app.import('vendor/custom-js/linkify-cordova.js');
+
 
 
 //Everything goes before this

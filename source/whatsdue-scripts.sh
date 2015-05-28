@@ -4,7 +4,7 @@
 
 # Run Ember stuff
 cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/source;
-ember build --environment="development";
+ember build --environment="production";
 
 # Get into Cordova directors
 cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova;
@@ -13,7 +13,6 @@ cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova
 if [ "$1" = "run" ]
 then
     cordova run android;
-
 # Build for either
 elif ["$1" = "build"]
 then

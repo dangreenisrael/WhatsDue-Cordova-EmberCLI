@@ -31,6 +31,5 @@
   },
   "_source": "git://github.com/rpflorence/ember-localstorage-adapter.git",
   "_target": "~0.5.3",
-  "_originalSource": "ember-localstorage-adapter",
-  "_direct": true
+  "_originalSource": "ember-localstorage-adapter"
 }

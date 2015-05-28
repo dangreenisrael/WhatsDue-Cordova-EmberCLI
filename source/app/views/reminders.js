@@ -9,10 +9,8 @@ var RemindersView = Ember.View.extend({
     setTimeout(function(){
             CustomUI.putBackable();
             CustomUI.reminderTips();
-        }, 50
-    );
-}
-
+        }, 50);
+    }
 });
 
 export default RemindersView;
