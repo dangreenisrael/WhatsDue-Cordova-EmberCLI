@@ -17,13 +17,17 @@
             </intent-filter>
         </receiver>
         <service android:name="com.plugin.gcm.GCMIntentService" />
-        <receiver android:name="de.appplant.cordova.plugin.localnotification.Receiver" />
-        <receiver android:name="de.appplant.cordova.plugin.localnotification.Restore">
+        <receiver android:exported="false" android:name="de.appplant.cordova.plugin.localnotification.TriggerReceiver" />
+        <receiver android:exported="false" android:name="de.appplant.cordova.plugin.localnotification.ClearReceiver" />
+        <activity android:exported="false" android:launchMode="singleInstance" android:name="de.appplant.cordova.plugin.localnotification.ClickActivity" android:theme="@android:style/Theme.NoDisplay" />
+        <receiver android:exported="false" android:name="de.appplant.cordova.plugin.notification.TriggerReceiver" />
+        <receiver android:exported="false" android:name="de.appplant.cordova.plugin.notification.ClearReceiver" />
+        <receiver android:exported="false" android:name="de.appplant.cordova.plugin.localnotification.RestoreReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <activity android:launchMode="singleInstance" android:name="de.appplant.cordova.plugin.localnotification.ReceiverActivity" />
+        <activity android:exported="false" android:launchMode="singleInstance" android:name="de.appplant.cordova.plugin.notification.ClickActivity" android:theme="@android:style/Theme.NoDisplay" />
     </application>
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -34,6 +38,6 @@
     <uses-permission android:name="com.whatsdue.app.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import CustomUI from 'customUI';
+/* global CustomUI */
 
 var SupportRoute = Ember.Route.extend({
     model: function(){

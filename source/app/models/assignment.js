@@ -13,7 +13,6 @@ var Assignment = DS.Model.extend({
     enrolled:           DS.attr('boolean', {defaultValue: true}),
     completed:          DS.attr('boolean', {defaultValue: false}),
     course_id:          DS.belongsTo('course', {async:true}),
-    set_reminders:      DS.hasMany('setReminders'),
     overdue: function(){
         return moment().isAfter(this.get('due_date'));
     }.property('due_date'),

@@ -85,14 +85,6 @@ var CustomUI = {
             var removeButton = $('.putBackable img');
             var putBackable = $('.putBackable');
             removeButton.off('tap');
-            putBackable.siblings('.reveal').off();
-            putBackable.not('.keep').siblings('.reveal').on('tap', function () {
-                $(this).parent('.slider');
-                var context = this;
-                setTimeout(function () {
-                    $(context).parent('.slider').detach();
-                }, 1);
-            });
 
             removeButton.on('tap', function (event) {
                 event.stopPropagation();
@@ -116,8 +108,8 @@ var CustomUI = {
             });
 
             /*
-             * Adding Course Stuff
-             */
+            * Adding Course Stuff
+            */
             var addCourse = $('#addCourse');
             addCourse.find('input').keyup(function () {
                 $('.courses .bubble').addClass('hidden');
@@ -136,8 +128,8 @@ var CustomUI = {
             });
 
             /*
-             * Run if no courses are added
-             */
+            * Run if no courses are added
+            */
             var courseCount = $('.courses .slider').length;
             if (!courseCount) {
                 $('.courses .bubble').removeClass('hidden');
@@ -193,16 +185,6 @@ var CustomUI = {
                 $(this).addClass('spin')
             })
         }, 50);
-    },
-    reminderTips: function() {
-        var reminders = $('#reminders');
-        var time = $('input.time');
-        if (!reminders.find('.putBackable').length) {
-            reminders.find('.bubble').removeClass('hidden');
-            reminders.find('figure').on('tap', function () {
-                reminders.find('.bubble').addClass('hidden');
-            });
-        }
     },
     shareModal: function(assignment, course, message) {
         Ember.$("#share-modal").modal({

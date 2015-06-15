@@ -77,7 +77,7 @@ var cordovaApp = {
         };
         //console.log(postData);
         $.ajax({
-            url: site+"/students",
+            url: CustomFunctions.site()+"/students",
             type: 'POST',
             data: postData,
             success: function (response) {
@@ -106,14 +106,16 @@ var cordovaApp = {
                     "platform":  device.platform,
                     "pushId":    e.regid
                 };
-                //console.log(postData);
                 $.ajax({
-                    url: site+"/students",
+                    url: CustomFunctions.site()+"/consumers",
                     type: 'POST',
+                    dataType: 'json',
                     data: postData,
                     success: function (response) {
                         //console.log(response);
-                        localStorage.setItem("primaryKey", response.primaryKey)
+                        //localStorage.setItem("primaryKey", response.primaryKey);
+                        CustomFunctions.consumerId = response.consumerId;
+                        localforage.set('consumerId', response.consumerId);
                     }
                 });
                 break;

@@ -21,9 +21,6 @@ var AssignmentsController = Ember.ArrayController.extend({
     actions: {
         removeAssignment: function(assignment) {
             CustomFunctions.trackEvent('Assignment Completed');
-            this.store.find('setReminder',{'assignment': assignment.get('id')}).then(function(setReminders){
-                CustomFunctions.removeSetReminders(setReminders);
-            });
             assignment.set('completed', true);
             assignment.set('date_completed', Date.now());
             assignment.save();

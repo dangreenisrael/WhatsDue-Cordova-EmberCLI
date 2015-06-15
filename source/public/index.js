@@ -78,7 +78,7 @@ var cordovaApp = {
         };
         //console.log(postData);
         $.ajax({
-            url: site+"/students",
+            url: CustomFunctions.site+"/students",
             type: 'POST',
             data: postData,
             success: function (response) {
@@ -109,7 +109,7 @@ var cordovaApp = {
                 };
                 //console.log(postData);
                 $.ajax({
-                    url: site+"/students",
+                    url: CustomFunctions.site+"/students",
                     type: 'POST',
                     data: postData,
                     success: function (response) {

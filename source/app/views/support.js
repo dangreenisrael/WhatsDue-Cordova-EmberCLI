@@ -1,6 +1,5 @@
 import Ember from 'ember';
-import CustomUI from 'customUI';
-
+/*global CustomUI */
 var SupportView = Ember.View.extend({
     afterRender: function(){
         setTimeout(function(){

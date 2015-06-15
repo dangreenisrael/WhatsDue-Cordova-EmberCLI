@@ -17,33 +17,25 @@ var CoursesController = Ember.ArrayController.extend({
             addCourse.find('button').addClass('disabled');
 
             Ember.$.ajax({
-                url: CustomFunctions.site()+"/courses/"+course_code,
-                type: 'GET',
+                url: CustomFunctions.site() + "/consumers/" + CustomFunctions.consumerId + "/courses",
+                type: 'POST',
+                data: {"courseCode": course_code},
                 success: function (resp) {
-                    console.log(resp.course);
+                    if (!store.hasRecordForId('course',resp.course.id)) {
+                        store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
+                        var course = store.createRecord('course',resp.course);
+                        course.save();
+                        CustomFunctions.getUpdates('/assignments', 'assignment', {
+                            'courses': "[" + course.get('id') + "]",
+                            'sendAll': true
+                        }, true);
 
-                    /*
-                     * Enroll without break old version - rewrite in August 2015
-                     */
-                    Ember.$.ajax({
-                        url: CustomFunctions.site() + "/courses/" + resp.course.id + "/enrolls",
-                        type: 'POST',
-                        data: {"primaryKey": window.localStorage.getItem('primaryKey')},
-                        success: function () {
-                            if (!store.hasRecordForId('course',resp.course.id)) {
-                                store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
-                                var course = store.createRecord('course',resp.course);
-                                course.save();
-                                CustomFunctions.getUpdates('/assignments', 'assignment', {
-                                    'courses': "[" + course.get('id') + "]",
-                                    'sendAll': true
-                                }, true);
-                                CustomFunctions.updateCourseList();
-                                controller.set('course_code', "");
-                                CustomFunctions.trackEvent("Course Added", "Course", course.get('course_name'), "Instructor", course.get('instructor_name'), "School", course.get('school_name'));
-                            }
-                        }
-                    });
+                        CustomFunctions.updateCourseList();
+                        controller.set('course_code', "");
+                        CustomFunctions.trackEvent("Course Added", "Course", course.get('course_name'), "Instructor", course.get('instructor_name'), "School", course.get('school_name'));
+                    } else{
+                        alert("You tried to add a duplicate course");
+                    }
                 },
                 error: function (resp){
                     console.log(resp);
@@ -56,20 +48,17 @@ var CoursesController = Ember.ArrayController.extend({
                     }
                 }
             });
+
         },
         removeCourse: function(course) {
             var context = this;
             Ember.$.ajax({
-                url: CustomFunctions.site()+"/courses/"+course.get('id') +"/unenrolls",
-                type: 'POST',
+                url: CustomFunctions.site()+"/consumers/"+CustomFunctions.consumerId+"/courses/"+course.get('id'),
+                type: 'DELETE',
                 data: {"primaryKey":localStorage.getItem('primaryKey')},
                 success: function () {
                     context.store.find('assignment',{'course_id':course.get('id')}).then(function(assignments){
                         assignments.content.forEach(function(assignment) {
-                            this.store.find('setReminder',{'assignment': assignment.get('id')}).then(function(setReminders){
-                                CustomFunctions.removeSetReminders(setReminders);
-                                console.log('destroyed Reminder');
-                            });
                             assignment.destroyRecord();
                             console.log('destroyed Assignment');
                         }, context);
@@ -77,15 +66,14 @@ var CoursesController = Ember.ArrayController.extend({
                     course.destroyRecord().then(function(){
                         CustomFunctions.updateCourseList();
                     });
-
                     CustomFunctions.trackEvent('Course Removed', 'Course Name', course.get('course_name'));
                 },
-                error: function(){
+                error: function(e){
+                    console.log(e);
                     alert("Are you connected to the Internet?");
                     CustomFunctions.trackEvent('Course Remove Failed');
                 }
             });
-
         }
     }
 });

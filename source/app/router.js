@@ -25,9 +25,6 @@ Router.map(function() {
 
     });
 
-    this.resource('welcome', function(){
-
-    });
 
 });
 

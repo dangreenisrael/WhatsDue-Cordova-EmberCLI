@@ -15,15 +15,8 @@ var Migration = {
             return (JSON.parse(assignments)).assignment.records;
         }
     },
-    getReminders: function(){
-        var reminders = localStorage.getItem('whatsdue-reminder');
-        if (reminders!= null){
-            return (JSON.parse(reminders)).reminder.records;
-        }
-    },
     runMigration: function(){
         var store = CustomFunctions.store;
-        window.plugin.notification.local.clearAll();
         // Add each course
         Ember.$.each(this.getCourses(), function(index, course) {
             store.createRecord('course', course).save().then(
@@ -38,16 +31,9 @@ var Migration = {
                     });
                 }
             );
-
-
         });
         CustomFunctions.updateCourseList();
-        /* Set reminders - 3 seconds after assignments (for safety and simplicity) */
-        var context = this;
-        setTimeout(function() {
-            Ember.$.each(context.getReminders(), function (index, reminder) {
-                CustomFunctions.createReminders(reminder.seconds_before);
-            })
-        }, 3000);
     }
 };
+
+

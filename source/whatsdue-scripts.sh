@@ -3,11 +3,11 @@
 #Build Ember
 
 # Run Ember stuff
-cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/source;
+cd /Users/Dan/Git\ Repos/WhatsDue\ App/source;
 ember build --environment="production";
 
 # Get into Cordova directors
-cd /Users/Dan/Dropbox/Website/Current/WhatsDue/WhatsDue-Cordova-EmberCLI/cordova;
+cd /Users/Dan/Git\ Repos/WhatsDue\ App/cordova;
 
 # Run Android
 if [ "$1" = "run" ]

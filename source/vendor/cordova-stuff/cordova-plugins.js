@@ -34,12 +34,7 @@ function onPause() {
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
 
 function keyboardShowHandler(e){
-    var newReminder = $('#new-reminder').position();
-    if (typeof newReminder !== 'undefined') {
-        var scrollTop = newReminder.top;
-        //$('#reminders').css('margin-top',-scrollTop)
-    }
-
+    /* Do stuff when keyboard opens */
 }
 
 window.addEventListener('native.keyboardhide', keyboardHideHandler);
