@@ -17,9 +17,9 @@
     <div id="assignments-due" class="needsclick">
         {{firstOfDay}}
         <div class="arrow-up"></div>
-        {{#each groupedCards}}
-            <div class="day-divider">{{key}}</div>
-                {{#each assignment in this}}
+        {{#each day in groupedCards}}
+            <div class="day-divider">{{day.key}}</div>
+                {{#each assignment in day}}
                     {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
                 {{/each}}
         {{/each}}

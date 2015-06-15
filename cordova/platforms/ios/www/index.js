@@ -17,6 +17,8 @@
  * under the License.
  */
 var pushNotification = window.plugins.pushNotification;
+var cordovaLoaded = false;
+console.log("Cordova Loaded: " + cordovaLoaded);
 var cordovaApp = {
     // Application Constructor
     initialize: function() {
@@ -31,28 +33,29 @@ var cordovaApp = {
     },
     // deviceready Event Handler
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'cordovareceivedEvent(...);'
+    // function, we must explicitly call 'cordovaApp.receivedEvent(...);'
     onDeviceReady: function() {
-        cordovareceivedEvent('deviceready');
+        cordovaApp.receivedEvent('deviceready');
         console.log('Device Ready');
+        cordovaLoaded = true;
 
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
 
-        //pushNotification.register(cordovasuccessHandler, cordovaerrorHandler,{"senderID":"577888563057","ecb":"cordovaonNotificatioLoaded});
+        //pushNotification.register(cordovaApp.successHandler, cordovaApp.errorHandler,{"senderID":"577888563057","ecb":"cordovaApp.onNotificatioLoaded});
         if ( device.platform == 'android' || device.platform == 'Android'){
             pushNotification.register(
-                cordovasuccessHandler,
-                cordovaerrorHandler,
+                cordovaApp.successHandler,
+                cordovaApp.errorHandler,
                 {
                     "senderID":"577888563057",
-                    "ecb":"cordovaonNotificationGCM"
+                    "ecb":"cordovaApp.onNotificationGCM"
                 });
         } else {
             pushNotification.register(
-                cordovatokenHandler,
-                cordovaerrorHandler,
+                cordovaApp.tokenHandler,
+                cordovaApp.errorHandler,
                 {
                     "badge":"true",
                     "sound":"true",
@@ -75,7 +78,7 @@ var cordovaApp = {
         };
         //console.log(postData);
         $.ajax({
-            url: site+"/students",
+            url: CustomFunctions.site+"/students",
             type: 'POST',
             data: postData,
             success: function (response) {
@@ -90,7 +93,7 @@ var cordovaApp = {
     },
     successHandler: function(result) {
         console.log('Success Handler = '+result)
-     },
+    },
     errorHandler:function(error) {
         alert('Error Handler = '+error);
     },
@@ -99,21 +102,21 @@ var cordovaApp = {
         switch( e.event )
         {
             case 'registered':
-                    var postData = {
+                var postData = {
                     "uuid":      device.uuid,
                     "platform":  device.platform,
                     "pushId":    e.regid
-                    };
-                    //console.log(postData);
-                    $.ajax({
-                        url: site+"/students",
-                        type: 'POST',
-                        data: postData,
-                        success: function (response) {
-                            //console.log(response);
-                            localStorage.setItem("primaryKey", response.primaryKey)
-                        }
-                    });
+                };
+                //console.log(postData);
+                $.ajax({
+                    url: CustomFunctions.site+"/students",
+                    type: 'POST',
+                    data: postData,
+                    success: function (response) {
+                        //console.log(response);
+                        localStorage.setItem("primaryKey", response.primaryKey)
+                    }
+                });
                 break;
 
             case 'message':
@@ -145,24 +148,22 @@ var cordovaApp = {
         }
     },
     onNotificationAPN: function (event) {
-    if ( event.alert )
-    {
-        navigator.notification.alert(event.alert);
+        if ( event.alert )
+        {
+            navigator.notification.alert(event.alert);
+        }
+
+        if ( event.sound )
+        {
+            var snd = new Media(event.sound);
+            snd.play();
+        }
+
+        if ( event.badge )
+        {
+            pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
+        }
     }
 
-    if ( event.sound )
-    {
-        var snd = new Media(event.sound);
-        snd.play();
-    }
-
-    if ( event.badge )
-    {
-        pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
-    }
-}
-    
 };
-cordovainitialize();
-
-export default undefined;
+cordovaApp.initialize();

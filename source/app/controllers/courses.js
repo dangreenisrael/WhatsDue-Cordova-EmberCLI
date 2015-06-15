@@ -39,7 +39,6 @@ var CoursesController = Ember.ArrayController.extend({
                                     'sendAll': true
                                 }, true);
                                 CustomFunctions.updateCourseList();
-
                                 controller.set('course_code', "");
                                 CustomFunctions.trackEvent("Course Added", "Course", course.get('course_name'), "Instructor", course.get('instructor_name'), "School", course.get('school_name'));
                             }

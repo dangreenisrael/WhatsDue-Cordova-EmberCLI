@@ -2,40 +2,7 @@
 
 /* jshint ignore:end */
 
-define('whats-due-cordova/adapter-temp/assignment', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var AssignmentAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = AssignmentAdapter;
-
-	// namespace: 'whatsdue-assignment'
-
-});
-define('whats-due-cordova/adapter-temp/course', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var CourseAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = CourseAdapter;
-
-	//namespace: 'whatsdue-courses'
-
-});
-define('whats-due-cordova/adapter-temp/reminder', ['exports', 'ember-data'], function (exports, DS) {
-
-	'use strict';
-
-	var ReminderAdapter = DS['default'].LSAdapter.extend({});
-
-	exports['default'] = ReminderAdapter;
-
-	//  namespace: 'whatsdue-reminder'
-
-});
-define('whats-due-cordova/adapters/application', ['exports', 'ember-data'], function (exports, DS) {
+define('whats-due-cordova/adapters/application', ['exports', 'ember-localforage-adapter/adapters/localforage'], function (exports, LFAdapter) {
 
   'use strict';
 
@@ -43,11 +10,9 @@ define('whats-due-cordova/adapters/application', ['exports', 'ember-data'], func
    * Created by dan on 2014-05-13.
    */
 
-  var ApplicationAdapter = DS['default'].LSAdapter.extend({
-    namespace: 'whatsdue'
+  exports['default'] = LFAdapter['default'].extend({
+    namespace: 'WhatsDue'
   });
-
-  exports['default'] = ApplicationAdapter;
 
 });
 define('whats-due-cordova/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initializers', 'whats-due-cordova/config/environment'], function (exports, Ember, Resolver, loadInitializers, config) {
@@ -60,7 +25,6 @@ define('whats-due-cordova/app', ['exports', 'ember', 'ember/resolver', 'ember/lo
 
     App = Ember['default'].Application.extend({
         modulePrefix: config['default'].modulePrefix,
-        podModulePrefix: config['default'].podModulePrefix,
         Resolver: Resolver['default'],
         outputPaths: {
             app: {
@@ -74,6 +38,27 @@ define('whats-due-cordova/app', ['exports', 'ember', 'ember/resolver', 'ember/lo
     loadInitializers['default'](App, config['default'].modulePrefix);
 
     exports['default'] = App;
+
+});
+define('whats-due-cordova/components/assignment-card', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    /**
+     * Created by Dan on 5/26/15.
+     */
+    var AssignmentCardComponent = Ember['default'].Component.extend({
+        actions: {
+            removeAssignment: function removeAssignment(assignment) {
+                this.sendAction('removeAssignment', assignment);
+            },
+            toggleModal: function toggleModal(assignment) {
+                this.sendAction('toggleModal', assignment);
+            }
+        }
+    });
+
+    exports['default'] = AssignmentCardComponent;
 
 });
 define('whats-due-cordova/components/course-profile', ['exports', 'ember'], function (exports, Ember) {
@@ -91,21 +76,53 @@ define('whats-due-cordova/components/course-profile', ['exports', 'ember'], func
     exports['default'] = CourseProfileComponent;
 
 });
+define('whats-due-cordova/components/ember-modal-dialog-positioned-container', ['exports', 'ember-modal-dialog/components/positioned-container'], function (exports, Component) {
+
+	'use strict';
+
+	exports['default'] = Component['default'];
+
+});
+define('whats-due-cordova/components/ember-wormhole', ['exports', 'ember-wormhole/components/ember-wormhole'], function (exports, Component) {
+
+	'use strict';
+
+	exports['default'] = Component['default'];
+
+});
+define('whats-due-cordova/components/modal-dialog', ['exports', 'ember-modal-dialog/components/modal-dialog'], function (exports, Component) {
+
+	'use strict';
+
+	exports['default'] = Component['default'];
+
+});
 define('whats-due-cordova/controllers/application', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
     var ApplicationController = Ember['default'].Controller.extend({
         actions: {
-            reset: function reset() {}
+            test: function test() {
+                this.transitionToRoute('assignments');
+            }
         },
         init: function init() {
-            if (localStorage.getItem('timestamp_course') == null) {
-                localStorage.setItem('timestamp_course', 0);
-            }
-            if (localStorage.getItem('timestamp_assignment') == null) {
-                localStorage.setItem('timestamp_assignment', 0);
-            }
+            /* Start store injection */
+            CustomFunctions.setStore(this);
+            /* End store injection */
+
+            var returnUser = function returnUser(ran) {
+                console.log(ran);
+                if (ran === null) {
+                    Migration.runMigration();
+                    CustomFunctions.setSetting('timestamp_assignment', '0');
+                    CustomFunctions.setSetting('timestamp_course', '0');
+                    CustomFunctions.setSetting('timestamp_message', '0');
+                    CustomFunctions.setSetting('return_user', true);
+                }
+            };
+            CustomFunctions.getSetting('return_user', returnUser);
 
             Ember['default'].$.ajax({
                 url: 'http://ipinfo.io/json',
@@ -144,23 +161,9 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
              *  This deals with the iOS 64 Reminder limit & Default Reminders
              */
             var cordovaInitiated = setInterval(function () {
-                if (typeof cordovaLoaded !== 'undefined') {
+                if (cordovaLoaded === true) {
 
-                    /*First Run*/
-                    if (localStorage.getItem('course_code_update') !== 'updated') {
-                        var reminder = context.store.createRecord('reminder', {
-                            id: CustomFunctions.primaryKey('reminders'),
-                            seconds_before: 86400 // 1 day
-                        });
-                        reminder.save();
-                        context.store.find('assignment', { completed: false }).then(function (assignments) {
-                            assignments.get('content').forEach(function (assignment) {
-                                CustomFunctions.setReminder(assignment, reminder, context);
-                            });
-                        });
-                    }
-
-                    window.plugin.notification.local.cancelAll(function () {
+                    cordova.plugins.notification.local.cancelAll(function () {
                         context.store.find('reminder');
                         context.store.find('assignment').then(function () {
                             CustomUI.swipeRemove();
@@ -176,44 +179,18 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
                                 var reminderId = item.get('id');
                                 var date = item.get('alarm_date_object');
                                 // All notifications have been canceled
-                                window.plugin.notification.local.add({
+                                cordova.plugins.notification.local.schedule({
                                     id: reminderId,
-                                    date: date,
-                                    message: message,
+                                    at: date,
+                                    text: message,
                                     title: title
                                 });
                             });
                         });
                     });
-
                     clearInterval(cordovaInitiated);
                 }
             }, 5);
-
-            /*
-             * First Run
-             */
-
-            if (localStorage.getItem('course_code_update') !== 'updated') {
-                /*
-                 * Delete non-active course
-                 */
-                this.get('store').find('course', { enrolled: false }).then(function (record) {
-                    record.content.forEach(function (rec) {
-                        Ember['default'].run.once(this, function () {
-                            rec.deleteRecord();
-                            rec.save();
-                        });
-                    }, this);
-                });
-
-                // Mark the update as completed
-                localStorage.setItem('course_code_update', 'updated');
-            }
-
-            if (localStorage.getItem('courses') == null) {
-                this.transitionToRoute('courses').then(function () {});
-            }
 
             /*
              * This is for the back button;
@@ -234,6 +211,13 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
             window.addEventListener('updatedAssignment', function () {
                 CustomFunctions.updateAssignments(context);
             });
+
+            /* Move to course page if first run */
+            var courseList = function courseList(courses) {
+                console.log(courses);
+                if (courses === null) {}
+            };
+            CustomFunctions.getSetting('course_list', courseList);
         }
     });
     /**
@@ -244,32 +228,25 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
 
     exports['default'] = ApplicationController;
 
-    //localStorage.removeItem('courses');
-    //localStorage.removeItem("timestamp_assignment");
-    //localStorage.removeItem("timestamp_course");
-    //deleteAll(this, 'assignment');
-    //deleteAll(this, 'course');
+});
+define('whats-due-cordova/controllers/array', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Controller;
 
 });
-define('whats-due-cordova/controllers/assignments', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/controllers/assignments', ['exports', 'ember', 'whats-due-cordova/utils/group-by'], function (exports, Ember, groupBy) {
 
     'use strict';
 
     var AssignmentsController = Ember['default'].ArrayController.extend({
         due: (function () {
-            var context = this;
-
-            setTimeout(function () {
-                var total = context.get('totalDue') + context.get('totalOverdue');
-                if (total === 0) {
-                    Ember['default'].$('.nothing-due').removeClass('hidden');
-                    Ember['default'].$('.day-divider').addClass('hidden');
-                } else {
-                    Ember['default'].$('.nothing-due').addClass('hidden');
-                    Ember['default'].$('.day-divider').removeClass('hidden');
-                }
-            }, 5);
             return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', false).sortBy('due_date');
+        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        groupedCards: groupBy['default']('due', 'daysAway'),
+        overdue: (function () {
+            return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', true).filterBy('hidden', false).sortBy('due_date');
         }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
         totalDue: (function () {
             return this.get('due.length');
@@ -277,12 +254,10 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember'], functi
         totalOverdue: (function () {
             return this.get('overdue.length');
         }).property('model.@each.due_date', 'model.@each.completed'),
-        overdue: (function () {
-            return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', true).filterBy('hidden', false).sortBy('due_date');
-        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        isShowingModal: false,
+        shareContent: '',
         actions: {
             removeAssignment: function removeAssignment(assignment) {
-                console.log('removed');
                 CustomFunctions.trackEvent('Assignment Completed');
                 this.store.find('setReminder', { 'assignment': assignment.get('id') }).then(function (setReminders) {
                     CustomFunctions.removeSetReminders(setReminders);
@@ -290,10 +265,23 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember'], functi
                 assignment.set('completed', true);
                 assignment.set('date_completed', Date.now());
                 assignment.save();
-                this.send('invalidateModel');
             },
-            getLatest: function getLatest() {
-                this.send('invalidateModel');
+            toggleModal: function toggleModal(assignment) {
+                console.log('Show Modal');
+                var context = this;
+                if (this.isShowingModal === false) {
+                    assignment.get('course_id').then(function (course) {
+                        context.shareContent = assignment.get('daysAway') + ' at ' + assignment.get('timeDue') + ':\n\n' + assignment.get('assignment_name') + ' is due for ' + course.get('course_name');
+                    });
+                }
+                this.toggleProperty('isShowingModal');
+            },
+            share: function share() {
+                CustomFunctions.share(this.shareContent);
+                this.toggleProperty('isShowingModal');
+            },
+            cancel: function cancel() {
+                this.toggleProperty('isShowingModal');
             }
         }
     });
@@ -341,8 +329,10 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
         }).property('model.@each.enrolled'),
         actions: {
             addCourse: function addCourse(course_code) {
-                var context = this;
+                var controller = this;
+                var store = this.store;
                 course_code = course_code.toUpperCase();
+                this.set('course_code', '');
                 var addCourse = Ember['default'].$('#addCourse');
                 addCourse.find('button').addClass('disabled');
 
@@ -358,27 +348,19 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
                         Ember['default'].$.ajax({
                             url: CustomFunctions.site() + '/courses/' + resp.course.id + '/enrolls',
                             type: 'POST',
-                            data: { 'primaryKey': localStorage.getItem('primaryKey') },
+                            data: { 'primaryKey': window.localStorage.getItem('primaryKey') },
                             success: function success() {
-                                if (!context.store.hasRecordForId('course', resp.course.id)) {
-                                    context.store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and readding
-                                    var course = context.store.createRecord('course', resp.course);
+                                if (!store.hasRecordForId('course', resp.course.id)) {
+                                    store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
+                                    var course = store.createRecord('course', resp.course);
                                     course.save();
-
-                                    CustomFunctions.getUpdates('/assignments', context, 'assignment', {
+                                    CustomFunctions.getUpdates('/assignments', 'assignment', {
                                         'courses': '[' + course.get('id') + ']',
                                         'sendAll': true
                                     }, true);
-
-                                    // Add course to local storage;
-                                    var courses = localStorage.getItem('courses');
-                                    if (courses !== null) {
-                                        courses = courses + ',' + course.get('id');
-                                        localStorage.setItem('courses', courses);
-                                    } else {
-                                        localStorage.setItem('courses', course.get('id'));
-                                    }
-                                    context.set('course_code', '');
+                                    CustomFunctions.updateCourseList();
+                                    controller.set('course_code', '');
+                                    CustomFunctions.trackEvent('Course Added', 'Course', course.get('course_name'), 'Instructor', course.get('instructor_name'), 'School', course.get('school_name'));
                                 }
                             }
                         });
@@ -411,23 +393,11 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
                                 console.log('destroyed Assignment');
                             }, context);
                         });
-                        course.destroyRecord();
+                        course.destroyRecord().then(function () {
+                            CustomFunctions.updateCourseList();
+                        });
 
                         CustomFunctions.trackEvent('Course Removed', 'Course Name', course.get('course_name'));
-                        // Remove Course from local storage
-                        var courses = localStorage.getItem('courses');
-                        courses = courses.split(',');
-                        if (courses.length <= 1) {
-                            localStorage.removeItem('courses');
-                        } else {
-                            // Find and remove courseId from array
-                            var i = courses.indexOf(course.get('id'));
-                            if (i !== -1) {
-                                courses.splice(i, 1);
-                            }
-                            var serialized = courses.toString();
-                            localStorage.setItem('courses', serialized);
-                        }
                     },
                     error: function error() {
                         alert('Are you connected to the Internet?');
@@ -441,6 +411,13 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
     exports['default'] = CoursesController;
 
 });
+define('whats-due-cordova/controllers/object', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Controller;
+
+});
 define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -451,44 +428,18 @@ define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function
             add: function add() {
                 var newReminders = Ember['default'].$('#new-reminder');
                 var time = parseInt(newReminders.find('.time').val());
-                var context = this;
-                if (time > 0 && this.get('model.length') < 3) {
-                    var timeFrame = newReminders.find('.time-frame').val();
-                    var seconds = 0;
-                    if (timeFrame === 'days') {
-                        seconds = time * 86400;
-                    } else if (timeFrame = 'hours') {
-                        seconds = time * 3600;
-                    }
-                    /* Prevent Duplicates */
-                    this.store.find('reminder', { seconds_before: seconds }).then(function () {
-                        if (cordovaLoaded) {
-                            navigator.notification.alert('This reminder is already set', // message
-                            null, // callback
-                            'Duplicate Reminer', // title
-                            'OK' // buttonName
-                            );
-                        } else {
-                            alert('Duplicate');
-                        }
-                    }, function () {
-                        // on rejection
-                        var reminder = context.store.createRecord('reminder', {
-                            id: CustomFunctions.primaryKey('reminders'),
-                            seconds_before: seconds
-                        });
-                        reminder.save().then(CustomUI.putBackable());
-                        Ember['default'].$('input').val('');
-                        context.store.find('assignment', { completed: false }).then(function (assignments) {
-                            assignments.get('content').forEach(function (assignment) {
-                                CustomFunctions.setReminder(assignment, reminder, context);
-                            });
-                        });
-                    });
+                var timeFrame = newReminders.find('.time-frame').val();
+                var seconds = 0;
+                if (timeFrame === 'days') {
+                    seconds = time * 86400;
+                } else if (timeFrame === 'hours') {
+                    seconds = time * 3600;
                 }
-
+                if (time > 0 && this.get('model.length') < 3) {
+                    CustomFunctions.createReminders(seconds);
+                }
                 /* Fix Keyboard */
-                if (cordovaLoaded === true) {
+                if (typeof cordovaLoaded !== 'undefined') {
                     setTimeout(function () {
                         cordova.plugins.Keyboard.close();
                         Ember['default'].$('input').blur();
@@ -519,32 +470,6 @@ define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function
     exports['default'] = RemindersController;
 
 });
-define('whats-due-cordova/helpers/assignment-divider', ['exports', 'ember'], function (exports, Ember) {
-
-    'use strict';
-
-    /**
-     * Created by Dan on 4/29/15.
-     */
-    var dueDays = [];
-    var assignmentCount = 0;
-    exports['default'] = Ember['default'].Handlebars.makeBoundHelper(function (daysAway, totalDue) {
-        assignmentCount++;
-        var count = CustomFunctions.countInArray(dueDays, daysAway);
-        dueDays.push(daysAway);
-
-        if (totalDue === assignmentCount) {
-            assignmentCount = 0;
-            dueDays = [];
-        }
-
-        var escaped = Ember['default'].Handlebars.Utils.escapeExpression(daysAway);
-        if (count === 0) {
-            return new Ember['default'].Handlebars.SafeString('<div class="day-divider">' + escaped + '</div>');
-        }
-    });
-
-});
 define('whats-due-cordova/helpers/icon-device', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -560,27 +485,24 @@ define('whats-due-cordova/helpers/icon-device', ['exports', 'ember'], function (
     });
 
 });
-define('whats-due-cordova/helpers/linkify-descriptions', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/helpers/linkify-external', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
-    /**
-     * Created by Dan on 4/30/15.
-     */
     exports['default'] = Ember['default'].Handlebars.makeBoundHelper(function (text) {
-        if (typeof text === "undefined") {
-            return Ember['default'].String.htmlSafe("");
-        } else {
-            var options = {
-                callback: function callback(text, href) {
-                    /* Make it open in the default browser */
-                    var defaultBrowser = "onclick=\"window.open('" + href + "', '_system')\"";
-                    return href ? "<span class=\"link\"" + defaultBrowser + " >" + text + "</a>" : text;
-                }
-            };
-            return Ember['default'].String.htmlSafe(linkify(text, options));
-        }
+        console.log(linkifyCordova(text));
+        return new Ember['default'].Handlebars.SafeString(linkifyCordova(text));
     });
+
+});
+define('whats-due-cordova/initializers/add-modals-container', ['exports', 'ember-modal-dialog/initializers/add-modals-container'], function (exports, initialize) {
+
+  'use strict';
+
+  exports['default'] = {
+    name: 'add-modals-container',
+    initialize: initialize['default']
+  };
 
 });
 define('whats-due-cordova/initializers/app-version', ['exports', 'whats-due-cordova/config/environment', 'ember'], function (exports, config, Ember) {
@@ -617,6 +539,42 @@ define('whats-due-cordova/initializers/ember-cli-fastclick', ['exports', 'ember'
   };
 
   exports['default'] = EmberCliFastclickInitializer;
+
+});
+define('whats-due-cordova/initializers/ember-linkify', ['exports', 'ember', 'ember-linkify/helpers/linkify'], function (exports, Ember, linkify) {
+
+  'use strict';
+
+  var initialize = function initialize() {
+    Ember['default'].Handlebars.helper('linkify', linkify.linkify);
+  };
+
+  exports['default'] = {
+    name: 'ember-linkify',
+    initialize: initialize
+  };
+  /* container, app */
+
+  exports.initialize = initialize;
+
+});
+define('whats-due-cordova/initializers/ember-mobiletouch', ['exports', 'whats-due-cordova/config/environment', 'ember-mobiletouch/default-config', 'ember-mobiletouch/overrides/view', 'ember-mobiletouch/overrides/link-view', 'whats-due-cordova/overrides/ember-mobiletouch', 'ember-mobiletouch/overrides/action-helper'], function (exports, config, defaultConfig, ModifiedView, ModifiedLinkView, ModifiedEventDispatcher, ModifiedActionHelper) {
+
+  'use strict';
+
+  exports['default'] = {
+
+    name: 'mobiletouch',
+
+    initialize: function initialize() {
+
+      var mergedConfig = Ember.merge({}, defaultConfig['default'], config['default']);
+
+      //add config settings to overrides
+      ModifiedView['default'].reopen({ __useGesturesHash: mergedConfig.useGesturesHash });
+      ModifiedLinkView['default'].reopen({ __defaultTapOnPress: mergedConfig.defaultTapOnPress });
+    }
+  };
 
 });
 define('whats-due-cordova/initializers/export-application-global', ['exports', 'ember', 'whats-due-cordova/config/environment'], function (exports, Ember, config) {
@@ -773,6 +731,22 @@ define('whats-due-cordova/models/set-reminder', ['exports', 'ember-data'], funct
     exports['default'] = SetReminder;
 
 });
+define('whats-due-cordova/models/setting', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  /**
+   * Created by Dan on 5/11/15.
+   */
+
+  /* Settings */
+  var Setting = DS['default'].Model.extend({
+    value: DS['default'].attr('string', { defaultValue: null })
+  });
+
+  exports['default'] = Setting;
+
+});
 define('whats-due-cordova/objects/pollster', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -796,6 +770,47 @@ define('whats-due-cordova/objects/pollster', ['exports', 'ember'], function (exp
     // This gets defined when its called
 
 });
+define('whats-due-cordova/overrides/ember-mobiletouch', ['exports', 'whats-due-cordova/config/environment', 'ember-mobiletouch/overrides/event-dispatcher', 'whats-due-cordova/recognizers'], function (exports, config, EventDispatcher, CustomRecognizers) {
+
+  'use strict';
+
+  exports['default'] = EventDispatcher['default'].reopen({
+    _mobileTouchCustomizations: config['default'].mobileTouch,
+    _customRecognizers: CustomRecognizers['default']
+  });
+
+});
+define('whats-due-cordova/recognizers', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = function () {}
+
+  /**
+   * Place your recognizer customizations here
+   */
+
+  //this.Manager is a reference to the hammer Manager instance
+  //this.Recognizers is a hash of available recognizers
+  //   e.g. this.Recognizers.Pan
+
+  //you can add a new recognizer, for instance doubleTap, like below
+  //the DOM event will be all lowercase (doubletap)
+  //the Ember event will be camelCase (doubleTap)
+  //the key in this.Recognizers will be SnakeCase (DoubleTap)
+  /*
+  this.recognize({
+     name : 'doubleTap', //always camelCase this
+     gesture : 'tap', //the base Hammer recognizer to use
+     tune : { //the settings to pass to the recognizer, event will be added automatically
+      taps : 2
+    },
+     'with' : ['tap'], //an array of recognizers to recognize with.
+     without : [] //an array of recognizers that must first fail
+  });
+  */
+
+});
 define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/config/environment'], function (exports, Ember, config) {
 
     'use strict';
@@ -804,7 +819,7 @@ define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/confi
         location: config['default'].locationType
     });
 
-    exports['default'] = Router.map(function () {
+    Router.map(function () {
         this.resource('courses', function () {});
 
         this.resource('assignments', { path: '/' }, function () {});
@@ -820,6 +835,8 @@ define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/confi
         this.resource('welcome', function () {});
     });
 
+    exports['default'] = Router;
+
 });
 define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (exports, Ember) {
 
@@ -827,18 +844,9 @@ define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (e
 
     var AssignmentsRoute = Ember['default'].Route.extend({
         model: function model() {
-            //CustomFunctions.updateAssignments(this);
             CustomUI.setTitle('Assignments Due');
             return this.store.find('assignment');
-        },
-        actions: {
-            invalidateModel: function invalidateModel() {
-                console.log('invalidated');
-                CustomUI.swipeRemove();
-                this.refresh();
-            }
-        },
-        afterModel: function afterModel() {}
+        }
     });
 
     exports['default'] = AssignmentsRoute;
@@ -917,15 +925,11 @@ define('whats-due-cordova/routes/support', ['exports', 'ember', 'customUI'], fun
     exports['default'] = SupportRoute;
 
 });
-define('whats-due-cordova/serializers/application', ['exports', 'ember-data'], function (exports, DS) {
+define('whats-due-cordova/services/modal-dialog', ['exports', 'ember-modal-dialog/services/modal-dialog'], function (exports, Service) {
 
 	'use strict';
 
-	/**
-	 * Created by dan on 2014-05-13.
-	 */
-
-	exports['default'] = DS['default'].LSSerializer.extend();
+	exports['default'] = Service['default'];
 
 });
 define('whats-due-cordova/templates/application', ['exports'], function (exports) {
@@ -936,7 +940,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -995,7 +999,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1050,7 +1054,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1105,7 +1109,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1160,7 +1164,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1214,7 +1218,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -1237,7 +1241,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
         var el3 = dom.createTextNode("\n        Assignments Due\n    ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
+        var el2 = dom.createTextNode("\n\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -1319,56 +1323,13 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
         var el2 = dom.createTextNode("\n\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"id","share-modal");
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        var el3 = dom.createTextNode("\n        ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("span");
-        dom.setAttribute(el3,"class","assignment-name");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n\n\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","buttons");
-        var el3 = dom.createTextNode("\n        ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","button share");
-        var el4 = dom.createTextNode("\n            Share\n        ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n        ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","button close");
-        var el4 = dom.createTextNode("\n            Cancel\n        ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("input");
-        dom.setAttribute(el2,"type","hidden");
-        dom.setAttribute(el2,"class","message");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, block = hooks.block, content = hooks.content;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element, block = hooks.block, content = hooks.content;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -1387,18 +1348,20 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
           fragment = this.build(dom);
         }
         var element0 = dom.childAt(fragment, [0]);
-        var element1 = dom.childAt(fragment, [2, 1]);
-        var element2 = dom.childAt(element1, [1, 1, 1]);
+        var element1 = dom.childAt(element0, [5]);
+        var element2 = dom.childAt(fragment, [2, 1]);
+        var element3 = dom.childAt(element2, [1, 1, 1]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(element0,3,3);
-        var morph2 = dom.createMorphAt(element2,1,1);
-        var morph3 = dom.createMorphAt(element2,3,3);
-        var morph4 = dom.createMorphAt(element2,5,5);
-        var morph5 = dom.createMorphAt(element2,7,7);
-        var morph6 = dom.createMorphAt(element2,9,9);
-        var morph7 = dom.createMorphAt(dom.childAt(element1, [3]),1,1);
+        var morph2 = dom.createMorphAt(element3,1,1);
+        var morph3 = dom.createMorphAt(element3,3,3);
+        var morph4 = dom.createMorphAt(element3,5,5);
+        var morph5 = dom.createMorphAt(element3,7,7);
+        var morph6 = dom.createMorphAt(element3,9,9);
+        var morph7 = dom.createMorphAt(dom.childAt(element2, [3]),1,1);
         inline(env, morph0, context, "icon-device", ["menu", "pull-left", "menuToggle"], {});
         inline(env, morph1, context, "icon-device", ["menu", "pull-right hide", "menuToggle"], {});
+        element(env, element1, context, "action", ["test"], {});
         block(env, morph2, context, "link-to", ["assignments"], {"tagName": "li"}, child0, null);
         block(env, morph3, context, "link-to", ["completedAssignments"], {"tagName": "li"}, child1, null);
         block(env, morph4, context, "link-to", ["courses"], {"tagName": "li"}, child2, null);
@@ -1417,9 +1380,103 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.0",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("                    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "assignment-card", [], {"assignment": get(env, context, "assignment"), "toggleModal": "toggleModal", "removeAssignment": "removeAssignment"});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","day-divider");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, content = hooks.content, get = hooks.get, block = hooks.block;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          var morph1 = dom.createMorphAt(fragment,3,3,contextualElement);
+          dom.insertBoundary(fragment, null);
+          content(env, morph0, context, "key");
+          block(env, morph1, context, "each", [get(env, context, "this")], {"keyword": "assignment"}, child0, null);
+          return fragment;
+        }
+      };
+    }());
+    var child1 = (function() {
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1429,103 +1486,13 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","reveal");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","time");
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("span");
-          dom.setAttribute(el4,"class","from-now");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode(" ago\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("span");
-          dom.setAttribute(el4,"class","time-due");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","course");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","info");
-          var el4 = dom.createTextNode("\n\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","title");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","description");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n\n                    ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n\n                ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
         render: function render(context, env, contextualElement) {
           var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, inline = hooks.inline, element = hooks.element, content = hooks.content;
+          var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -1543,134 +1510,91 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           } else {
             fragment = this.build(dom);
           }
-          var element5 = dom.childAt(fragment, [3]);
-          var element6 = dom.childAt(element5, [1]);
-          var element7 = dom.childAt(element5, [3]);
-          var element8 = dom.childAt(element7, [1]);
-          var element9 = dom.childAt(element7, [3]);
           var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          var morph1 = dom.createMorphAt(dom.childAt(element8, [1]),1,1);
-          var morph2 = dom.createMorphAt(dom.childAt(element8, [3]),1,1);
-          var morph3 = dom.createMorphAt(dom.childAt(element8, [5]),1,1);
-          var morph4 = dom.createMorphAt(dom.childAt(element9, [1]),1,1);
-          var morph5 = dom.createMorphAt(dom.childAt(element9, [3]),1,1);
-          var morph6 = dom.createMorphAt(element7,5,5);
-          inline(env, morph0, context, "assignment-divider", [get(env, context, "assignment.daysAway"), get(env, context, "totalDue")], {});
-          element(env, element5, context, "bind-attr", [], {"class": ":slider :left-box"});
-          element(env, element6, context, "action", ["removeAssignment", get(env, context, "assignment")], {});
-          element(env, element7, context, "bind-attr", [], {"class": ":removable assignment.urgencyLabel"});
-          content(env, morph1, context, "assignment.fromNow");
-          content(env, morph2, context, "assignment.timeDue");
-          content(env, morph3, context, "assignment.course_id.course_name");
-          content(env, morph4, context, "assignment.assignment_name");
-          inline(env, morph5, context, "linkify-descriptions", [get(env, context, "assignment.description")], {});
-          inline(env, morph6, context, "input", [], {"class": "date-due", "type": "hidden", "value": get(env, context, "assignment.daysAway")});
+          inline(env, morph0, context, "assignment-card", [], {"assignment": get(env, context, "assignment"), "toggleModal": "toggleModal", "removeAssignment": "removeAssignment"});
           return fragment;
         }
       };
     }());
-    var child1 = (function() {
+    var child2 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.0",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("            ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","buttons");
+            var el2 = dom.createTextNode("\n                ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("div");
+            dom.setAttribute(el2,"class","button share");
+            var el3 = dom.createTextNode("\n                    Share\n                ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n\n                ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("div");
+            dom.setAttribute(el2,"class","button close");
+            var el3 = dom.createTextNode("\n                    Cancel\n                ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n            ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, element = hooks.element;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var element0 = dom.childAt(fragment, [1]);
+            var element1 = dom.childAt(element0, [1]);
+            var element2 = dom.childAt(element0, [3]);
+            element(env, element1, context, "action", ["share"], {});
+            element(env, element2, context, "action", ["cancel"], {});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","reveal");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","time");
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("span");
-          dom.setAttribute(el4,"class","from-now");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("span");
-          dom.setAttribute(el4,"class","time-due");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","course");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","info");
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","title");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                        ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("div");
-          dom.setAttribute(el4,"class","description");
-          var el5 = dom.createTextNode("\n                            ");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createComment("");
-          dom.appendChild(el4, el5);
-          var el5 = dom.createTextNode("\n                        ");
-          dom.appendChild(el4, el5);
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
+          var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
         render: function render(context, env, contextualElement) {
           var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, get = hooks.get, content = hooks.content, inline = hooks.inline;
+          var hooks = env.hooks, block = hooks.block;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -1688,31 +1612,17 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           } else {
             fragment = this.build(dom);
           }
-          var element0 = dom.childAt(fragment, [1]);
-          var element1 = dom.childAt(element0, [1]);
-          var element2 = dom.childAt(element0, [3]);
-          var element3 = dom.childAt(element2, [1]);
-          var element4 = dom.childAt(element2, [3]);
-          var morph0 = dom.createMorphAt(dom.childAt(element3, [1]),1,1);
-          var morph1 = dom.createMorphAt(dom.childAt(element3, [3]),1,1);
-          var morph2 = dom.createMorphAt(dom.childAt(element3, [5]),1,1);
-          var morph3 = dom.createMorphAt(dom.childAt(element4, [1]),1,1);
-          var morph4 = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
-          element(env, element0, context, "bind-attr", [], {"class": ":slider :left-box assignment.hidden"});
-          element(env, element1, context, "action", ["removeAssignment", get(env, context, "assignment")], {});
-          element(env, element2, context, "bind-attr", [], {"class": ":removable :red assignment.urgencyLabel"});
-          content(env, morph0, context, "assignment.fromNow");
-          content(env, morph1, context, "assignment.fromNow");
-          content(env, morph2, context, "assignment.course_id.course_name");
-          content(env, morph3, context, "assignment.assignment_name");
-          inline(env, morph4, context, "linkify-descriptions", [get(env, context, "assignment.description")], {});
+          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, null);
+          dom.insertBoundary(fragment, 0);
+          block(env, morph0, context, "modal-dialog", [], {"close": "toggleModal", "alignment": "center", "translucentOverlay": true}, child0, null);
           return fragment;
         }
       };
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -1767,7 +1677,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n    ");
+        var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"id","assignments-due");
@@ -1776,7 +1686,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n        ");
+        var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
         dom.setAttribute(el3,"class","arrow-up");
@@ -1785,7 +1695,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
+        var el3 = dom.createTextNode("    ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n    ");
@@ -1835,6 +1745,8 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
@@ -1857,19 +1769,22 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         } else {
           fragment = this.build(dom);
         }
-        var element10 = dom.childAt(fragment, [0]);
-        var element11 = dom.childAt(element10, [1]);
-        var element12 = dom.childAt(element10, [3]);
-        var morph0 = dom.createMorphAt(dom.childAt(element11, [1, 1]),1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element11, [5, 1]),1,1);
-        var morph2 = dom.createMorphAt(element12,1,1);
-        var morph3 = dom.createMorphAt(element12,5,5);
-        var morph4 = dom.createMorphAt(dom.childAt(element10, [5]),5,5);
+        var element3 = dom.childAt(fragment, [0]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [3]);
+        var morph0 = dom.createMorphAt(dom.childAt(element4, [1, 1]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element4, [5, 1]),1,1);
+        var morph2 = dom.createMorphAt(element5,1,1);
+        var morph3 = dom.createMorphAt(element5,5,5);
+        var morph4 = dom.createMorphAt(dom.childAt(element3, [5]),5,5);
+        var morph5 = dom.createMorphAt(fragment,2,2,contextualElement);
+        dom.insertBoundary(fragment, null);
         content(env, morph0, context, "totalDue");
         content(env, morph1, context, "totalOverdue");
         content(env, morph2, context, "firstOfDay");
-        block(env, morph3, context, "each", [get(env, context, "due")], {"keyword": "assignment"}, child0, null);
+        block(env, morph3, context, "each", [get(env, context, "groupedCards")], {}, child0, null);
         block(env, morph4, context, "each", [get(env, context, "overdue")], {"keyword": "assignment"}, child1, null);
+        block(env, morph5, context, "if", [get(env, context, "isShowingModal")], {}, child2, null);
         return fragment;
       }
     };
@@ -1884,7 +1799,7 @@ define('whats-due-cordova/templates/completed-assignments', ['exports'], functio
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2000,7 +1915,7 @@ define('whats-due-cordova/templates/completed-assignments', ['exports'], functio
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2054,6 +1969,165 @@ define('whats-due-cordova/templates/completed-assignments', ['exports'], functio
   }()));
 
 });
+define('whats-due-cordova/templates/components/assignment-card', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.12.0",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","reveal");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","time");
+        var el4 = dom.createTextNode("\n                        ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("span");
+        dom.setAttribute(el4,"class","from-now");
+        var el5 = dom.createTextNode("\n                            ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode(" ago\n                        ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n                        ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("span");
+        dom.setAttribute(el4,"class","time-due");
+        var el5 = dom.createTextNode("\n                            ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n                        ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","course");
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n        ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","info");
+        var el4 = dom.createTextNode("\n\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","title");
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","description");
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n        ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, element = hooks.element, get = hooks.get, content = hooks.content, inline = hooks.inline;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [1]);
+        var element2 = dom.childAt(element0, [3]);
+        var element3 = dom.childAt(element2, [1]);
+        var element4 = dom.childAt(element2, [3]);
+        var element5 = dom.childAt(element4, [1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element3, [1]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element3, [3]),1,1);
+        var morph2 = dom.createMorphAt(dom.childAt(element3, [5]),1,1);
+        var morph3 = dom.createMorphAt(element5,1,1);
+        var morph4 = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
+        var morph5 = dom.createMorphAt(element2,5,5);
+        element(env, element0, context, "bind-attr", [], {"class": ":slider :left-box"});
+        element(env, element1, context, "action", ["removeAssignment", get(env, context, "assignment")], {});
+        element(env, element2, context, "bind-attr", [], {"class": ":removable assignment.urgencyLabel"});
+        element(env, element3, context, "action", ["toggleModal", get(env, context, "assignment")], {});
+        content(env, morph0, context, "assignment.fromNow");
+        content(env, morph1, context, "assignment.timeDue");
+        content(env, morph2, context, "assignment.course_id.course_name");
+        element(env, element5, context, "action", ["toggleModal", get(env, context, "assignment")], {});
+        content(env, morph3, context, "assignment.assignment_name");
+        inline(env, morph4, context, "linkify-external", [get(env, context, "assignment.description")], {});
+        inline(env, morph5, context, "input", [], {"class": "date-due", "type": "hidden", "value": get(env, context, "assignment.daysAway")});
+        return fragment;
+      }
+    };
+  }()));
+
+});
+define('whats-due-cordova/templates/components/modal-dialog', ['exports', 'ember-modal-dialog/templates/components/modal-dialog'], function (exports, template) {
+
+	'use strict';
+
+	exports['default'] = template['default'];
+
+});
 define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
 
   'use strict';
@@ -2062,7 +2136,7 @@ define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2168,7 +2242,7 @@ define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2212,7 +2286,7 @@ define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
+        var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n    ");
@@ -2273,7 +2347,7 @@ define('whats-due-cordova/templates/messages', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2362,7 +2436,7 @@ define('whats-due-cordova/templates/messages', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2413,7 +2487,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2462,7 +2536,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2552,7 +2626,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2645,7 +2719,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.12.0",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2686,7 +2760,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2784,7 +2858,7 @@ define('whats-due-cordova/templates/support', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.12.0",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2823,418 +2897,64 @@ define('whats-due-cordova/templates/support', ['exports'], function (exports) {
   }()));
 
 });
-define('whats-due-cordova/tests/adapter-temp/assignment.jshint', function () {
+define('whats-due-cordova/utils/group-by', ['exports', 'ember'], function (exports, Ember) {
 
-  'use strict';
+    'use strict';
 
-  module('JSHint - adapter-temp');
-  test('adapter-temp/assignment.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/assignment.js should pass jshint.'); 
-  });
+    /**
+     * Created by Dan on 5/28/15.
+     */
 
-});
-define('whats-due-cordova/tests/adapter-temp/course.jshint', function () {
+    var get = Ember['default'].get,
+        arrayComputed = Ember['default'].arrayComputed;
 
-  'use strict';
+    exports['default'] = function (dependentKey, property) {
 
-  module('JSHint - adapter-temp');
-  test('adapter-temp/course.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/course.js should pass jshint.'); 
-  });
+        var options = {
 
-});
-define('whats-due-cordova/tests/adapter-temp/reminder.jshint', function () {
+            initialValue: [],
 
-  'use strict';
+            addedItem: function addedItem(array, item) {
 
-  module('JSHint - adapter-temp');
-  test('adapter-temp/reminder.js should pass jshint', function() { 
-    ok(true, 'adapter-temp/reminder.js should pass jshint.'); 
-  });
+                var key = get(item, property),
+                    group = array.findBy('key', key);
 
-});
-define('whats-due-cordova/tests/adapters/application.jshint', function () {
+                if (!group) {
+                    group = Ember['default'].ArrayProxy.create({
+                        content: [],
+                        key: key
+                    });
 
-  'use strict';
+                    array.pushObject(group);
+                }
 
-  module('JSHint - adapters');
-  test('adapters/application.js should pass jshint', function() { 
-    ok(true, 'adapters/application.js should pass jshint.'); 
-  });
+                group.pushObject(item);
 
-});
-define('whats-due-cordova/tests/app.jshint', function () {
+                return array;
+            },
 
-  'use strict';
+            removedItem: function removedItem(array, item) {
 
-  module('JSHint - .');
-  test('app.js should pass jshint', function() { 
-    ok(true, 'app.js should pass jshint.'); 
-  });
+                var key = get(item, property),
+                    group = array.findBy('key', key);
 
-});
-define('whats-due-cordova/tests/components/course-profile.jshint', function () {
+                if (!group) {
+                    return;
+                }
 
-  'use strict';
+                group.removeObject(item);
 
-  module('JSHint - components');
-  test('components/course-profile.js should pass jshint', function() { 
-    ok(true, 'components/course-profile.js should pass jshint.'); 
-  });
+                if (get(group, 'length') === 0) {
+                    array.removeObject(group);
+                }
 
-});
-define('whats-due-cordova/tests/controllers/application.jshint', function () {
+                return array;
+            }
 
-  'use strict';
+        };
 
-  module('JSHint - controllers');
-  test('controllers/application.js should pass jshint', function() { 
-    ok(true, 'controllers/application.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/controllers/assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers');
-  test('controllers/assignments.js should pass jshint', function() { 
-    ok(true, 'controllers/assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/controllers/completed-assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers');
-  test('controllers/completed-assignments.js should pass jshint', function() { 
-    ok(true, 'controllers/completed-assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/controllers/courses.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers');
-  test('controllers/courses.js should pass jshint', function() { 
-    ok(true, 'controllers/courses.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/controllers/reminders.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers');
-  test('controllers/reminders.js should pass jshint', function() { 
-    ok(true, 'controllers/reminders.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/helpers/assignment-divider.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - helpers');
-  test('helpers/assignment-divider.js should pass jshint', function() { 
-    ok(true, 'helpers/assignment-divider.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/helpers/icon-device.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - helpers');
-  test('helpers/icon-device.js should pass jshint', function() { 
-    ok(true, 'helpers/icon-device.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/helpers/linkify-descriptions.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - helpers');
-  test('helpers/linkify-descriptions.js should pass jshint', function() { 
-    ok(true, 'helpers/linkify-descriptions.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/helpers/resolver', ['exports', 'ember/resolver', 'whats-due-cordova/config/environment'], function (exports, Resolver, config) {
-
-  'use strict';
-
-  var resolver = Resolver['default'].create();
-
-  resolver.namespace = {
-    modulePrefix: config['default'].modulePrefix,
-    podModulePrefix: config['default'].podModulePrefix
-  };
-
-  exports['default'] = resolver;
-
-});
-define('whats-due-cordova/tests/helpers/resolver.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - helpers');
-  test('helpers/resolver.js should pass jshint', function() { 
-    ok(true, 'helpers/resolver.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/helpers/start-app', ['exports', 'ember', 'whats-due-cordova/app', 'whats-due-cordova/router', 'whats-due-cordova/config/environment'], function (exports, Ember, Application, Router, config) {
-
-  'use strict';
-
-
-
-  exports['default'] = startApp;
-  function startApp(attrs) {
-    var application;
-
-    var attributes = Ember['default'].merge({}, config['default'].APP);
-    attributes = Ember['default'].merge(attributes, attrs); // use defaults, but you can override;
-
-    Ember['default'].run(function () {
-      application = Application['default'].create(attributes);
-      application.setupForTesting();
-      application.injectTestHelpers();
-    });
-
-    return application;
-  }
-
-});
-define('whats-due-cordova/tests/helpers/start-app.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - helpers');
-  test('helpers/start-app.js should pass jshint', function() { 
-    ok(true, 'helpers/start-app.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/models/assignment.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - models');
-  test('models/assignment.js should pass jshint', function() { 
-    ok(true, 'models/assignment.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/models/course.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - models');
-  test('models/course.js should pass jshint', function() { 
-    ok(true, 'models/course.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/models/message.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - models');
-  test('models/message.js should pass jshint', function() { 
-    ok(true, 'models/message.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/models/reminder.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - models');
-  test('models/reminder.js should pass jshint', function() { 
-    ok(true, 'models/reminder.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/models/set-reminder.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - models');
-  test('models/set-reminder.js should pass jshint', function() { 
-    ok(true, 'models/set-reminder.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/objects/pollster.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - objects');
-  test('objects/pollster.js should pass jshint', function() { 
-    ok(true, 'objects/pollster.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/router.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - .');
-  test('router.js should pass jshint', function() { 
-    ok(true, 'router.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/assignments.js should pass jshint', function() { 
-    ok(true, 'routes/assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/completed-assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/completed-assignments.js should pass jshint', function() { 
-    ok(true, 'routes/completed-assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/courses.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/courses.js should pass jshint', function() { 
-    ok(true, 'routes/courses.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/messages.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/messages.js should pass jshint', function() { 
-    ok(true, 'routes/messages.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/reminders.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/reminders.js should pass jshint', function() { 
-    ok(true, 'routes/reminders.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/routes/support.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/support.js should pass jshint', function() { 
-    ok(true, 'routes/support.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/serializers/application.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - serializers');
-  test('serializers/application.js should pass jshint', function() { 
-    ok(true, 'serializers/application.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/test-helper', ['whats-due-cordova/tests/helpers/resolver', 'ember-qunit'], function (resolver, ember_qunit) {
-
-	'use strict';
-
-	ember_qunit.setResolver(resolver['default']);
-
-});
-define('whats-due-cordova/tests/test-helper.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - .');
-  test('test-helper.js should pass jshint', function() { 
-    ok(true, 'test-helper.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/application.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/application.js should pass jshint', function() { 
-    ok(true, 'views/application.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/assignments.js should pass jshint', function() { 
-    ok(true, 'views/assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/completed-assignments.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/completed-assignments.js should pass jshint', function() { 
-    ok(true, 'views/completed-assignments.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/courses.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/courses.js should pass jshint', function() { 
-    ok(true, 'views/courses.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/reminders.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/reminders.js should pass jshint', function() { 
-    ok(true, 'views/reminders.js should pass jshint.'); 
-  });
-
-});
-define('whats-due-cordova/tests/views/support.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - views');
-  test('views/support.js should pass jshint', function() { 
-    ok(true, 'views/support.js should pass jshint.'); 
-  });
+        return arrayComputed(dependentKey, options);
+    }
 
 });
 define('whats-due-cordova/views/application', ['exports', 'ember'], function (exports, Ember) {
@@ -3255,66 +2975,76 @@ define('whats-due-cordova/views/assignments', ['exports', 'ember'], function (ex
     'use strict';
 
     var AssignmentsView = Ember['default'].View.extend({
-        contentDidChange: (function () {
-            CustomUI.swipeRemove();
-        }).observes('controller.filteredData'),
         afterRender: function afterRender() {
             CustomUI.swipeRemove();
         },
-        hammerOptions: {},
-        activeElement: null,
-        gestures: {
-            drag: function drag(event) {
-                // do something like send an event down the controller/route chain
-                var x = event.gesture.deltaX;
-                var y = event.gesture.deltaY;
-                if (x > y * 2) {
-                    var percent = 1 - Math.abs(x / pageWidth);
-                    this.activeElement.css({
-                        '-webkit-transform': 'translate3d(' + x + 'px,0,0) scale3d(1,1,1)',
-                        'opacity': percent
-                    });
-                }
-                return false; // return `false` to stop bubbling
-            },
-            release: function release(event) {
-                // do something like send an event down the controller/route chain
-                console.log(this.activeElement);
-                var deltaX = event.gesture.deltaX;
-                var percent = Math.abs(deltaX / pageWidth);
-                var swiped = percent > 0.3;
-                var direction = event.gesture.direction;
-                console.log(percent);
-                ///* Prevent wonky scrolling */
-                if (!swiped) {
-                    console.log('Reset');
-                    CustomUI.fastAnimate(this.activeElement);
-                    CustomUI.customAnimate(this.activeElement, percent * 750);
-                    this.activeElement.css({
-                        '-webkit-transform': 'translate3d(0,0,0) scale3d(1,1,1)',
-                        'opacity': 1
-                    });
-                } else {
-                    CustomUI.complete(this.activeElement, (1 - percent) * 250);
-                    var position;
-                    if (direction === 'left') {
-                        position = '-100%';
-                    } else if (direction === 'right') {
-                        position = '100%';
-                    }
-                    this.activeElement.css({
-                        '-webkit-transform': 'translate3d(' + position + ',0,0) scale3d(1,1,1)',
-                        'opacity': 0
-                    });
-                }
-                return false; // return `false` to stop bubbling
-            },
-            touch: function touch(event) {
-                this.activeElement = CustomUI.closest(event, '.removable');
+        activeElement: false,
+        allowSwiping: false,
+        startPos: false,
+        panMove: function panMove(event) {
+            // do something like send an event down the controller/route chain
+            var gesture = event.originalEvent.gesture;
+            //console.log(gesture);
+            var x = gesture.deltaX;
+
+            if (this.allowSwiping) {
+                //Block Scrolling
+
+                //Swipe
+                var percent = 1 - Math.abs(x / pageWidth);
+                this.activeElement.css({
+                    "-webkit-transform": "translate3d(" + x + "px,0,0) scale3d(1,1,1)",
+                    "opacity": percent
+                });
             }
+            event.preventDefault();
+            return false; // return `false` to stop bubbling
+        },
+        panStart: function panStart(event) {
+
+            var gesture = event.originalEvent.gesture;
+            if (Math.abs(gesture.deltaY) < 15) {
+                this.allowSwiping = true;
+                this.activeElement = CustomUI.closest(event, ".removable");
+                Ember['default'].$(document).bind("touchmove", function (e) {
+                    e.preventDefault();
+                });
+            } else {
+                this.activeElement = false;
+                this.allowSwiping = false;
+            }
+        },
+        panEnd: function panEnd(event) {
+            Ember['default'].$(document).unbind("touchmove");
+            // do something like send an event down the controller/route chain
+            //console.log(this.sendAction('removeAssignment'));
+            //console.log(this.get('controller').send('removeAssignment'));
+            var gesture = event.originalEvent.gesture;
+            var percent = Math.abs(gesture.deltaX) / pageWidth;
+            var swiped = percent > 0.3;
+            var direction = gesture.direction;
+            if (swiped) {
+                CustomUI.complete(this.activeElement, (1 - percent) * 200);
+                var position;
+                if (direction === "left") {
+                    position = "-100%";
+                } else if (direction === "right") {
+                    position = "100%";
+                }
+                this.activeElement.css({
+                    "-webkit-transform": "translate3d(" + position + ",0,0) scale3d(1,1,1)",
+                    "opacity": 0
+                });
+            } else {
+                //            CustomUI.customAnimate(Ember.$.(this.activeElement), (percent*100) );
+                this.activeElement.css({
+                    "-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)",
+                    "opacity": 1
+                });
+            }
+            return false; // return `false` to stop bubbling
         }
     });
-
     exports['default'] = AssignmentsView;
 
 });
@@ -3365,7 +3095,6 @@ define('whats-due-cordova/views/reminders', ['exports', 'ember'], function (expo
                 CustomUI.reminderTips();
             }, 50);
         }
-
     });
 
     exports['default'] = RemindersView;
@@ -3414,8 +3143,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.715c6666"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.54ddde9f"});
 }
 
 /* jshint ignore:end */
-//# sourceMappingURL=whats-due-cordova.map

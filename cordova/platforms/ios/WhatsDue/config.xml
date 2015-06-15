@@ -30,10 +30,6 @@
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
-    <feature name="LocalNotification">
-        <param name="ios-package" onload="true" value="APPLocalNotification" />
-        <param name="onload" value="true" />
-    </feature>
     <feature name="InAppBrowser">
         <param name="ios-package" value="CDVInAppBrowser" />
     </feature>
@@ -43,6 +39,10 @@
     </feature>
     <feature name="Notification">
         <param name="ios-package" value="CDVNotification" />
+    </feature>
+    <feature name="LocalNotification">
+        <param name="ios-package" onload="true" value="APPLocalNotification" />
+        <param name="onload" value="true" />
     </feature>
     <icon height="60" src="www/res/ios/icon-60.png" width="60" />
     <icon height="120" src="www/res/ios/icon-60@2x.png" width="120" />
@@ -73,6 +73,8 @@
     <preference name="DisallowOverscroll" value="false" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
+    <preference name="SplashScreenDelay" value="3500" />
     <preference name="webviewbounce" value="true" />
+    <preference name="SplashMaintainAspectRatio" value="true" />
     <icon src="www/res/icon.png" />
 </widget>

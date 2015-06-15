@@ -1,5 +1,5 @@
-source/bower_components/*
-source/node_modules/*
-cordova/platforms/android/ant-build/*
+/source/bower_components/*
+/source/node_modules/*
+/cordova/platforms/android/ant-build/*
 *tmp/*
 *.idea
