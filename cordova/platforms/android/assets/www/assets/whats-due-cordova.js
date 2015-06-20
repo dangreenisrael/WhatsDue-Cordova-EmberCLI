@@ -15,6 +15,20 @@ define('whats-due-cordova/adapters/application', ['exports', 'ember-localforage-
   });
 
 });
+define('whats-due-cordova/adapters/consumer', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  /**
+   * Created by dan on 2014-05-13.
+   */
+
+  exports['default'] = DS['default'].RESTAdapter.extend({
+    host: 'http://127.0.0.1/app_dev.php',
+    namespace: 'student'
+  });
+
+});
 define('whats-due-cordova/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initializers', 'whats-due-cordova/config/environment'], function (exports, Ember, Resolver, loadInitializers, config) {
 
     'use strict';
@@ -97,6 +111,21 @@ define('whats-due-cordova/components/modal-dialog', ['exports', 'ember-modal-dia
 	exports['default'] = Component['default'];
 
 });
+define('whats-due-cordova/components/switchery-checkbox', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    /**
+     * Created by Dan on 6/5/15.
+     */
+    exports['default'] = Ember['default'].Component.extend({
+        didInsertElement: function didInsertElement() {
+            var elem = document.querySelector('#' + this.get('name'));
+            var checkBox = new Switchery(elem);
+        }
+    });
+
+});
 define('whats-due-cordova/controllers/application', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -124,85 +153,17 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
 
             var context = this;
 
-            /*
-             * Deal with duplicate reminders
-             */
+            //setInterval(function () {
+            //    CustomFunctions.updateAssignments(context);
+            //    CustomFunctions.updateCourses(context);
+            //}, 5000);
 
-            //this.store.find('reminder', {seconds_before: 86400}).then(function (records) {
-            //    /* Find Duplicates */
-            //    var totalRecords = records.get('length');
-            //    var counter = 0;
-            //    /* Destroy duplicate reminders */
-            //    records.forEach(function (reminder) {
-            //        counter = counter + 1;
-            //        if (counter < totalRecords) {
-            //            console.log(counter);
-            //            context.store.find('setReminder', {'reminder': reminder.get('id')}).then(function (setReminders) {
-            //                CustomFunctions.removeSetReminders(setReminders);
-            //                reminder.destroyRecord();
-            //            });
-            //        }
-            //    });
+            ///*
+            // *  This updates record on push notifications
+            // */
+            //window.addEventListener('updatedAssignment', function () {
+            //    CustomFunctions.updateAssignments(context);
             //});
-
-            /*
-             *  This deals with the iOS 64 Reminder limit & Default Reminders
-             */
-            //var cordovaInitiated = setInterval(function () {
-            //        if (cordovaLoaded === true) {
-            //
-            //            cordova.plugins.notification.local.cancelAll(function () {
-            //                context.store.find('reminder');
-            //                context.store.find('assignment').then(function () {
-            //                    CustomUI.swipeRemove();
-            //                });
-            //                context.store.find('course');
-            //                context.store.find('setReminder').then(
-            //                    function (reminders) {
-            //                        reminders.filterBy('future').sortBy('timestamp').forEach(function (item, index) {
-            //                            if (index >= 60) {
-            //                                return null;
-            //                            }
-            //                            var title = item.get('assignment').get('course_id').get('course_name');
-            //                            var message = item.get('assignment').get('assignment_name') + " is due in " + item.get('reminder').get('time_before');
-            //                            var reminderId = item.get('id');
-            //                            var date = item.get('alarm_date_object');
-            //                            // All notifications have been canceled
-            //                            cordova.plugins.notification.local.schedule({
-            //                                id: reminderId,
-            //                                at: date,
-            //                                text: message,
-            //                                title: title
-            //                            });
-            //                        });
-            //                    });
-            //            });
-            //            clearInterval(cordovaInitiated);
-            //        }
-            //    },
-            //    5);
-
-            /*
-             * This is for the back button;
-             */
-
-            //goHome = function () {
-            //    context.transitionToRoute('assignments');
-            //};
-
-            setInterval(function () {
-                CustomFunctions.updateAssignments(context);
-                CustomFunctions.updateCourses(context);
-            }, 5000);
-
-            /*
-             *  This updates record on push notifications
-             */
-            window.addEventListener('updatedAssignment', function () {
-                CustomFunctions.updateAssignments(context);
-            });
-
-            //CustomFunctions.getSetting('course_list', courseList);
         }
     });
     /**
@@ -242,9 +203,6 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember', 'whats-
         actions: {
             removeAssignment: function removeAssignment(assignment) {
                 CustomFunctions.trackEvent('Assignment Completed');
-                this.store.find('setReminder', { 'assignment': assignment.get('id') }).then(function (setReminders) {
-                    CustomFunctions.removeSetReminders(setReminders);
-                });
                 assignment.set('completed', true);
                 assignment.set('date_completed', Date.now());
                 assignment.save();
@@ -284,15 +242,10 @@ define('whats-due-cordova/controllers/completed-assignments', ['exports', 'ember
         actions: {
             unRemoveAssignment: function unRemoveAssignment(assignment) {
                 var context = this;
-                this.store.find('reminder').then(function (reminders) {
-                    reminders.get('content').forEach(function (reminder) {
-                        CustomFunctions.setReminder(assignment, reminder, context);
-                    });
-                    assignment.set('completed', false);
-                    assignment.set('date_completed', null);
-                    assignment.set('times_changed', assignment.get('times_changed') + 1);
-                    assignment.save();
-                });
+                assignment.set('completed', false);
+                assignment.set('date_completed', null);
+                assignment.set('times_changed', assignment.get('times_changed') + 1);
+                assignment.save();
             }
         }
     });
@@ -320,33 +273,24 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
                 addCourse.find('button').addClass('disabled');
 
                 Ember['default'].$.ajax({
-                    url: CustomFunctions.site() + '/courses/' + course_code,
-                    type: 'GET',
+                    url: CustomFunctions.site() + '/consumers/' + CustomFunctions.consumerId + '/courses/' + course_code + '/enroll',
+                    type: 'PUT',
                     success: function success(resp) {
-                        console.log(resp.course);
+                        if (!store.hasRecordForId('course', resp.course.id)) {
+                            store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
+                            var course = store.createRecord('course', resp.course);
+                            course.save();
+                            CustomFunctions.getUpdates('/assignments', 'assignment', {
+                                'courses': '[' + course.get('id') + ']',
+                                'sendAll': true
+                            }, true);
 
-                        /*
-                         * Enroll without break old version - rewrite in August 2015
-                         */
-                        Ember['default'].$.ajax({
-                            url: CustomFunctions.site() + '/courses/' + resp.course.id + '/enrolls',
-                            type: 'POST',
-                            data: { 'primaryKey': window.localStorage.getItem('primaryKey') },
-                            success: function success() {
-                                if (!store.hasRecordForId('course', resp.course.id)) {
-                                    store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
-                                    var course = store.createRecord('course', resp.course);
-                                    course.save();
-                                    CustomFunctions.getUpdates('/assignments', 'assignment', {
-                                        'courses': '[' + course.get('id') + ']',
-                                        'sendAll': true
-                                    }, true);
-                                    CustomFunctions.updateCourseList();
-                                    controller.set('course_code', '');
-                                    CustomFunctions.trackEvent('Course Added', 'Course', course.get('course_name'), 'Instructor', course.get('instructor_name'), 'School', course.get('school_name'));
-                                }
-                            }
-                        });
+                            CustomFunctions.updateCourseList();
+                            controller.set('course_code', '');
+                            CustomFunctions.trackEvent('Course Added', 'Course', course.get('course_name'), 'Instructor', course.get('instructor_name'), 'School', course.get('school_name'));
+                        } else {
+                            alert('You tried to add a duplicate course');
+                        }
                     },
                     error: function error(resp) {
                         console.log(resp);
@@ -362,16 +306,12 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
             removeCourse: function removeCourse(course) {
                 var context = this;
                 Ember['default'].$.ajax({
-                    url: CustomFunctions.site() + '/courses/' + course.get('id') + '/unenrolls',
-                    type: 'POST',
+                    url: CustomFunctions.site() + '/consumers/' + CustomFunctions.consumerId + '/courses/' + course.get('id') + '/unenroll',
+                    type: 'PUT',
                     data: { 'primaryKey': localStorage.getItem('primaryKey') },
                     success: function success() {
                         context.store.find('assignment', { 'course_id': course.get('id') }).then(function (assignments) {
                             assignments.content.forEach(function (assignment) {
-                                this.store.find('setReminder', { 'assignment': assignment.get('id') }).then(function (setReminders) {
-                                    CustomFunctions.removeSetReminders(setReminders);
-                                    console.log('destroyed Reminder');
-                                });
                                 assignment.destroyRecord();
                                 console.log('destroyed Assignment');
                             }, context);
@@ -379,10 +319,10 @@ define('whats-due-cordova/controllers/courses', ['exports', 'ember'], function (
                         course.destroyRecord().then(function () {
                             CustomFunctions.updateCourseList();
                         });
-
                         CustomFunctions.trackEvent('Course Removed', 'Course Name', course.get('course_name'));
                     },
-                    error: function error() {
+                    error: function error(e) {
+                        console.log(e);
                         alert('Are you connected to the Internet?');
                         CustomFunctions.trackEvent('Course Remove Failed');
                     }
@@ -405,52 +345,47 @@ define('whats-due-cordova/controllers/reminders', ['exports', 'ember'], function
 
     'use strict';
 
-    var RemindersController = Ember['default'].Controller.extend({
-        init: function init() {},
+    exports['default'] = Ember['default'].Controller.extend({
+        init: (function () {}).on('init'),
+        hours: (function () {
+            return this.get('model').get('notification_time_local').substring(0, 2);
+        }).property(),
+        minutes: (function () {
+            return this.get('model').get('notification_time_local').substring(2, 4);
+        }).property(),
         actions: {
-            add: function add() {
-                var newReminders = Ember['default'].$('#new-reminder');
-                var time = parseInt(newReminders.find('.time').val());
-                var timeFrame = newReminders.find('.time-frame').val();
-                var seconds = 0;
-                if (timeFrame === 'days') {
-                    seconds = time * 86400;
-                } else if (timeFrame === 'hours') {
-                    seconds = time * 3600;
-                }
-                if (time > 0 && this.get('model.length') < 3) {
-                    CustomFunctions.createReminders(seconds);
-                }
-                /* Fix Keyboard */
-                if (typeof cordovaLoaded !== 'undefined') {
-                    setTimeout(function () {
-                        cordova.plugins.Keyboard.close();
-                        Ember['default'].$('input').blur();
-                    }, 1);
-                }
-            },
-            remove: function remove(reminder) {
-                console.log(reminder);
-                this.store.find('setReminder', { 'reminder': reminder.get('id') }).then(function (setReminders) {
-                    CustomFunctions.removeSetReminders(setReminders);
-                    reminder.destroyRecord();
-                }, function () {
-                    reminder.destroyRecord();
-                });
+            save: function save() {
+                this.save();
             }
         },
-        totalRecords: (function () {
-            return this.get('model.length');
-        }).property('model.@each'),
-        maxxedOut: (function () {
-            return this.get('model.length') >= 3;
-        }).property('model.@each'),
-        empty: (function () {
-            return this.get('model.length') === 0;
-        }).property('model.@each')
+        save: function save() {
+            var hours = this.get('hours');
+            var minutes = this.get('minutes');
+            var local = moment().hours(hours).minutes(minutes);
+            this.get('model').set('notification_time_local', local.format('HHmm'));
+            this.get('model').set('notification_time_utc', local.utcOffset('UTC').format('HHmm'));
+            this.get('model').save();
+            console.log('save');
+        },
+        watchElements: (function () {
+            this.save();
+        }).observes('model.notifications', 'model.notification_updates', 'hours', 'minutes')
     });
 
-    exports['default'] = RemindersController;
+});
+define('whats-due-cordova/helpers/description-text', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Handlebars.makeBoundHelper(function (text) {
+        if (typeof text === "undefined") {
+            return Ember['default'].String.htmlSafe("");
+        } else {
+            text = Ember['default'].Handlebars.Utils.escapeExpression(text);
+            text = text.replace(/(\r\n|\n|\r)/gm, "<br>");
+            return Ember['default'].String.htmlSafe(linkifyCordova(text));
+        }
+    });
 
 });
 define('whats-due-cordova/helpers/icon-device', ['exports', 'ember'], function (exports, Ember) {
@@ -599,7 +534,6 @@ define('whats-due-cordova/models/assignment', ['exports', 'ember-data'], functio
         enrolled: DS['default'].attr('boolean', { defaultValue: true }),
         completed: DS['default'].attr('boolean', { defaultValue: false }),
         course_id: DS['default'].belongsTo('course', { async: true }),
-        set_reminders: DS['default'].hasMany('setReminders'),
         overdue: (function () {
             return moment().isAfter(this.get('due_date'));
         }).property('due_date'),
@@ -630,6 +564,23 @@ define('whats-due-cordova/models/assignment', ['exports', 'ember-data'], functio
     });
 
     exports['default'] = Assignment;
+
+});
+define('whats-due-cordova/models/consumer', ['exports', 'ember-data'], function (exports, DS) {
+
+    'use strict';
+
+    /**
+     * Created by Dan on 5/11/15.
+     */
+
+    /* Settings */
+    exports['default'] = DS['default'].Model.extend({
+        'notifications': DS['default'].attr('boolean'),
+        'notification_updates': DS['default'].attr('boolean'),
+        'notification_time_utc': DS['default'].attr('string'),
+        'notification_time_local': DS['default'].attr('string')
+    });
 
 });
 define('whats-due-cordova/models/course', ['exports', 'ember-data'], function (exports, DS) {
@@ -674,44 +625,6 @@ define('whats-due-cordova/models/message', ['exports', 'ember-data'], function (
     });
 
     exports['default'] = Message;
-
-});
-define('whats-due-cordova/models/reminder', ['exports', 'ember-data'], function (exports, DS) {
-
-    'use strict';
-
-    var Reminder = DS['default'].Model.extend({
-        seconds_before: DS['default'].attr('number'),
-        set_reminders: DS['default'].hasMany('setReminders'),
-        time_before: (function () {
-            var timeAgo = moment().format('X') - this.get('seconds_before');
-            return moment(timeAgo, 'X').fromNow();
-        }).property('seconds_before')
-    });
-
-    exports['default'] = Reminder;
-
-});
-define('whats-due-cordova/models/set-reminder', ['exports', 'ember-data'], function (exports, DS) {
-
-    'use strict';
-
-    var SetReminder = DS['default'].Model.extend({
-        alarm_date: DS['default'].attr('string'),
-        assignment: DS['default'].belongsTo('assignment'),
-        reminder: DS['default'].belongsTo('reminder'),
-        alarm_date_object: (function () {
-            return new Date(this.get('alarm_date'));
-        }).property('alarm_date'),
-        future: (function () {
-            return moment(this.get('alarm_date_object')).isAfter();
-        }).property('alarm_date'),
-        timestamp: (function () {
-            return moment(this.get('alarm_date_object')).format('X');
-        }).property('alarm_date')
-    });
-
-    exports['default'] = SetReminder;
 
 });
 define('whats-due-cordova/models/setting', ['exports', 'ember-data'], function (exports, DS) {
@@ -814,8 +727,6 @@ define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/confi
         this.resource('messages', function () {});
 
         this.resource('reminders', function () {});
-
-        this.resource('welcome', function () {});
     });
 
     exports['default'] = Router;
@@ -884,24 +795,20 @@ define('whats-due-cordova/routes/reminders', ['exports', 'ember'], function (exp
 
     'use strict';
 
-    var RemindersRoute = Ember['default'].Route.extend({
+    exports['default'] = Ember['default'].Route.extend({
         model: function model() {
-            CustomUI.setTitle('Reminders');
-            this.store.find('setReminder');
-            return this.store.find('reminder');
+            return this.store.find('consumer', CustomFunctions.consumerId);
         }
     });
 
-    exports['default'] = RemindersRoute;
-
 });
-define('whats-due-cordova/routes/support', ['exports', 'ember', 'customUI'], function (exports, Ember, CustomUI) {
+define('whats-due-cordova/routes/support', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
     var SupportRoute = Ember['default'].Route.extend({
         model: function model() {
-            CustomUI['default'].setTitle('Support');
+            CustomUI.setTitle('Support');
         }
     });
 
@@ -1450,8 +1357,8 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
           var morph1 = dom.createMorphAt(fragment,3,3,contextualElement);
           dom.insertBoundary(fragment, null);
-          content(env, morph0, context, "key");
-          block(env, morph1, context, "each", [get(env, context, "this")], {"keyword": "assignment"}, child0, null);
+          content(env, morph0, context, "day.key");
+          block(env, morph1, context, "each", [get(env, context, "day")], {"keyword": "assignment"}, child0, null);
           return fragment;
         }
       };
@@ -1765,7 +1672,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         content(env, morph0, context, "totalDue");
         content(env, morph1, context, "totalOverdue");
         content(env, morph2, context, "firstOfDay");
-        block(env, morph3, context, "each", [get(env, context, "groupedCards")], {}, child0, null);
+        block(env, morph3, context, "each", [get(env, context, "groupedCards")], {"keyword": "day"}, child0, null);
         block(env, morph4, context, "each", [get(env, context, "overdue")], {"keyword": "assignment"}, child1, null);
         block(env, morph5, context, "if", [get(env, context, "isShowingModal")], {}, child2, null);
         return fragment;
@@ -2096,7 +2003,7 @@ define('whats-due-cordova/templates/components/assignment-card', ['exports'], fu
         content(env, morph2, context, "assignment.course_id.course_name");
         element(env, element5, context, "action", ["toggleModal", get(env, context, "assignment")], {});
         content(env, morph3, context, "assignment.assignment_name");
-        inline(env, morph4, context, "linkify-external", [get(env, context, "assignment.description")], {});
+        inline(env, morph4, context, "description-text", [get(env, context, "assignment.description")], {});
         inline(env, morph5, context, "input", [], {"class": "date-due", "type": "hidden", "value": get(env, context, "assignment.daysAway")});
         return fragment;
       }
@@ -2109,6 +2016,53 @@ define('whats-due-cordova/templates/components/modal-dialog', ['exports', 'ember
 	'use strict';
 
 	exports['default'] = template['default'];
+
+});
+define('whats-due-cordova/templates/components/switchery-checkbox', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.12.0",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, null);
+        dom.insertBoundary(fragment, 0);
+        inline(env, morph0, context, "input", [], {"type": "checkbox", "id": get(env, context, "name"), "checked": get(env, context, "checked"), "action": "checked"});
+        return fragment;
+      }
+    };
+  }()));
 
 });
 define('whats-due-cordova/templates/courses', ['exports'], function (exports) {
@@ -2467,280 +2421,6 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.0",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h3");
-          var el2 = dom.createTextNode("\n             My Reminders ( ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" of 3 )\n        ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
-          content(env, morph0, context, "totalRecords");
-          return fragment;
-        }
-      };
-    }());
-    var child1 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.0",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("li");
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","reveal");
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("span");
-          dom.setAttribute(el3,"class","helper");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","putBackable fastAnimate");
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n\n                ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("p");
-          var el4 = dom.createTextNode("\n                    ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createComment("");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode(" before each item\n                ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, element = hooks.element, inline = hooks.inline, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var element1 = dom.childAt(fragment, [1]);
-          var element2 = dom.childAt(element1, [1]);
-          var element3 = dom.childAt(element1, [3]);
-          var morph0 = dom.createMorphAt(element2,3,3);
-          var morph1 = dom.createMorphAt(element3,1,1);
-          var morph2 = dom.createMorphAt(dom.childAt(element3, [3]),1,1);
-          element(env, element2, context, "action", ["remove", get(env, context, "reminder")], {});
-          inline(env, morph0, context, "icon-device", ["X"], {});
-          inline(env, morph1, context, "icon-device", ["minus-red"], {});
-          content(env, morph2, context, "reminder.time_before");
-          return fragment;
-        }
-      };
-    }());
-    var child2 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.0",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h3");
-          var el2 = dom.createTextNode("\n                Add Reminder\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("figure");
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("form");
-          var el2 = dom.createTextNode("\n                Remind me\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("input");
-          dom.setAttribute(el2,"class","time");
-          dom.setAttribute(el2,"type","tel");
-          dom.setAttribute(el2,"step","1");
-          dom.setAttribute(el2,"placeholder","0");
-          dom.setAttribute(el2,"max","30");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("select");
-          dom.setAttribute(el2,"class","time-frame");
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("option");
-          dom.setAttribute(el3,"value","hours");
-          var el4 = dom.createTextNode("hour(s)");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("option");
-          dom.setAttribute(el3,"value","days");
-          var el4 = dom.createTextNode("day(s)");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                before everything is due.\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var element0 = dom.childAt(fragment, [3]);
-          var morph0 = dom.createMorphAt(element0,1,1);
-          element(env, element0, context, "action", ["add"], {});
-          inline(env, morph0, context, "icon-device", ["plus-big"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child3 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.0",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h3");
-          var el2 = dom.createTextNode("\n                Remove a reminder to add another\n            ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          return fragment;
-        }
-      };
-    }());
     return {
       isHTMLBars: true,
       revision: "Ember@1.12.0",
@@ -2751,45 +2431,53 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"id","reminders");
-        var el2 = dom.createTextNode("\n");
+        var el2 = dom.createTextNode("\n    Get notifications: ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("ul");
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"id","new-reminder");
-        var el3 = dom.createTextNode("\n\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
+        var el2 = dom.createElement("br");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n    ");
+        var el2 = dom.createTextNode("\n    Get notified about changes: ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("p");
-        dom.setAttribute(el2,"class","triangle-isosceles topleft hidden bubble");
-        var el3 = dom.createTextNode("\n        Choose how many hours or days you want to be reminded before each due date\n    ");
-        dom.appendChild(el2, el3);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("br");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    Time to get notifications:\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("br");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    Hour:\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("br");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    Minute\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("br");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    Local Time: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("br");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    UTC Time: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
@@ -2798,7 +2486,7 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block, inline = hooks.inline;
+        var hooks = env.hooks, get = hooks.get, inline = hooks.inline, content = hooks.content;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -2816,18 +2504,19 @@ define('whats-due-cordova/templates/reminders', ['exports'], function (exports) 
         } else {
           fragment = this.build(dom);
         }
-        var element4 = dom.childAt(fragment, [0]);
-        var element5 = dom.childAt(element4, [7]);
-        var morph0 = dom.createMorphAt(element4,1,1);
-        var morph1 = dom.createMorphAt(element4,3,3);
-        var morph2 = dom.createMorphAt(dom.childAt(element4, [5]),1,1);
-        var morph3 = dom.createMorphAt(element5,1,1);
-        var morph4 = dom.createMorphAt(element5,3,3);
-        block(env, morph0, context, "unless", [get(env, context, "empty")], {}, child0, null);
-        inline(env, morph1, context, "input", [], {"type": "hidden", "value": get(env, context, "total"), "id": "total-reminders"});
-        block(env, morph2, context, "each", [get(env, context, "model")], {"keyword": "reminder"}, child1, null);
-        block(env, morph3, context, "unless", [get(env, context, "maxxedOut")], {}, child2, null);
-        block(env, morph4, context, "if", [get(env, context, "maxxedOut")], {}, child3, null);
+        var element0 = dom.childAt(fragment, [0]);
+        var morph0 = dom.createMorphAt(element0,1,1);
+        var morph1 = dom.createMorphAt(element0,5,5);
+        var morph2 = dom.createMorphAt(element0,11,11);
+        var morph3 = dom.createMorphAt(element0,15,15);
+        var morph4 = dom.createMorphAt(element0,19,19);
+        var morph5 = dom.createMorphAt(element0,23,23);
+        inline(env, morph0, context, "switchery-checkbox", [], {"name": "notifications", "checked": get(env, context, "model.notifications")});
+        inline(env, morph1, context, "input", [], {"type": "checkbox", "id": get(env, context, "name"), "checked": get(env, context, "model.notification_updates")});
+        inline(env, morph2, context, "input", [], {"value": get(env, context, "controller.hours")});
+        inline(env, morph3, context, "input", [], {"value": get(env, context, "controller.minutes")});
+        content(env, morph4, context, "model.notification_time_local");
+        content(env, morph5, context, "model.notification_time_utc");
         return fragment;
       }
     };
@@ -3064,33 +2753,14 @@ define('whats-due-cordova/views/courses', ['exports', 'ember'], function (export
     exports['default'] = EnrolledView;
 
 });
-define('whats-due-cordova/views/reminders', ['exports', 'ember'], function (exports, Ember) {
-
-    'use strict';
-
-    var RemindersView = Ember['default'].View.extend({
-        contentDidChange: (function () {
-            CustomUI.putBackable();
-        }).observes('controller.model'),
-        afterRender: function afterRender() {
-            setTimeout(function () {
-                CustomUI.putBackable();
-                CustomUI.reminderTips();
-            }, 50);
-        }
-    });
-
-    exports['default'] = RemindersView;
-
-});
-define('whats-due-cordova/views/support', ['exports', 'ember', 'customUI'], function (exports, Ember, CustomUI) {
+define('whats-due-cordova/views/support', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
     var SupportView = Ember['default'].View.extend({
         afterRender: function afterRender() {
             setTimeout(function () {
-                CustomUI['default'].showSupport();
+                CustomUI.showSupport();
             }, 50);
         }
     });
@@ -3126,7 +2796,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.54ddde9f"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.1.343cbc1b"});
 }
 
 /* jshint ignore:end */

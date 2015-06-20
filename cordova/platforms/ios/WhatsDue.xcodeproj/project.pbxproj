@@ -62,6 +62,8 @@
 		BA8022618D1543CB9A63D596 /* APPLocalNotificationOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = D3E85DB532BC436DB4DB2DEE /* APPLocalNotificationOptions.m */; };
 		4EC1E3624C3A40D49D4BFC65 /* UIApplication+APPLocalNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 654E783DF5EB4C399697BE1A /* UIApplication+APPLocalNotification.m */; };
 		2D1C350A07D64A4CA7A9DDF6 /* UILocalNotification+APPLocalNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 180C3064FA55462FAFF8CA2A /* UILocalNotification+APPLocalNotification.m */; };
+		0F7EE8CC55E24FA5B81D315D /* DatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = FA78D22B0238408E8972618A /* DatePicker.m */; };
+		6307893D373A42738DCBFF42 /* DatePicker.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE3351E556C642669AB20C96 /* DatePicker.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +168,9 @@
 		50D065A4C6374774985073EA /* APPLocalNotificationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "APPLocalNotificationOptions.h"; path = "de.appplant.cordova.plugin.local-notification/APPLocalNotificationOptions.h"; sourceTree = "<group>"; fileEncoding = 4; };
 		22C16DD619EC4657B9444E37 /* UIApplication+APPLocalNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UIApplication+APPLocalNotification.h"; path = "de.appplant.cordova.plugin.local-notification/UIApplication+APPLocalNotification.h"; sourceTree = "<group>"; fileEncoding = 4; };
 		152AB7EF5305411CA1FCC198 /* UILocalNotification+APPLocalNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UILocalNotification+APPLocalNotification.h"; path = "de.appplant.cordova.plugin.local-notification/UILocalNotification+APPLocalNotification.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		FA78D22B0238408E8972618A /* DatePicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "DatePicker.m"; path = "com.sharinglabs.cordova.plugin.datepicker/DatePicker.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		7CED1DEE993945C2BA785A8A /* DatePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "DatePicker.h"; path = "com.sharinglabs.cordova.plugin.datepicker/DatePicker.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		CE3351E556C642669AB20C96 /* DatePicker.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "DatePicker.xib"; path = "DatePicker.xib"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +252,7 @@
 				308D05311370CCF300D202BF /* splash */,
 				8D1107310486CEB800E47090 /* WhatsDue-Info.plist */,
 				6E0279D495064A9D95AE23E9 /* CDVNotification.bundle */,
+				CE3351E556C642669AB20C96 /* DatePicker.xib */,
 			);
 			name = Resources;
 			path = WhatsDue/Resources;
@@ -313,6 +319,8 @@
 				50D065A4C6374774985073EA /* APPLocalNotificationOptions.h */,
 				22C16DD619EC4657B9444E37 /* UIApplication+APPLocalNotification.h */,
 				152AB7EF5305411CA1FCC198 /* UILocalNotification+APPLocalNotification.h */,
+				FA78D22B0238408E8972618A /* DatePicker.m */,
+				7CED1DEE993945C2BA785A8A /* DatePicker.h */,
 			);
 			name = Plugins;
 			path = WhatsDue/Plugins;
@@ -472,6 +480,7 @@
 				7E7966E51810823500FA85AD /* icon-76@2x.png in Resources */,
 				30FC414916E50CA1004E6F35 /* icon-72@2x.png in Resources */,
 				811601E4BDAD49E7BB904652 /* CDVNotification.bundle in Resources */,
+				6307893D373A42738DCBFF42 /* DatePicker.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,6 +526,7 @@
 				BA8022618D1543CB9A63D596 /* APPLocalNotificationOptions.m in Sources */,
 				4EC1E3624C3A40D49D4BFC65 /* UIApplication+APPLocalNotification.m in Sources */,
 				2D1C350A07D64A4CA7A9DDF6 /* UILocalNotification+APPLocalNotification.m in Sources */,
+				0F7EE8CC55E24FA5B81D315D /* DatePicker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -39,6 +39,10 @@
                         {
                             "xml": "<feature name=\"LocalNotification\"><param name=\"ios-package\" onload=\"true\" value=\"APPLocalNotification\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"DatePicker\"><param name=\"ios-package\" value=\"DatePicker\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -117,6 +121,9 @@
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "de.appplant.cordova.plugin.local-notification": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "com.sharinglabs.cordova.plugin.datepicker": {
             "PACKAGE_NAME": "com.whatsdue.app"
         }
     },

@@ -23,6 +23,9 @@
     <feature name="LocalNotification">
         <param name="android-package" value="de.appplant.cordova.plugin.localnotification.LocalNotification" />
     </feature>
+    <feature name="DatePickerPlugin">
+        <param name="android-package" value="com.sharinglabs.cordova.plugin.datepicker.DatePickerPlugin" />
+    </feature>
     <feature name="LocalyticsPlugin">
         <param name="android-package" value="com.localytics.phonegap.LocalyticsPlugin" />
     </feature>

@@ -67,6 +67,13 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/com.sharinglabs.cordova.plugin.datepicker/www/ios/DatePicker.js",
+        "id": "com.sharinglabs.cordova.plugin.datepicker.DatePicker",
+        "clobbers": [
+            "datePicker"
+        ]
+    },
+    {
         "file": "plugins/org.apache.cordova.device/www/device.js",
         "id": "org.apache.cordova.device.device",
         "clobbers": [
@@ -84,6 +91,7 @@ module.exports.metadata =
     "nl.x-services.plugins.socialsharing": "4.3.12",
     "org.apache.cordova.dialogs": "0.2.11",
     "de.appplant.cordova.plugin.local-notification": "0.8.2dev",
+    "com.sharinglabs.cordova.plugin.datepicker": "1.1.3",
     "org.apache.cordova.device": "0.2.12-dev",
     "de.appplant.cordova.common.registerusernotificationsettings": "1.0.1"
 }

@@ -77,4 +77,7 @@
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <icon src="www/res/icon.png" />
+    <feature name="DatePicker">
+        <param name="ios-package" value="DatePicker" />
+    </feature>
 </widget>
