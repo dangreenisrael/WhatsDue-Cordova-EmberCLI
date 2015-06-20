@@ -10,8 +10,13 @@ var CustomFunctions = {
     site: function(){
         if (this.test == true) {
             //var site = "http://stage.whatsdueapp.com/student";
-            return "http://192.168.1.100/app_dev.php/student";
+            return "http://127.0.0.1/app_dev.php/student";
         } else {
+            function ignoreError()
+            {
+                return true
+            }
+            window.onerror=ignoreError();
             return "http://admin.whatsdueapp.com/student";
         }
     },

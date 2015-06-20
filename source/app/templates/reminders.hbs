@@ -1,5 +1,17 @@
 <div id="reminders">
-    <h1>
-        Reminders will go here
-    </h1>
+    Get notifications: {{switchery-checkbox name="notifications" checked=model.notifications}}
+    <br>
+    Get notified about changes: {{input type="checkbox" id=name checked=model.notification_updates}}
+    <br>
+    Time to get notifications:
+    <br/>
+    Hour:
+    {{input value=controller.hours}}
+    <br>
+    Minute
+    {{input value=controller.minutes}}
+    <br>
+    Local Time: {{model.notification_time_local}}
+    <br>
+    UTC Time: {{model.notification_time_utc}}
 </div>

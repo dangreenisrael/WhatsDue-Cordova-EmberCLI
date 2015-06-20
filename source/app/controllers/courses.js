@@ -17,9 +17,8 @@ var CoursesController = Ember.ArrayController.extend({
             addCourse.find('button').addClass('disabled');
 
             Ember.$.ajax({
-                url: CustomFunctions.site() + "/consumers/" + CustomFunctions.consumerId + "/courses",
-                type: 'POST',
-                data: {"courseCode": course_code},
+                url: CustomFunctions.site() + "/consumers/" + CustomFunctions.consumerId + "/courses/"+course_code + "/enroll",
+                type: 'PUT',
                 success: function (resp) {
                     if (!store.hasRecordForId('course',resp.course.id)) {
                         store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
@@ -53,8 +52,8 @@ var CoursesController = Ember.ArrayController.extend({
         removeCourse: function(course) {
             var context = this;
             Ember.$.ajax({
-                url: CustomFunctions.site()+"/consumers/"+CustomFunctions.consumerId+"/courses/"+course.get('id'),
-                type: 'DELETE',
+                url: CustomFunctions.site()+"/consumers/"+CustomFunctions.consumerId+"/courses/"+course.get('id') + "/unenroll",
+                type: 'PUT',
                 data: {"primaryKey":localStorage.getItem('primaryKey')},
                 success: function () {
                     context.store.find('assignment',{'course_id':course.get('id')}).then(function(assignments){

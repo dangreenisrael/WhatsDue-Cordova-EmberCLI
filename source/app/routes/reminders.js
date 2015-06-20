@@ -1,10 +1,9 @@
 import Ember from 'ember';
 /* global CustomUI */
 
-var RemindersRoute = Ember.Route.extend({
+export default Ember.Route.extend({
     model: function(){
-       return null;
+        return this.store.find('consumer', CustomFunctions.consumerId);
     }
 });
 
-export default RemindersRoute;
