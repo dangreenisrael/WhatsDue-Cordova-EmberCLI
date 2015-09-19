@@ -8,6 +8,7 @@ var Assignment = DS.Model.extend({
     due_date:           DS.attr('string'),
     last_modified:      DS.attr('number'),
     archived:           DS.attr('boolean'),
+    time_visible:       DS.attr('boolean', {defaultValue: true}),
     last_updated:       DS.attr('number', {defaultValue: null}),
     date_completed:     DS.attr('number', {defaultValue: null}),
     enrolled:           DS.attr('boolean', {defaultValue: true}),

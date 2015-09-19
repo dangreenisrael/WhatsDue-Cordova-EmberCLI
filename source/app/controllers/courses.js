@@ -17,9 +17,13 @@ var CoursesController = Ember.ArrayController.extend({
             addCourse.find('button').addClass('disabled');
 
             Ember.$.ajax({
-                url: CustomFunctions.site() + "/consumers/" + CustomFunctions.consumerId + "/courses/"+course_code + "/enroll",
+                url: CustomFunctions.site() + "/courses/"+course_code + "/enroll",
                 type: 'PUT',
                 success: function (resp) {
+                    CustomFunctions.updateCourseList();
+                    if(cordovaLoaded === true){
+                        cordova.plugins.Keyboard.close();
+                    }
                     if (!store.hasRecordForId('course',resp.course.id)) {
                         store.recordForId('course', resp.course.id).unloadRecord(); // Quirk when deleting and re-adding
                         var course = store.createRecord('course',resp.course);
@@ -29,21 +33,29 @@ var CoursesController = Ember.ArrayController.extend({
                             'sendAll': true
                         }, true);
 
-                        CustomFunctions.updateCourseList();
+                        //CustomFunctions.updateCourseList();
                         controller.set('course_code', "");
                         CustomFunctions.trackEvent("Course Added", "Course", course.get('course_name'), "Instructor", course.get('instructor_name'), "School", course.get('school_name'));
                     } else{
-                        alert("You tried to add a duplicate course");
+                        navigator.notification.alert(
+                            'It looks like you\'re already in that course',
+                            null,
+                            'Woops');
                     }
                 },
                 error: function (resp){
-                    console.log(resp);
                     if (resp.statusText === "Course Not Found"){
-                        alert("Course Code is Wrong");
+                        navigator.notification.alert(
+                            'Looks like you typed in the wrong course code',
+                            null,
+                            'Woops');
                         addCourse.removeClass('disabled');
 
                     }else{
-                        alert("Are you connected to the Internet?");
+                        navigator.notification.alert(
+                            'Something went wrong, are you connected to the internet?',
+                            null,
+                            'Woops');
                     }
                 }
             });
@@ -52,14 +64,13 @@ var CoursesController = Ember.ArrayController.extend({
         removeCourse: function(course) {
             var context = this;
             Ember.$.ajax({
-                url: CustomFunctions.site()+"/consumers/"+CustomFunctions.consumerId+"/courses/"+course.get('id') + "/unenroll",
+                url: CustomFunctions.site()+"/courses/"+course.get('id') + "/unenroll",
                 type: 'PUT',
                 data: {"primaryKey":localStorage.getItem('primaryKey')},
                 success: function () {
                     context.store.find('assignment',{'course_id':course.get('id')}).then(function(assignments){
                         assignments.content.forEach(function(assignment) {
                             assignment.destroyRecord();
-                            console.log('destroyed Assignment');
                         }, context);
                     });
                     course.destroyRecord().then(function(){
@@ -67,8 +78,7 @@ var CoursesController = Ember.ArrayController.extend({
                     });
                     CustomFunctions.trackEvent('Course Removed', 'Course Name', course.get('course_name'));
                 },
-                error: function(e){
-                    console.log(e);
+                error: function(){
                     alert("Are you connected to the Internet?");
                     CustomFunctions.trackEvent('Course Remove Failed');
                 }

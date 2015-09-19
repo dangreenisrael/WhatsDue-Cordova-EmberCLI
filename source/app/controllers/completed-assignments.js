@@ -8,11 +8,22 @@ var CompletedAssignmentsController = Ember.ArrayController.extend({
     sortAscending:  false,
     actions: {
         unRemoveAssignment: function(assignment) {
-            var context = this;
             assignment.set('completed', false);
             assignment.set('date_completed', null);
             assignment.set('times_changed',assignment.get('times_changed')+1);
             assignment.save();
+            var putData = {
+                assignment: {
+                    completed:       false,
+                    completed_date:  null
+                }
+            };
+            Ember.$.ajax({
+                url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
+                type: 'PUT',
+                data: JSON.stringify(putData),
+                contentType: "application/json"
+            });
         }
     }
 });

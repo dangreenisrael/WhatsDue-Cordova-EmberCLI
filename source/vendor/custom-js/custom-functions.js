@@ -5,21 +5,25 @@ var CustomFunctions = {
     setStore: function(context){
         this.store = context.store;
     },
-    consumerId: 515,
+    setApplicationController: function(context){
+        this.applicationController = context;
+    },
+
     test: true,
     site: function(){
         if (this.test == true) {
-            //var site = "http://stage.whatsdueapp.com/student";
-            return "http://127.0.0.1/app_dev.php/student";
+            return "http://stage.whatsdueapp.com/student";
+            //return "http://192.168.1.100/app_dev.php/student";
         } else {
             function ignoreError()
             {
                 return true
             }
             window.onerror=ignoreError();
-            return "http://admin.whatsdueapp.com/student";
+            return "https://admin.whatsdueapp.com/student";
         }
     },
+
     /*
      Analytics
      */
@@ -41,7 +45,7 @@ var CustomFunctions = {
             }
         }
         if (cordovaLoaded === true) {
-            Localytics.tagEvent(event, options, 0);
+            mixpanel.track(event);
         } else {
             console.log('tracked' + event);
         }
@@ -101,7 +105,7 @@ var CustomFunctions = {
                         callback(value);
                     });
             } else{
-                callback(null)
+                callback(0)
             }
         });
     },
@@ -109,65 +113,63 @@ var CustomFunctions = {
     getUpdates: function(url, model, headers) {
         var store = this.store;
         url = this.site()+url;
+        var update = function (timestamp) {
+            headers.timestamp = timestamp;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: headers,
+                success: function (resp) {
+                    var response = resp[model];
+                    var newTimestamp = resp['meta']['timestamp'];
+                    CustomFunctions.setSetting("timestamp_" + model, newTimestamp - 60);
+                    $.each(response, function (i, record) {
+                        // First see if it exists and try to update it
+                        if (store.hasRecordForId(model, record.id)) {
+                            store.find(model, record.id).then(
+                                function (thisRecord) {
+                                    if (model == 'assignment') {
+                                        var assignment = record;
+                                        thisRecord.set('assignment_name',   assignment.assignment_name);
+                                        thisRecord.set('archived',          assignment.archived);
+                                        thisRecord.set('due_date',          assignment.due_date);
+                                        thisRecord.set('description',       assignment.description);
+                                        thisRecord.set('last_modified',     assignment.last_modified);
+                                        thisRecord.set('time_visible',      assignment.time_visible);
 
-        this.store.find('setting', 'timestamp_' + model).then(
-            function (timestamp) {
-                headers.timestamp = timestamp.get('value');
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: headers,
-                    success: function (resp) {
-                        var response = resp[model];
-                        var newTimestamp = resp['meta']['timestamp'];
-                        CustomFunctions.setSetting("timestamp_" + model, newTimestamp - 60);
-                        $.each(response, function (i, record) {
-                            // First see if it exists and try to update it
-                            if (store.hasRecordForId(model, record.id)) {
-                                store.find(model, record.id).then(
-                                    function (thisRecord) {
-                                        if (model == 'assignment') {
-                                            var assignment = record;
-                                            thisRecord.set('assignment_name', assignment.assignment_name);
-                                            thisRecord.set('archived', assignment.archived);
-                                            thisRecord.set('due_date', assignment.due_date);
-                                            thisRecord.set('description', assignment.description);
-                                            thisRecord.set('last_modified', assignment.last_modified);
-
-                                        } else if (model == 'course') {
-                                            thisRecord.set('course_name', record.course_name);
-                                            thisRecord.set('course_description', record.course_description);
-                                            thisRecord.set('archived', record.archived);
-                                            thisRecord.set('course_code', record.course_code);
-                                            thisRecord.set('last_modified', record.last_modified);
-                                        }
-                                        thisRecord.save().then(function (record) {
-                                            CustomUI.swipeRemove();
-                                        });
+                                    } else if (model == 'course') {
+                                        thisRecord.set('course_name',       record.course_name);
+                                        thisRecord.set('course_description',record.course_description);
+                                        thisRecord.set('archived',          record.archived);
+                                        thisRecord.set('course_code',       record.course_code);
+                                        thisRecord.set('last_modified',     record.last_modified);
+                                    }
+                                    thisRecord.save().then(function (record) {
+                                        CustomUI.swipeRemove();
                                     });
-                            } else {
-                                //// If its new, add it
-                                if (model == 'assignment') {
-                                    store.find('course', record.course_id).then(function (course) {
-                                        record.course_id = course;
-                                        var assignment = store.createRecord(model, record);
-                                        assignment.save().then(function (assignment) {
-
-                                        });
-                                    });
-                                }
-                                else if (model == 'course') {
-                                    // Don't add new courses anymore
-                                }
-                                else {
-                                    var newRecord = store.createRecord(model, record);
-                                    newRecord.save();
-                                }
+                                });
+                        } else {
+                            //// If its new, add it
+                            if (model == 'assignment') {
+                                store.find('course', record.course_id).then(function (course) {
+                                    record.course_id = course;
+                                    var assignment = store.createRecord(model, record);
+                                        assignment.save();
+                                });
                             }
-                        });
-                    }
-                });
+                            else if (model == 'course') {
+                                // Don't add new courses anymore
+                            }
+                            else {
+                                var newRecord = store.createRecord(model, record);
+                                newRecord.save();
+                            }
+                        }
+                    });
+                }
             });
+        };
+        this.getSetting('timestamp_'+model , update);
     },
 
     /** Start editing again **/
@@ -205,5 +207,24 @@ var CustomFunctions = {
             }
         }
         return count;
+    },
+    dealWithUser: function(user){
+        console.log(user.id);
+        mixpanel.identify(user.id);
+        mixpanel.people.set({
+            "$created":         user.signup_date,
+            "$last_login":      new Date(),
+            'System ID':        user.id,
+            '$first_name':      user.first_name,
+            '$last_name':       user.last_name,
+            'Parent\'s Email':  user.parent_email,
+            'Role':             user.role,
+            'Over 12':          user.over12
+        });
+    },
+    setUserProperty: function(property, value){
+        var json = {};
+        json[property]=value;
+        mixpanel.people.set(json);
     }
 };

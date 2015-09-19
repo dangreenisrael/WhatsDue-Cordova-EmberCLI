@@ -1,0 +1,31 @@
+
+/* Messages */
+#messages{
+  .message{
+    @padding:20px;
+    margin: 30px;
+    border: @lightGrey solid 1px;
+    //box-shadow: @lightGrey 5px;
+    background-color: white;
+    header{
+      @height: 20px;
+      color: @black;
+      line-height: @height;
+      height: @height;
+      padding: @padding;
+      padding-bottom: 10px;
+      .pull-left{
+        font-size: @height;
+        font-weight: 600;
+      }
+      .pull-right{
+        font-size: 14px;
+      }
+    }
+    article{
+      clear: both;
+      padding: @padding;
+      padding-top: 10px;
+    }
+  }
+}

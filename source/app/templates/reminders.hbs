@@ -1,17 +1,68 @@
-<div id="reminders">
-    Get notifications: {{switchery-checkbox name="notifications" checked=model.notifications}}
-    <br>
-    Get notified about changes: {{input type="checkbox" id=name checked=model.notification_updates}}
-    <br>
-    Time to get notifications:
-    <br/>
-    Hour:
-    {{input value=controller.hours}}
-    <br>
-    Minute
-    {{input value=controller.minutes}}
-    <br>
-    Local Time: {{model.notification_time_local}}
-    <br>
-    UTC Time: {{model.notification_time_utc}}
+<div id="settings">
+    <h3>
+        Reminders
+    </h3>
+    <table class="static-content">
+        <tr>
+            <td>
+                {{bs-switch name="my-bs-switch"
+                    btnSize="medium"
+                    status=student.notifications
+                    callback="saveNotifications"}}
+            </td>
+            <td {{action "datePicker"}}>
+                Notify me at <span class="click-me">{{student.displayTime}}</span> about due dates
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{bs-switch name="my-bs-switch"
+                    btnSize="medium"
+                    status=student.notification_updates
+                    callback="saveUpdateNotifications"}}
+            </td>
+            <td>
+                Notify me about all new assignments and updates
+            </td>
+        </tr>
+    </table>
+
+    <h3>
+        Details
+    </h3>
+
+    <p class="static-content">
+        My name is
+        {{input value=student.first_name    focus-out="save"}}
+        {{input value=student.last_name     focus-out="save"}}
+    </p>
+    <div class="buttons">
+        <a {{action "setRole" student "student"}} class="box square {{studentActive}} double">
+            Student
+        </a>
+        <a {{action "setRole" student "parent"}} class="box square {{parentActive}} double">
+            Parent
+        </a>
+    </div>
+    {{#unless model.isParent}}
+        <div class="over13 static-content">
+            <p>
+                I am over 13 years old
+                <span {{action "toggleAge" model}}>
+                    {{#if model.over12}}
+                        <img src="assets/img/checked-black-blue.png">
+                    {{else}}
+                        <img src="assets/img/unchecked-black.png">
+                    {{/if}}
+                </span>
+            </p>
+            {{#unless model.over12}}
+                <p>
+                    <br>
+                    My parent's email address <br>
+                    {{input value=student.parent_email action="save" on="key-press"}}
+                </p>
+            {{/unless}}
+        </div>
+    {{/unless}}
 </div>

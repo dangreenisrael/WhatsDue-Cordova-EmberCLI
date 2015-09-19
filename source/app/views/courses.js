@@ -1,15 +1,9 @@
 import Ember from 'ember';
 /* global CustomUI */
 
-
-/**
- * Created by dan on 2014-05-14.
- */
-
-var EnrolledView = Ember.View.extend({
+export default Ember.View.extend({
     contentDidChange: function() {
         CustomUI.putBackable();
-        console.log('loaded');
     }.observes('controller.filteredData'),
     afterRender: function(){
         CustomUI.makeSpinnable();
@@ -20,4 +14,3 @@ var EnrolledView = Ember.View.extend({
 });
 
 
-export default EnrolledView;

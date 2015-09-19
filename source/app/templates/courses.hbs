@@ -1,5 +1,5 @@
 <div class="courses">
-    {{#each course in filteredData}}
+    {{#each filteredData as |course|}}
         <div class="slider left-box">
             <div {{action 'removeCourse' course}} class="reveal">
                 {{icon-device "X"}}

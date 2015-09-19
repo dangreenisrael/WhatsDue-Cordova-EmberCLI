@@ -1,6 +1,6 @@
 <div id="completedAssignments">
     <div class="assignments-list">
-        {{#each assignment in filteredData}}
+        {{#each filteredData as |assignment|}}
         <div class="slider">
             <div class="reveal" {{action 'unRemoveAssignment' assignment}}>
                 <div class="full">

@@ -16,6 +16,12 @@ var app = new EmberApp({
     },
     sourcemaps:{
         enabled: false
+    },
+    'ember-cli-bootstrap-switch': {
+        'importBootstrapCSS': false,
+        'importBootstrapJS': false,
+        'importBootstrapSwitchCSS': true,
+        'importBootstrapSwitchJS': true
     }
 });
 
@@ -35,8 +41,6 @@ app.import('vendor/cordova-stuff/push-notifications.js');
 app.import('vendor/cordova-stuff/cordova-plugins.js');
 app.import('vendor/cordova-stuff/index.js');
 
-app.import('bower_components/switchery/dist/switchery.js');
-app.import('bower_components/switchery/dist/switchery.css');
 app.import('bower_components/moment/moment.js');
 app.import('bower_components/moment-timezone/moment-timezone.js');
 
@@ -44,6 +48,9 @@ app.import('vendor/custom-js/custom-functions.js');
 app.import('vendor/custom-js/custom-ui.js');
 app.import('vendor/custom-js/LS-LF-migration.js');
 app.import('vendor/custom-js/linkify-cordova.js');
+
+app.import('vendor/vendors/dragdealer.css');
+app.import('vendor/vendors/dragdealer.js');
 
 
 
