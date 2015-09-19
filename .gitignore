@@ -1,5 +1,8 @@
+source/bower_components
 source/bower_components/*
+source/node_modules
 source/node_modules/*
+source/dist
 source/dist/*
 cordova/platforms
 cordova/platforms/*

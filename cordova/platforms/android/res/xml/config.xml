@@ -1,13 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.whatsdue.app" version="1.2.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.whatsdue.app" version="2.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <preference name="loglevel" value="DEBUG" />
-    <feature name="Keyboard">
-        <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
-        <param name="onload" value="true" />
-    </feature>
-    <feature name="Device">
-        <param name="android-package" value="org.apache.cordova.device.Device" />
-    </feature>
     <feature name="PushPlugin">
         <param name="android-package" value="com.plugin.gcm.PushPlugin" />
     </feature>
@@ -20,14 +13,23 @@
     <feature name="InAppBrowser">
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
     </feature>
-    <feature name="LocalNotification">
-        <param name="android-package" value="de.appplant.cordova.plugin.localnotification.LocalNotification" />
-    </feature>
     <feature name="DatePickerPlugin">
-        <param name="android-package" value="com.sharinglabs.cordova.plugin.datepicker.DatePickerPlugin" />
+        <param name="android-package" value="com.plugin.datepicker.DatePickerPlugin" />
     </feature>
-    <feature name="LocalyticsPlugin">
-        <param name="android-package" value="com.localytics.phonegap.LocalyticsPlugin" />
+    <feature name="Whitelist">
+        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="SplashScreen">
+        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Device">
+        <param name="android-package" value="org.apache.cordova.device.Device" />
+    </feature>
+    <feature name="Keyboard">
+        <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
+        <param name="onload" value="true" />
     </feature>
     <icon density="ldpi" src="www/res/android/ldpi.png" />
     <icon density="mdpi" src="www/res/android/mdpi.png" />
@@ -46,10 +48,14 @@
     <preference name="Fullscreen" value="false" />
     <preference name="HideKeyboardFormAccessoryBar" value="true" />
     <preference name="DisallowOverscroll" value="false" />
+    <preference name="BackupWebStorage" value="local" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="3500" />
+    <preference name="SplashScreenDelay" value="4000" />
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <icon src="www/res/icon.png" />
+    <access origin="http://192.168.1.100" />
+    <access origin="http://*.whatsdueapp.com" />
+    <access origin="https://*.whatsdueapp.com" />
 </widget>

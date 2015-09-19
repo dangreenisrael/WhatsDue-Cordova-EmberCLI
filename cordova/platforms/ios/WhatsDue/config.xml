@@ -1,16 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.whatsdue.app" version="1.2.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.whatsdue.app" version="2.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="AutoHideSplashScreen" value="true" />
     <preference name="BackupWebStorage" value="cloud" />
     <preference name="EnableViewportScale" value="false" />
-    <preference name="FadeSplashScreen" value="true" />
-    <preference name="FadeSplashScreenDuration" value=".25" />
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />
     <preference name="MediaPlaybackRequiresUserAction" value="false" />
-    <preference name="ShowSplashScreenSpinner" value="true" />
     <preference name="SuppressesIncrementalRendering" value="false" />
-    <preference name="TopActivityIndicator" value="gray" />
     <preference name="GapBetweenPages" value="0" />
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" />
@@ -21,17 +16,18 @@
     <feature name="Keyboard">
         <param name="ios-package" onload="true" value="IonicKeyboard" />
     </feature>
-    <feature name="Device">
-        <param name="ios-package" value="CDVDevice" />
-    </feature>
-    <feature name="LocalyticsPlugin">
-        <param name="ios-package" value="LocalyticsPlugin" />
-    </feature>
     <feature name="PushPlugin">
         <param name="ios-package" value="PushPlugin" />
     </feature>
-    <feature name="InAppBrowser">
-        <param name="ios-package" value="CDVInAppBrowser" />
+    <feature name="DatePicker">
+        <param name="ios-package" value="DatePicker" />
+    </feature>
+    <feature name="Device">
+        <param name="ios-package" value="CDVDevice" />
+    </feature>
+    <feature name="SplashScreen">
+        <param name="ios-package" value="CDVSplashScreen" />
+        <param name="onload" value="true" />
     </feature>
     <feature name="SocialSharing">
         <param name="ios-package" value="SocialSharing" />
@@ -40,9 +36,8 @@
     <feature name="Notification">
         <param name="ios-package" value="CDVNotification" />
     </feature>
-    <feature name="LocalNotification">
-        <param name="ios-package" onload="true" value="APPLocalNotification" />
-        <param name="onload" value="true" />
+    <feature name="InAppBrowser">
+        <param name="ios-package" value="CDVInAppBrowser" />
     </feature>
     <icon height="60" src="www/res/ios/icon-60.png" width="60" />
     <icon height="120" src="www/res/ios/icon-60@2x.png" width="120" />
@@ -71,13 +66,14 @@
     <preference name="Fullscreen" value="false" />
     <preference name="HideKeyboardFormAccessoryBar" value="true" />
     <preference name="DisallowOverscroll" value="false" />
+    <preference name="BackupWebStorage" value="local" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="3500" />
+    <preference name="SplashScreenDelay" value="4000" />
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <icon src="www/res/icon.png" />
-    <feature name="DatePicker">
-        <param name="ios-package" value="DatePicker" />
-    </feature>
+    <access origin="http://192.168.1.100" />
+    <access origin="http://*.whatsdueapp.com" />
+    <access origin="https://*.whatsdueapp.com" />
 </widget>

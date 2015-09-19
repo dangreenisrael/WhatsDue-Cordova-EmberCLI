@@ -1,20 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/com.ionic.keyboard/www/keyboard.js",
-        "id": "com.ionic.keyboard.keyboard",
-        "clobbers": [
-            "cordova.plugins.Keyboard"
-        ]
-    },
-    {
-        "file": "plugins/com.localytics.phonegap.LocalyticsPlugin/www/Localytics.js",
-        "id": "com.localytics.phonegap.LocalyticsPlugin.Localytics",
-        "clobbers": [
-            "Localytics"
-        ]
-    },
-    {
         "file": "plugins/com.phonegap.plugins.PushPlugin/www/PushNotification.js",
         "id": "com.phonegap.plugins.PushPlugin.PushNotification",
         "clobbers": [
@@ -50,57 +36,51 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification.js",
-        "id": "de.appplant.cordova.plugin.local-notification.LocalNotification",
-        "clobbers": [
-            "cordova.plugins.notification.local",
-            "plugin.notification.local"
-        ]
-    },
-    {
-        "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-core.js",
-        "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Core",
-        "clobbers": [
-            "cordova.plugins.notification.local.core",
-            "plugin.notification.local.core"
-        ]
-    },
-    {
-        "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-util.js",
-        "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Util",
-        "merges": [
-            "cordova.plugins.notification.local.core",
-            "plugin.notification.local.core"
-        ]
-    },
-    {
-        "file": "plugins/com.sharinglabs.cordova.plugin.datepicker/www/android/DatePicker.js",
-        "id": "com.sharinglabs.cordova.plugin.datepicker.DatePicker",
+        "file": "plugins/cordova-plugin-datepicker/www/android/DatePicker.js",
+        "id": "cordova-plugin-datepicker.DatePicker",
         "clobbers": [
             "datePicker"
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.device/www/device.js",
-        "id": "org.apache.cordova.device.device",
+        "file": "plugins/cordova-plugin-whitelist/whitelist.js",
+        "id": "cordova-plugin-whitelist.whitelist",
+        "runs": true
+    },
+    {
+        "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+        "id": "cordova-plugin-splashscreen.SplashScreen",
+        "clobbers": [
+            "navigator.splashscreen"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-device/www/device.js",
+        "id": "cordova-plugin-device.device",
         "clobbers": [
             "device"
+        ]
+    },
+    {
+        "file": "plugins/com.ionic.keyboard/www/keyboard.js",
+        "id": "com.ionic.keyboard.keyboard",
+        "clobbers": [
+            "cordova.plugins.Keyboard"
         ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "com.ionic.keyboard": "1.0.3",
-    "com.localytics.phonegap.LocalyticsPlugin": "1.0.0",
     "com.phonegap.plugins.PushPlugin": "2.4.0",
     "nl.x-services.plugins.socialsharing": "4.3.12",
     "org.apache.cordova.dialogs": "0.2.11",
     "org.apache.cordova.inappbrowser": "0.6.0",
-    "de.appplant.cordova.plugin.local-notification": "0.8.2dev",
-    "com.sharinglabs.cordova.plugin.datepicker": "1.1.3",
-    "org.apache.cordova.device": "0.2.12-dev",
-    "android.support.v4": "21.0.1"
+    "cordova-plugin-datepicker": "0.8.5",
+    "cordova-plugin-whitelist": "1.0.0",
+    "cordova-plugin-splashscreen": "2.1.0",
+    "cordova-plugin-device": "1.0.1",
+    "com.ionic.keyboard": "1.0.4"
 }
 // BOTTOM OF METADATA
 });

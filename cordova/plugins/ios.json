@@ -13,19 +13,19 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"LocalyticsPlugin\"><param name=\"ios-package\" value=\"LocalyticsPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"PushPlugin\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
+                            "xml": "<feature name=\"DatePicker\"><param name=\"ios-package\" value=\"DatePicker\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SplashScreen\"><param name=\"ios-package\" value=\"CDVSplashScreen\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
                         {
@@ -37,11 +37,7 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"LocalNotification\"><param name=\"ios-package\" onload=\"true\" value=\"APPLocalNotification\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"DatePicker\"><param name=\"ios-package\" value=\"DatePicker\" /></feature>",
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -49,51 +45,27 @@
             },
             "framework": {
                 "parents": {
-                    "libsqlite3.dylib": [
-                        {
-                            "xml": "false",
-                            "count": 1
-                        }
-                    ],
-                    "libz.dylib": [
-                        {
-                            "xml": "false",
-                            "count": 1
-                        }
-                    ],
-                    "SystemConfiguration.framework": [
-                        {
-                            "xml": "false",
-                            "count": 1
-                        }
-                    ],
-                    "AdSupport.framework": [
-                        {
-                            "xml": "true",
-                            "count": 1
-                        }
-                    ],
                     "CoreGraphics.framework": [
                         {
-                            "xml": "false",
-                            "count": 1
+                            "xml": false,
+                            "count": 2
                         }
                     ],
                     "Social.framework": [
                         {
-                            "xml": "true",
+                            "xml": true,
                             "count": 1
                         }
                     ],
                     "MessageUI.framework": [
                         {
-                            "xml": "true",
+                            "xml": true,
                             "count": 1
                         }
                     ],
                     "AudioToolbox.framework": [
                         {
-                            "xml": "true",
+                            "xml": true,
                             "count": 1
                         }
                     ]
@@ -102,16 +74,25 @@
         }
     },
     "installed_plugins": {
-        "com.ionic.keyboard": {
+        "android.support.v4": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "com.localytics.phonegap.LocalyticsPlugin": {
+        "com.ionic.keyboard": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "com.phonegap.plugins.PushPlugin": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "org.apache.cordova.inappbrowser": {
+        "cordova-plugin-datepicker": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "nl.x-services.plugins.socialsharing": {
@@ -120,19 +101,9 @@
         "org.apache.cordova.dialogs": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "de.appplant.cordova.plugin.local-notification": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
-        "com.sharinglabs.cordova.plugin.datepicker": {
+        "org.apache.cordova.inappbrowser": {
             "PACKAGE_NAME": "com.whatsdue.app"
         }
     },
-    "dependent_plugins": {
-        "org.apache.cordova.device": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
-        "de.appplant.cordova.common.registerusernotificationsettings": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        }
-    }
+    "dependent_plugins": {}
 }
