@@ -1,0 +1,35 @@
+<div id="my-name">
+    <p>
+        My name is
+    </p>
+    <div class="name keyboard-top">
+        {{input type="text" placeholder="First Name" class="box double square clear" value=model.first_name}}
+
+        {{input type="text" placeholder="Last Name" class="box double square clear" value=model.last_name}}
+    </div>
+
+    {{#unless model.isParent}}
+        <p class="over13">
+            I am over 13 years old
+            <span {{action "toggleAge"}}>
+            {{#if model.over12}}
+                <img src="assets/img/checked.png">
+            {{else}}
+                <img src="assets/img/unchecked.png">
+            {{/if}}
+            </span>
+        </p>
+    {{/unless}}
+    <a {{action "setName"}}class="box centered square white join">
+        Join a Course
+    </a>
+    <p class="terms">
+        By continuing, you are agreeing to our<br>
+        {{external-link "http://whatsdueapp.com/terms" "terms of service"}} and
+        {{external-link "http://whatsdueapp.com/privacy-policy" "privacy policy"}}
+    </p>
+
+    <img {{action "transitionPage" "welcome.parent-student" "WhatsDue"}} class="static-content back-arrow" src="assets/img/back.png">
+</div>
+
+{{log model}}

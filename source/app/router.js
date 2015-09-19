@@ -22,13 +22,16 @@ Router.map(function() {
     });
 
     this.resource('reminders', function(){
-
     });
 
-    this.resource('welcome', function(){
-
+    this.route('welcome', function() {
+        this.route('parent-student', function () {
+        });
+        this.route('my-name', function () {
+        });
+        this.route('under13', function () {
+        });
     });
-
 });
 
 export default Router;

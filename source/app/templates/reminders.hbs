@@ -1,58 +1,68 @@
-<div id="reminders">
-    {{#unless empty}}
-        <h3>
-             My Reminders ( {{totalRecords}} of 3 )
-        </h3>
-    {{/unless}}
-    {{input type="hidden" value=total id="total-reminders"}}
+<div id="settings">
+    <h3>
+        Reminders
+    </h3>
+    <table class="static-content">
+        <tr>
+            <td>
+                {{bs-switch name="my-bs-switch"
+                    btnSize="medium"
+                    status=student.notifications
+                    callback="saveNotifications"}}
+            </td>
+            <td {{action "datePicker"}}>
+                Notify me at <span class="click-me">{{student.displayTime}}</span> about due dates
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{bs-switch name="my-bs-switch"
+                    btnSize="medium"
+                    status=student.notification_updates
+                    callback="saveUpdateNotifications"}}
+            </td>
+            <td>
+                Notify me about all new assignments and updates
+            </td>
+        </tr>
+    </table>
 
-    <ul>
-        {{# each reminder in model}}
-        <li>
-            <div class="reveal" {{action 'remove' reminder}}>
-                    <span class="helper"></span>
-                    {{icon-device "X"}}
-            </div>
-            <div class="putBackable fastAnimate">
-                {{icon-device "minus-red"}}
+    <h3>
+        Details
+    </h3>
 
-                <p>
-                    {{ reminder.time_before}} before each item
-                </p>
-            </div>
-        </li>
-        {{/each}}
-
-    </ul>
-    <div id="new-reminder">
-
-        {{#unless maxxedOut}}
-            <h3>
-                Add Reminder
-            </h3>
-            <figure {{action 'add'}}>
-                {{icon-device "plus-big"}}
-            </figure>
-            <form>
-                Remind me
-                <input class="time" type="tel" step="1" placeholder="0" max="30">
-                <select class="time-frame">
-                    <option value="hours">hour(s)</option>
-                    <option value="days">day(s)</option>
-                </select>
-                before everything is due.
-            </form>
-        {{/unless}}
-
-        {{#if maxxedOut}}
-            <h3>
-                Remove a reminder to add another
-            </h3>
-        {{/if}}
-
-    </div>
-
-    <p class="triangle-isosceles topleft hidden bubble">
-        Choose how many hours or days you want to be reminded before each due date
+    <p class="static-content">
+        My name is
+        {{input value=student.first_name    focus-out="save"}}
+        {{input value=student.last_name     focus-out="save"}}
     </p>
+    <div class="buttons">
+        <a {{action "setRole" student "student"}} class="box square {{studentActive}} double">
+            Student
+        </a>
+        <a {{action "setRole" student "parent"}} class="box square {{parentActive}} double">
+            Parent
+        </a>
+    </div>
+    {{#unless model.isParent}}
+        <div class="over13 static-content">
+            <p>
+                I am over 13 years old
+                <span {{action "toggleAge" model}}>
+                    {{#if model.over12}}
+                        <img src="assets/img/checked-black-blue.png">
+                    {{else}}
+                        <img src="assets/img/unchecked-black.png">
+                    {{/if}}
+                </span>
+            </p>
+            {{#unless model.over12}}
+                <p>
+                    <br>
+                    My parent's email address <br>
+                    {{input value=student.parent_email action="save" on="key-press"}}
+                </p>
+            {{/unless}}
+        </div>
+    {{/unless}}
 </div>

@@ -4,9 +4,11 @@
 
 /* Start Global Variables */
 var pageWidth = $(window).width();
+pageWidth = $(window).width();
+
 var currentPage = 1;
 var page = {
-    0 : - 0,
+    0 : 0,
     1 : - pageWidth,
     2 : - pageWidth * 2
 };
@@ -18,7 +20,7 @@ var page = {
 
 var CustomUI = {
     closest: function(event, selector) {
-        return Ember.$(event.target).closest(selector)
+        return Ember.$(event.target).closest(selector);
     },
     animate: function(element) {
         element.addClass('animate');
@@ -46,29 +48,36 @@ var CustomUI = {
             element.remove();
         }, ms);
     },
-    toggleMenu: function() {
-        var element = $('#contentContainer');
+    openMenu: function(){
+        currentPage = 0;
+        Ember.$('#contentContainer').css({
+            "transform": "translate3d(0,0,0)",
+            "overflow": "hidden"
+        });
 
-        // fastAnimate(element);
-
-        document.getElementById('contentContainer').scrollTop = 0;
-        if (currentPage >= 1) {
-            element.css({"-webkit-transform": "translate3d(0,0,0) scale3d(1,1,1)", "overflow": "hidden"});
-            currentPage = 0;
-        } else {
-            currentPage = 1;
-            element.css({"-webkit-transform": "translate3d(-33.333%,0,0) scale3d(1,1,1)", "overflow": "visible"});
-        }
         if (cordovaLoaded === true) {
             cordova.plugins.Keyboard.close();
         }
-
+        //document.getElementById('contentContainer').scrollTop = 0;
+    },
+    closeMenu: function() {
+        var element = Ember.$('#contentContainer');
+        currentPage = 1;
+        element.css({
+            "transform": "translate3d("+ -pageWidth +"px,0,0)",
+            "overflow": "visible"
+        });
+        /*
+         iPhone 4 hack
+         */
+        Ember.$('#contentContainer').css({
+            'overflow-y': 'scroll',
+            '-webkit-overflow-scrolling': 'touch'
+        });
     },
     goHome: function(){
-        var element = $('#contentContainer');
-        CustomUI.animate(element);
-        element.css({"-webkit-transform": "translate3d(-33.33%,0,0) scale3d(1,1,1)", "overflow": "auto"});
-        currentPage = 1;
+        CustomFunctions.applicationController.transitionToRoute('assignments');
+        this.closeMenu();
     },
     sliderSize: function() {
         var assignmentWidth;
@@ -85,14 +94,6 @@ var CustomUI = {
             var removeButton = $('.putBackable img');
             var putBackable = $('.putBackable');
             removeButton.off('tap');
-            putBackable.siblings('.reveal').off();
-            putBackable.not('.keep').siblings('.reveal').on('tap', function () {
-                $(this).parent('.slider');
-                var context = this;
-                setTimeout(function () {
-                    $(context).parent('.slider').detach();
-                }, 1);
-            });
 
             removeButton.on('tap', function (event) {
                 event.stopPropagation();
@@ -116,8 +117,8 @@ var CustomUI = {
             });
 
             /*
-             * Adding Course Stuff
-             */
+            * Adding Course Stuff
+            */
             var addCourse = $('#addCourse');
             addCourse.find('input').keyup(function () {
                 $('.courses .bubble').addClass('hidden');
@@ -136,8 +137,8 @@ var CustomUI = {
             });
 
             /*
-             * Run if no courses are added
-             */
+            * Run if no courses are added
+            */
             var courseCount = $('.courses .slider').length;
             if (!courseCount) {
                 $('.courses .bubble').removeClass('hidden');
@@ -148,9 +149,6 @@ var CustomUI = {
 
 
 
-    setTitle: function(title) {
-        $('#page-title').html(title);
-    },
     swipeRemove: function() {
         setTimeout(function () {
 
@@ -193,16 +191,6 @@ var CustomUI = {
                 $(this).addClass('spin')
             })
         }, 50);
-    },
-    reminderTips: function() {
-        var reminders = $('#reminders');
-        var time = $('input.time');
-        if (!reminders.find('.putBackable').length) {
-            reminders.find('.bubble').removeClass('hidden');
-            reminders.find('figure').on('tap', function () {
-                reminders.find('.bubble').addClass('hidden');
-            });
-        }
     },
     shareModal: function(assignment, course, message) {
         Ember.$("#share-modal").modal({
@@ -269,18 +257,26 @@ var CustomUI = {
         Ember.$('div#content, div#content > div > div ').css({'width':pageWidth});
         Ember.$('div#contentContainer').css({
             'height': pageHeight,
-            "-webkit-transform":"translate3d(-33.3333%,0,0) scale3d(1,1,1)"
+            "-webkit-transform":"translate3d("+ -pageWidth +"px,0,0) scale3d(1,1,1)"
         });
-       Ember. $('div#content > div').css({'width': pageWidth*3});
+        Ember. $('div#content > div').css({'width': pageWidth*3});
         CustomUI.sliderSize();
         Ember.$( window ).resize(function() {
-            var pageWidth = Ember.$(window).width();
-            var headerHeight = Ember.$('#appHeader').outerHeight();
-            var pageHeight = Ember.$(window).height() - headerHeight;
-            Ember.$('div#content, div#content > div > div ').css('width',pageWidth);
-            Ember.$('div#contentContainer').css('height', pageHeight);
-            Ember.$('div#content > div').css({'width': pageWidth*3, 'margin-top':headerHeight});
-            CustomUI.sliderSize();
+            pageWidth = $(window).width();
+            pageHeight = $(window).height() - headerHeight;
+            Ember. $('div#content > div').css({'width': pageWidth*3});
+            Ember.$('div#content, div#content > div > div ').css({'width':pageWidth});
+            Ember.$('div#contentContainer').css({
+                'height': pageHeight,
+                "-webkit-transform":"translate3d("+ -pageWidth+"px,0,0) scale3d(1,1,1)"
+            });
+            //var pageWidth = Ember.$(window).width();
+            //var headerHeight = Ember.$('#appHeader').outerHeight();
+            //var pageHeight = Ember.$(window).height() - headerHeight;
+            //Ember.$('div#content, div#content > div > div ').css('width',pageWidth);
+            //Ember.$('div#contentContainer').css('height', pageHeight);
+            //Ember.$('div#content > div').css({'width': pageWidth*3, 'margin-top':headerHeight});
+            //CustomUI.sliderSize();
         });
 
         /*
@@ -296,14 +292,8 @@ var CustomUI = {
 
         /* Toggles */
 
-        Ember.$('#menuToggle, #left').off('tap').on('tap', function(){
-            console.log('toggle');
-            CustomUI.toggleMenu();
-        });
-
-
         Ember.$('body').on({
-            'touchmove': function(e) {
+            touchmove: function(e) {
                 if(cordovaLoaded === true){
                     cordova.plugins.Keyboard.close();
                 }

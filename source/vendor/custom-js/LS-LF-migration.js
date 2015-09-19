@@ -15,17 +15,25 @@ var Migration = {
             return (JSON.parse(assignments)).assignment.records;
         }
     },
-    getReminders: function(){
-        var reminders = localStorage.getItem('whatsdue-reminder');
-        if (reminders!= null){
-            return (JSON.parse(reminders)).reminder.records;
-        }
+    setDefaultSettings:function(){
+        CustomFunctions.store.find('student').then(function(records){
+            var student = records.get('firstObject');
+            var defaultTime = moment();
+            defaultTime.hours(18);
+            defaultTime.minutes(0);
+            student.set('notification_time_local', defaultTime.format('HHmm'));
+            student.set('notification_time_utc', defaultTime.utcOffset('UTC').format('HHmm'));
+            student.save();
+        });
     },
     runMigration: function(){
         var store = CustomFunctions.store;
-        window.plugin.notification.local.clearAll();
         // Add each course
         Ember.$.each(this.getCourses(), function(index, course) {
+            Ember.$.ajax({
+                url: CustomFunctions.site() + "/courses/"+course.course_code + "/enroll",
+                type: 'PUT'
+            });
             store.createRecord('course', course).save().then(
                 function(course){
                     // Add assignments for each course
@@ -35,19 +43,11 @@ var Migration = {
                             assignment.course_id = course;
                             store.createRecord('assignment', assignment).save();
                         }
+                        CustomFunctions.updateCourseList();
                     });
                 }
             );
-
-
         });
         CustomFunctions.updateCourseList();
-        /* Set reminders - 3 seconds after assignments (for safety and simplicity) */
-        var context = this;
-        setTimeout(function() {
-            Ember.$.each(context.getReminders(), function (index, reminder) {
-                CustomFunctions.createReminders(reminder.seconds_before);
-            })
-        }, 3000);
     }
 };

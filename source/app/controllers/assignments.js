@@ -13,23 +13,39 @@ var AssignmentsController = Ember.ArrayController.extend({
     totalDue: function() {
         return this.get('due.length');
     }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    stuffDue: function(){
+        if(this.get('due.length') > 0){
+            return "hidden";
+        }
+    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     totalOverdue: function() {
         return this.get('overdue.length');
     }.property('model.@each.due_date', 'model.@each.completed'),
     isShowingModal: false,
     shareContent: "",
     actions: {
+        clickElement: function(assignment){
+          this.set('activeElement', assignment);
+        },
         removeAssignment: function(assignment) {
             CustomFunctions.trackEvent('Assignment Completed');
-            this.store.find('setReminder',{'assignment': assignment.get('id')}).then(function(setReminders){
-                CustomFunctions.removeSetReminders(setReminders);
-            });
             assignment.set('completed', true);
             assignment.set('date_completed', Date.now());
             assignment.save();
+            var putData = {
+                assignment: {
+                    completed:       true,
+                    completed_date:  Date.now()
+                }
+            };
+            Ember.$.ajax({
+                url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
+                type: 'PUT',
+                data: JSON.stringify(putData),
+                contentType: "application/json"
+            });
         },
         toggleModal: function(assignment){
-            console.log('Show Modal');
             var context = this;
             if (this.isShowingModal === false){
                 assignment.get('course_id').then(function(course){

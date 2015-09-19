@@ -1,0 +1,113 @@
+@import "../mixins";
+@import "../variables";
+/*
+ * Welcome Screens
+ */
+.welcome{
+  background-color: @blue;
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+  .middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  .inner {
+    margin-left: auto;
+    margin-right: auto;
+   // margin-top: -150px;
+  }
+  div{
+    p{
+      color: white;
+      text-align: center;
+      font-size: 30px;
+      &.over13{
+        font-size: 22px;
+        img{
+          height: 20px;
+          margin-bottom: -3px;
+        }
+      }
+      &.terms{
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      a{
+        color: white;
+        text-decoration: underline;
+      }
+    }
+    .box{
+      display: inline-block;
+      text-align: center;
+      padding: 15px 0;
+      border: 1px solid white;
+      -webkit-appearance:none;  /* Remove default shadow */
+      font-size: 20px;
+      width:43%;
+      color: white;
+      &.clear{
+        color: white;
+        background-color: @blue;
+      }
+      &.white{
+        color: @blue;
+        background-color: white;
+      }
+      &.double{
+        margin: 2.5%;
+      }
+      &.full{
+        width: 96%;
+        margin: auto;
+        display: block;
+      }
+      &.centered{
+        margin: auto;
+        display: block;
+      }
+      &.join{
+        margin-top: 50px;
+      }
+    }
+
+
+    .placeholder({
+      color: white;
+      font-style: italic;
+      font-weight: 100
+    });
+  }
+  #under13{
+    h2{
+      color: white;
+      font-weight: 100;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    p{
+      font-size: 16px;
+      padding: 0 40px 20px;
+    }
+    a{
+      margin-top: 40px;
+    }
+  }
+ img.back-arrow{
+   width: 30px;
+   position: fixed;
+   bottom: 25px;
+   left: 20px;
+   padding: 0;
+ }
+}

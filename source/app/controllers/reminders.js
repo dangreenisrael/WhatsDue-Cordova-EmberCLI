@@ -1,53 +1,82 @@
 import Ember from 'ember';
+
+/* global moment*/
+/* global datePicker */
 /* global CustomFunctions */
-/* global cordovaLoaded */
-/* global cordova */
-
-var RemindersController = Ember.Controller.extend({
+export default Ember.Controller.extend({
     init: function() {
-    },
+    }.on('init'),
+    student: function(){
+      return this.get('model');
+    }.property(),
+    studentActive: function(){
+        var role = this.get('model.role');
+        if (role === 'student'){
+            return 'active';
+        } else{
+            return 'not-active';
+        }
+    }.property('model.role'),
+    parentActive: function(){
+        var role = this.get('model.role');
+        if (role === 'parent'){
+            return 'active';
+        } else{
+            return 'not-active';
+        }
+    }.property('model.role'),
+    //save: function(){
+    //    this.get('student').save();
+    //}.observes('student.first_name', 'student.last_name'),
     actions: {
-        add: function(){
-            var newReminders = Ember.$('#new-reminder');
-            var time = parseInt(newReminders.find('.time').val());
-            var timeFrame = newReminders.find('.time-frame').val();
-            var seconds = 0;
-            if (timeFrame === "days") {
-                seconds = time * 86400;
-            } else if (timeFrame === "hours") {
-                seconds = time * 3600;
-            }
-            if(( time >0) && (this.get('model.length') < 3) ) {
-                CustomFunctions.createReminders(seconds);
-            }
-            /* Fix Keyboard */
-            if(typeof cordovaLoaded !== "undefined"){
-                setTimeout(function(){
-                    cordova.plugins.Keyboard.close();
-                    Ember.$('input').blur();
-                }, 1);
-
-            }
+        save: function(){
+            this.get('student').save();
         },
-        remove: function(reminder){
-            console.log(reminder);
-            this.store.find('setReminder',{'reminder': reminder.get('id')}).then(function(setReminders){
-                CustomFunctions.removeSetReminders(setReminders);
-                reminder.destroyRecord();
-            }, function(){
-                reminder.destroyRecord();
-            });
+        toggleAge: function(model){
+            model.toggleProperty('over12');
+            model.save();
+        },
+        saveNotifications: function () {
+            this.get('model').toggleProperty('notifications');
+            this.save();
+        },
+        saveUpdateNotifications: function () {
+            this.get('model').toggleProperty('notification_updates');
+            this.save();
+        },
+        setRole: function(model, role){
+            model.set('role', role);
+            model.save();
+            CustomFunctions.setUserProperty('Role', role);
+        },
+        datePicker: function(){
+            var student = this.get('model');
+            var initialTime = new Date();
+            initialTime.setHours(student.get('hours'));
+            initialTime.setMinutes(student.get('minutes'));
+            initialTime.setSeconds(0);
+            var options = {
+                date: initialTime,
+                mode: 'time',
+                androidTheme: 3,
+                minuteInterval: 15
+            };
+            function onSuccess(datetime) {
+                datetime = moment(datetime);
+                student.set('notification_time_local', datetime.format('HHmm'));
+                student.set('notification_time_utc', datetime.utcOffset('UTC').format('HHmm'));
+                student.save();
+            }
+            datePicker.show(options, onSuccess);
         }
     },
-    totalRecords: function() {
-        return (this.get('model.length'));
-    }.property('model.@each'),
-    maxxedOut: function() {
-        return (this.get('model.length') >= 3 );
-    }.property('model.@each'),
-    empty: function(){
-        return (this.get('model.length') === 0 );
-    }.property('model.@each')
+    save: function(){
+        var student = this.get('student');
+        var hours = student.get('hours');
+        var minutes = student.get('minutes');
+        var local = moment().hours(hours).minutes(minutes);
+        student.set('notification_time_local', local.format('HHmm'));
+        student.set('notification_time_utc', local.utcOffset('UTC').format('HHmm'));
+        student.save();
+    }
 });
-
-export default RemindersController;

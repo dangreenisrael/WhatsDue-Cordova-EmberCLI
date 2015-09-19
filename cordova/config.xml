@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.whatsdue.app" version="1.2.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.whatsdue.app" version="2.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WhatsDue</name>
     <description>
         A simple app that tells you what's due for all your courses.
@@ -11,11 +11,13 @@
     <access origin="*" />
     <access origin="mailto:*" launch-external="yes"/>
     <preference name="Fullscreen" value="false" />
+
     <preference name="HideKeyboardFormAccessoryBar" value="true"/>
     <preference name="DisallowOverscroll" value="false" />
+    <preference name="BackupWebStorage" value="local" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="2000"/>
+    <preference name="SplashScreenDelay" value="4000"/>
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     
@@ -53,7 +55,9 @@
 		<icon src="www/res/ios/icon-50.png" width="50" height="50" />
 		<icon src="www/res/ios/icon-50@2x.png" width="100" height="100" />
     </platform>
-    <feature name="PushPlugin">
-        <param name="ios-package" value="PushPlugin"/>
-    </feature>
+
+    <access origin="http://192.168.1.100"/>
+    <access origin="http://*.whatsdueapp.com"/>
+    <access origin="https://*.whatsdueapp.com"/>
+    
 </widget>

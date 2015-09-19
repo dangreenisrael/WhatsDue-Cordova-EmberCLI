@@ -72,17 +72,19 @@ var cordovaApp = {
         var postData = {
             "uuid":      device.uuid,
             "platform":  device.platform,
-            "pushId":    result,
-            "school":    getSchool()
+            "pushId":    result
         };
-        //console.log(postData);
+        console.log(postData);
         $.ajax({
-            url: site+"/students",
+            url: CustomFunctions.site()+"/students",
             type: 'POST',
             data: postData,
             success: function (response) {
+                console.log(postData);
                 console.log(response);
-                localStorage.setItem("primaryKey", response.primaryKey)
+                localforage.setItem('studentId', response.student.id);
+                CustomFunctions.store.push('student', response.student);
+                CustomFunctions.dealWithUser(response.student);
             },
             error: function(response){
                 console.log(response)
@@ -94,7 +96,10 @@ var cordovaApp = {
         console.log('Success Handler = '+result)
     },
     errorHandler:function(error) {
-        alert('Error Handler = '+error);
+        navigator.notification.alert(
+            "We couldn't register your device for push notifications.\n\nPlease contact us through the website.",
+            null,
+            'Oy Gevalt');
     },
     /* These are for Push Notifications*/
     onNotificationGCM: function(e) {
@@ -106,14 +111,14 @@ var cordovaApp = {
                     "platform":  device.platform,
                     "pushId":    e.regid
                 };
-                //console.log(postData);
                 $.ajax({
-                    url: site+"/students",
+                    url: CustomFunctions.site()+"/students",
                     type: 'POST',
                     data: postData,
                     success: function (response) {
-                        //console.log(response);
-                        localStorage.setItem("primaryKey", response.primaryKey)
+                        localforage.setItem('studentId', response.student.id);
+                        CustomFunctions.store.push('student', response.student);
+                        CustomFunctions.dealWithUser(response.student);
                     }
                 });
                 break;
@@ -121,20 +126,20 @@ var cordovaApp = {
             case 'message':
                 console.log(e);
                 var data = e.payload;
-                if (data.assignmentId){
-                    // This deals with updated assignments
-                    var updatedAssignment = new CustomEvent('updatedAssignment');
-                    window.dispatchEvent(updatedAssignment);
-                    function alertDismissed() {
-                        window.location.hash = '/';
-                    }
-                    navigator.notification.alert(
-                        data.message,  // message
-                        alertDismissed,         // callback
-                        data.title,            // title
-                        'OK'                  // buttonName
-                    );
-                }
+                //if (data.assignmentId){
+                //    // This deals with updated assignments
+                //    //var updatedAssignment = new CustomEvent('updatedAssignment');
+                //    //window.dispatchEvent(updatedAssignment);
+                //    function alertDismissed() {
+                //        window.location.hash = '/';
+                //    }
+                //    navigator.notification.alert(
+                //        data.message,  // message
+                //        alertDismissed,         // callback
+                //        data.title,            // title
+                //        'OK'                  // buttonName
+                //    );
+                //}
                 break;
 
             case 'error':

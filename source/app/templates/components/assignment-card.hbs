@@ -1,24 +1,35 @@
-<div {{bind-attr class=":slider :left-box"}}>
-    <div {{action 'removeAssignment' assignment}} class="reveal"></div>
-    <div {{bind-attr class=":removable assignment.urgencyLabel"}}>
-        <div{{action 'toggleModal' assignment}}  class="time">
-                        <span class="from-now">
-                            {{assignment.fromNow}} ago
-                        </span>
-                        <span class="time-due">
-                            {{assignment.timeDue}}
-                        </span>
+<div class = "slider left-box" {{action 'slideOver' assignment on="swipe"}}>
+    <div {{action 'removeAssignment' assignment}} class="reveal">
+           <p>
+               Mark as <br>
+               Done
+           </p>
+    </div>
+    <div {{action 'slideOver' assignment on="tap"}} id="{{assignment.id}}" class ="fastAnimate removable {{assignment.urgencyLabel}}">
+        <div class="time">
+            {{#if assignment.time_visible}}
+                <span class="from-now">
+                {{assignment.fromNow}} ago
+            </span>
+            <span class="time-due">
+                {{assignment.timeDue}}
+            </span>
+            {{else}}
+                <span class="time-due">
+                    Morning
+                </span>
+            {{/if}}
             <div class="course">
                 {{ assignment.course_id.course_name }}
             </div>
         </div>
         <div class="info">
 
-            <div {{action 'toggleModal' assignment}}  class="title">
+            <div  class="title">
                 {{assignment.assignment_name}}
             </div>
             <div class="description">
-                {{linkify-external assignment.description}}
+                {{description-text assignment.description}}
             </div>
 
         </div>

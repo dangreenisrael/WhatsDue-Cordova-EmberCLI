@@ -6,7 +6,7 @@
                 {{totalDue}}
             </span>
         </div>
-        <div class="vertical-seperator white"></div>
+        <div class="vertical-separator white"></div>
         <div class="overdue">
             Overdue
             <span class="badge square black">
@@ -14,15 +14,22 @@
             </span>
         </div>
     </nav>
+
     <div id="assignments-due" class="needsclick">
         {{firstOfDay}}
         <div class="arrow-up"></div>
-        {{#each day in groupedCards}}
+        {{#each groupedCards as |day|}}
             <div class="day-divider">{{day.key}}</div>
-                {{#each assignment in day}}
-                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                {{#each day as |assignment|}}
+                    <div {{action "clickElement" assignment on="panStart" }}>
+                        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                    </div>
                 {{/each}}
         {{/each}}
+        <br/>
+        <br>
+        <br>
+
     </div>
 
     <div id="assignments-overdue">
@@ -30,11 +37,11 @@
         <div class="day-divider">
             Overdue
         </div>
-        {{#each assignment in overdue}}
+        {{#each overdue as |assignment|}}
             {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
         {{/each}}
     </div>
-    <div class="static-content nothing-due hidden">
+    <div class="static-content nothing-due {{stuffDue}}">
         <img src="assets/img/thumbs-up.png">
         <h2 class="centered">
             Looks like you've got nothing due

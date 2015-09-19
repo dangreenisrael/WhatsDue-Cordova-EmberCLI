@@ -1,0 +1,21 @@
+<div id="under13">
+    <h2>
+       Looks like you're under 13
+    </h2>
+    <p>
+        We need to send your parents an email
+        to let them know that you are using WhatsDue.
+    </p>
+    <p>
+        Please enter their email here:
+    </p>
+
+    {{input type="text" placeholder="Email" class="box full square clear" value=model.parent_email}}
+
+    <a {{action "parentEmail" model}} class="box square white centered">
+        Join a Course
+    </a>
+    <img {{action "transitionPage" "welcome.my-name" "WhatsDue"}}
+            class="static-content" src="assets/img/back.png">
+
+</div>
