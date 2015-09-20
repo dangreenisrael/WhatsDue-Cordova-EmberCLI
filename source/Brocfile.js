@@ -5,7 +5,7 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 var app = new EmberApp({
     minifyCSS: {
-        enabled: true
+        enabled: false
     },
     minifyJS: {
         enabled: false
@@ -45,7 +45,6 @@ app.import('bower_components/moment/moment.js');
 app.import('bower_components/moment-timezone/moment-timezone.js');
 
 app.import('vendor/custom-js/custom-functions.js');
-app.import('vendor/custom-js/custom-ui.js');
 app.import('vendor/custom-js/LS-LF-migration.js');
 app.import('vendor/custom-js/linkify-cordova.js');
 

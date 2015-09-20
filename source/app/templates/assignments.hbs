@@ -1,13 +1,13 @@
 <div id="newAssignments">
     <nav>
-        <div class="due">
+        <div class="due" {{action 'showDue'}}>
             What's Due
             <span class="badge square black">
                 {{totalDue}}
             </span>
         </div>
         <div class="vertical-separator white"></div>
-        <div class="overdue">
+        <div class="overdue" {{action 'showOverdue'}}>
             Overdue
             <span class="badge square black">
                 {{totalOverdue}}
@@ -15,38 +15,41 @@
         </div>
     </nav>
 
-    <div id="assignments-due" class="needsclick">
-        {{firstOfDay}}
-        <div class="arrow-up"></div>
-        {{#each groupedCards as |day|}}
-            <div class="day-divider">{{day.key}}</div>
-                {{#each day as |assignment|}}
-                    <div {{action "clickElement" assignment on="panStart" }}>
-                        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-                    </div>
-                {{/each}}
-        {{/each}}
-        <br/>
-        <br>
-        <br>
-
-    </div>
-
-    <div id="assignments-overdue">
-        <div class="arrow-up"></div>
-        <div class="day-divider">
-            Overdue
+    {{#if showDue}}
+        <div id="assignments-due">
+            {{firstOfDay}}
+            <div class="arrow-up"></div>
+            {{#each groupedCards as |day|}}
+                <div class="day-divider">{{day.key}}</div>
+                    {{#each day as |assignment|}}
+                        <div {{action "clickElement" assignment}}>
+                            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                        </div>
+                    {{/each}}
+            {{/each}}
+            <br/>
+            <br>
+            <br>
         </div>
-        {{#each overdue as |assignment|}}
-            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-        {{/each}}
-    </div>
-    <div class="static-content nothing-due {{stuffDue}}">
-        <img src="assets/img/thumbs-up.png">
-        <h2 class="centered">
-            Looks like you've got nothing due
-        </h2>
-    </div>
+    {{else}}
+        <div id="assignments-overdue">
+            <div class="arrow-up"></div>
+            <div class="day-divider">
+                Overdue
+            </div>
+            {{#each overdue as |assignment|}}
+                {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+            {{/each}}
+        </div>
+    {{/if}}
+    {{#unless stuffDue}}
+        <div class="static-content nothing-due {{stuffDue}}">
+            <img src="assets/img/thumbs-up.png">
+            <h2 class="centered">
+                Looks like you've got nothing due
+            </h2>
+        </div>
+    {{/unless}}
 </div>
 {{#if isShowingModal}}
     {{#modal-dialog close="toggleModal"

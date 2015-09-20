@@ -12,7 +12,7 @@ var CustomFunctions = {
     test: true,
     site: function(){
         if (this.test == true) {
-            return "http://stage.whatsdueapp.com/student";
+            return "http://test.whatsdueapp.com/app_dev.php/student";
             //return "http://192.168.1.100/app_dev.php/student";
         } else {
             function ignoreError()
@@ -144,9 +144,7 @@ var CustomFunctions = {
                                         thisRecord.set('course_code',       record.course_code);
                                         thisRecord.set('last_modified',     record.last_modified);
                                     }
-                                    thisRecord.save().then(function (record) {
-                                        CustomUI.swipeRemove();
-                                    });
+                                    thisRecord.save();
                                 });
                         } else {
                             //// If its new, add it

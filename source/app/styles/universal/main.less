@@ -1,20 +1,13 @@
-/* Main Slide */
 @import "../variables";
 
+/* Main Content */
+
 #content {
-  overflow-x: hidden;
+  position: relative;
   > div {
-    transform: translate3d(-33.333%, 0px, 0px);
-    margin-top: @mainTopMargin;
-    overflow: scroll;
     -webkit-overflow-scrolling: touch;
   }
-  > div > div {
-    float: left;
-    overflow-x: hidden;
-  }
 }
-
-#slideLeft{
-
+#main{
+  margin-top: @mainTopMargin;
 }

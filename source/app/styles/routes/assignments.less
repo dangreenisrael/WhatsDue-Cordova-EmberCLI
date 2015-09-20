@@ -12,10 +12,9 @@
 
 
   #assignments-overdue{
-    display: none;
     .arrow-up{
       top: 52px;
-      margin-left: 23%;
+      margin-left: 70%;
     }
     .slider{
       > div:nth-child(2){
@@ -51,6 +50,12 @@
       font-size: 20px;
     }
   }
+  .slider{
+    .info{
+      margin-left: 110px;
+      width: auto;
+    }
+  }
 }
 
 
@@ -75,13 +80,12 @@
   }
 
   .info {
-    margin-left: 10px;
     display: inline-block;
     position: relative;
     min-height: @innerSliderHeight;
     padding-left: 10px;
     border-left: 1px solid #9d9d9d;
-    width: 85%;
+    width: 90%;
   }
   .title {
     font-size: 16px;
@@ -182,7 +186,7 @@
 
     font-weight: bold;
     color: #808080;
-    position: relative;
+    position: absolute;
     overflow: hidden;
     .course{
       margin-top: 5px;

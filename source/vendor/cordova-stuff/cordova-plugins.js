@@ -35,9 +35,6 @@ function keyboardShowHandler(e){
         '-webkit-overflow-scrolling': 'touch'
     });
     activeInput = $(':focus');
-    //var focusedOffset = activeInput.offset().top;
-    //$('.welcome').css('top', -focusedOffset);
-    //$('#settings').css('margin-top', -focusedOffset+80);
 }
 
 window.addEventListener('native.keyboardhide', keyboardHideHandler);
@@ -52,5 +49,5 @@ function keyboardHideHandler(e){
 document.addEventListener("backbutton", onBackKeyDown, false);
 
 function onBackKeyDown() {
-    CustomUI.goHome();
+    CustomFunctions.applicationController.sendAction("transitionPage", "assignments", "Assignments");
 }

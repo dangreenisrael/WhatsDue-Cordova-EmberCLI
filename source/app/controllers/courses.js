@@ -3,10 +3,18 @@ import Ember from 'ember';
 
 var CoursesController = Ember.ArrayController.extend({
     model:[],
-    filteredData: (function() {
+    filteredData: function() {
         this.set('sortProperties', 'admin_id');
         return this.get('model').filterBy('enrolled', true).sortBy('admin_id', 'course_name');
-    }).property('model.@each.enrolled'),
+    }.property('model.@each.enrolled'),
+    disabled: 'disabled',
+    disableAddCourse: function(){
+        if (this.get('course_code').length < 6){
+            this.set('disabled', 'disabled');
+        } else{
+            this.set('disabled', null);
+        }
+    }.observes('course_code'),
     actions: {
         addCourse: function(course_code) {
             var controller = this;

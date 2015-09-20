@@ -3,9 +3,6 @@ import Ember from 'ember';
 var CompletedAssignmentsRoute = Ember.Route.extend({
     model: function() {
         return this.store.find('assignment');
-    },
-    afterModel: function() {
-        CustomUI.putBackable();
     }
 });
 

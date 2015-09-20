@@ -3,6 +3,7 @@ import groupBy from '../utils/group-by';
 
 /* global CustomFunctions */
 var AssignmentsController = Ember.ArrayController.extend({
+    showDue: true,
     due:(function() {
         return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',false).sortBy('due_date');
     }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
@@ -14,10 +15,9 @@ var AssignmentsController = Ember.ArrayController.extend({
         return this.get('due.length');
     }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     stuffDue: function(){
-        if(this.get('due.length') > 0){
-            return "hidden";
-        }
-    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        return (this.get('due.length') > 0);
+    }
+    .property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     totalOverdue: function() {
         return this.get('overdue.length');
     }.property('model.@each.due_date', 'model.@each.completed'),
@@ -60,6 +60,12 @@ var AssignmentsController = Ember.ArrayController.extend({
         },
         cancel:function(){
             this.toggleProperty('isShowingModal');
+        },
+        showDue: function(){
+            this.set('showDue', true)
+        },
+        showOverdue: function(){
+            this.set('showDue', false)
         }
     }
 });
