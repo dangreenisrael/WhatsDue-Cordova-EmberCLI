@@ -3,8 +3,6 @@
  */
 import Ember from 'ember';
 
-/* global moment */
-/* global CustomFunctions */
 export default Ember.Route.extend({
     renderTemplate: function() {
         this.render({ outlet: 'welcome' });

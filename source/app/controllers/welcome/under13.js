@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+/* global CustomFunctions */
 export default Ember.Controller.extend({
     actions: {
         parentEmail: function(){

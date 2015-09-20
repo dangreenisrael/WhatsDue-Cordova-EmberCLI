@@ -1,7 +1,7 @@
 import Ember from 'ember';
 /* global CustomFunctions */
 /* global Migration */
-
+/* global moment */
 
 export default Ember.Controller.extend({
     init: function () {
@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
                 CustomFunctions.setSetting('version', 2.1);
                 setTimeout(function(){
                     Migration.setDefaultSettings();
-                },5000)
+                },5000);
             }
         }
         CustomFunctions.getSetting('version', checkVersion);
@@ -71,7 +71,7 @@ export default Ember.Controller.extend({
         transitionPage: function(destination, title){
             this.transitionTo(destination);
             this.set('pageTitle', title);
-            this.set('menuOpen', 'menuOpen')
+            this.set('menuOpen', 'menuOpen');
         }
     }
 });

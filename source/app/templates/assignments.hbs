@@ -14,22 +14,18 @@
             </span>
         </div>
     </nav>
-
     {{#if showDue}}
         <div id="assignments-due">
             {{firstOfDay}}
             <div class="arrow-up"></div>
             {{#each groupedCards as |day|}}
-                <div class="day-divider">{{day.key}}</div>
-                    {{#each day as |assignment|}}
+                <div class="day-divider">{{day.value}}</div>
+                    {{#each day.items as |assignment|}}
                         <div {{action "clickElement" assignment}}>
                             {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
                         </div>
                     {{/each}}
             {{/each}}
-            <br/>
-            <br>
-            <br>
         </div>
     {{else}}
         <div id="assignments-overdue">
@@ -51,18 +47,3 @@
         </div>
     {{/unless}}
 </div>
-{{#if isShowingModal}}
-    {{#modal-dialog close="toggleModal"
-    alignment="center"
-    translucentOverlay=true}}
-            <div class="buttons">
-                <div {{action 'share'}} class="button share">
-                    Share
-                </div>
-
-                <div {{action 'cancel'}} class="button close">
-                    Cancel
-                </div>
-            </div>
-    {{/modal-dialog}}
-{{/if}}

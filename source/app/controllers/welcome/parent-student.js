@@ -1,10 +1,11 @@
 import Ember from 'ember';
-
-/* Migration */
+/* global moment */
+/* global Migration */
+/* global CustomFunctions */
 export default Ember.Controller.extend({
     actions: {
         setRole: function(role){
-            if (role == "parent"){
+            if (role === "parent"){
                 this.set('parentActive', "white");
                 this.set('studentActive', "clear");
             } else{

@@ -15,7 +15,7 @@ export default Ember.Component.extend({
             var component = this;
             setTimeout(function(){
                 component.set('open', true);
-            }, 50)
+            }, 50);
         },
         slideBack: function(){
             if (this.get('open')){

@@ -1,8 +1,8 @@
 import Ember from 'ember';
-import groupBy from '../utils/group-by';
+import groupBy from 'ember-group-by';
 
 /* global CustomFunctions */
-var AssignmentsController = Ember.ArrayController.extend({
+export default Ember.ArrayController.extend({
     showDue: true,
     due:(function() {
         return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',false).sortBy('due_date');
@@ -62,12 +62,11 @@ var AssignmentsController = Ember.ArrayController.extend({
             this.toggleProperty('isShowingModal');
         },
         showDue: function(){
-            this.set('showDue', true)
+            this.set('showDue', true);
         },
         showOverdue: function(){
-            this.set('showDue', false)
+            this.set('showDue', false);
         }
     }
 });
 
-export default AssignmentsController;

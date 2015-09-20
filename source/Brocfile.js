@@ -48,9 +48,6 @@ app.import('vendor/custom-js/custom-functions.js');
 app.import('vendor/custom-js/LS-LF-migration.js');
 app.import('vendor/custom-js/linkify-cordova.js');
 
-app.import('vendor/vendors/dragdealer.css');
-app.import('vendor/vendors/dragdealer.js');
-
 
 
 //Everything goes before this
