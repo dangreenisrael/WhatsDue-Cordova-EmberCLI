@@ -58,21 +58,17 @@ var CustomFunctions = {
             CustomFunctions.getUpdates('/assignments', 'assignment', {
                 'courses': "[" + courses + "]"
             });
-            CustomFunctions.getUpdates('/messages', 'message', {
-                'courses': "[" + courses + "]"
-            });
+            //CustomFunctions.getUpdates('/messages', 'message', {
+            //    'courses': "[" + courses + "]"
+            //});
         };
         CustomFunctions.getSetting('course_list', courseList);
     },
-    updateCourses: function() {
-        var headers = {};
-        this.getUpdates("/all/courses", 'course', headers);
-    },
     updateCourseList: function(){
         var course_list = [];
-        this.store.find('course').then(function(courses){
+        this.store.findAll('course').then(function(courses){
             courses.get('content').forEach(function (course) {
-                course_list.push( course.get('id') );
+                course_list.push( course.id );
             });
             CustomFunctions.setSetting('course_list', course_list.toString());
         });
@@ -81,7 +77,7 @@ var CustomFunctions = {
         var settingExists = this.store.hasRecordForId('setting', key);
         if (settingExists) {
             // Update Record
-            this.store.find('setting', key).then(
+            this.store.findRecord('setting', key).then(
                 function (record) {
                     record.set('value', value);
                     record.save();
@@ -96,10 +92,10 @@ var CustomFunctions = {
     },
     getSetting: function(key, callback){
         var store = this.store;
-        store.find('setting').then(function(){
+        store.findAll('setting').then(function(){
             var settingExists = store.hasRecordForId('setting', key);
             if (settingExists) {
-                store.find('setting', key).then(
+                store.findRecord('setting', key).then(
                     function (record) {
                         var value = record.get('value');
                         callback(value);
@@ -126,7 +122,7 @@ var CustomFunctions = {
                     $.each(response, function (i, record) {
                         // First see if it exists and try to update it
                         if (store.hasRecordForId(model, record.id)) {
-                            store.find(model, record.id).then(
+                            store.findRecord(model, record.id).then(
                                 function (thisRecord) {
                                     if (model == 'assignment') {
                                         var assignment = record;
@@ -148,11 +144,12 @@ var CustomFunctions = {
                                 });
                         } else {
                             //// If its new, add it
+                            console.log('add');
                             if (model == 'assignment') {
-                                store.find('course', record.course_id).then(function (course) {
+                                store.findRecord('course', record.course_id).then(function (course) {
                                     record.course_id = course;
                                     var assignment = store.createRecord(model, record);
-                                        assignment.save();
+                                    assignment.save();
                                 });
                             }
                             else if (model == 'course') {
@@ -188,24 +185,6 @@ var CustomFunctions = {
         return window.localStorage.getItem(name);
     },
 
-    /* Location Info Class */
-
-    LocationInfo: function(data) {
-        var user = [];
-        user.city = data.city;
-        user.country = data.country;
-        user.region = data.region;
-        return user;
-    },
-    countInArray: function(haystack, needle) {
-        var count = 0;
-        for (var i = 0; i < haystack.length; i++) {
-            if (haystack[i] === needle) {
-                count++;
-            }
-        }
-        return count;
-    },
     dealWithUser: function(user){
         console.log(user.id);
         mixpanel.identify(user.id);
@@ -225,4 +204,5 @@ var CustomFunctions = {
         json[property]=value;
         mixpanel.people.set(json);
     }
+
 };

@@ -4,9 +4,12 @@ source/node_modules
 source/node_modules/*
 source/dist
 source/dist/*
+source/tmp
+source/tmp/*
 cordova/platforms
 cordova/platforms/*
 cordova/plugins
 cordova/plugins/*
+
 *tmp/*
 *.idea

@@ -16,7 +16,7 @@ var Migration = {
         }
     },
     setDefaultSettings:function(){
-        CustomFunctions.store.find('student').then(function(records){
+        CustomFunctions.store.findAll('student').then(function(records){
             var student = records.get('firstObject');
             var defaultTime = moment();
             defaultTime.hours(18);

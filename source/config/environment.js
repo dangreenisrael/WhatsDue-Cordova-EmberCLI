@@ -1,5 +1,4 @@
 /* jshint node: true */
-
 var os     = require('os');
 var ifaces = os.networkInterfaces();
 var addresses = [];
@@ -10,7 +9,6 @@ for (var dev in ifaces) {
         }
     });
 }
-
 
 module.exports = function(environment) {
   var ENV = {
@@ -24,16 +22,17 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
-    contentSecurityPolicy: {
-      'default-src': "*",
-      'script-src': "* 'self' 'unsafe-inline' 'unsafe-eval'",
-      'font-src': "'self'",
-      'connect-src': "*",
-      'img-src': "*",
-      'style-src': "'self' 'unsafe-inline' "
-    },
+      contentSecurityPolicy: {
+          'default-src': "*",
+          'script-src': "* 'self' 'unsafe-inline' 'unsafe-eval'",
+          'font-src': "'self'",
+          'connect-src': "*",
+          'img-src': "*",
+          'style-src': "'self' 'unsafe-inline' "
+      },
 
-    APP: {
+
+      APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
     }
@@ -62,6 +61,6 @@ module.exports = function(environment) {
   if (environment === 'production') {
 
   }
-    ENV.RAISE_ON_DEPRECATION = true;
+
   return ENV;
 };
