@@ -2,7 +2,7 @@ import Ember from 'ember';
 import groupBy from 'ember-group-by';
 
 /* global CustomFunctions */
-export default Ember.ArrayController.extend({
+export default Ember.Controller.extend({
     showDue: true,
     due:(function() {
         return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',false).sortBy('due_date');
@@ -28,22 +28,22 @@ export default Ember.ArrayController.extend({
           this.set('activeElement', assignment);
         },
         removeAssignment: function(assignment) {
-            CustomFunctions.trackEvent('Assignment Completed');
+            //CustomFunctions.trackEvent('Assignment Completed');
             assignment.set('completed', true);
             assignment.set('date_completed', Date.now());
             assignment.save();
-            var putData = {
-                assignment: {
-                    completed:       true,
-                    completed_date:  Date.now()
-                }
-            };
-            Ember.$.ajax({
-                url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
-                type: 'PUT',
-                data: JSON.stringify(putData),
-                contentType: "application/json"
-            });
+            //var putData = {
+            //    assignment: {
+            //        completed:       true,
+            //        completed_date:  Date.now()
+            //    }
+            //};
+            //Ember.$.ajax({
+            //    url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
+            //    type: 'PUT',
+            //    data: JSON.stringify(putData),
+            //    contentType: "application/json"
+            //});
         },
         toggleModal: function(assignment){
             var context = this;

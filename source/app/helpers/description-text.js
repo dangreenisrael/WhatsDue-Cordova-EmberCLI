@@ -1,7 +1,7 @@
 import Ember from "ember";
 /* global linkifyCordova */
 
-export default Ember.Handlebars.makeBoundHelper( function(text) {
+export default Ember.Helper.helper( function(text) {
     if (typeof text === "undefined") {
         return Ember.String.htmlSafe("");
     } else{

@@ -3,7 +3,7 @@ import Ember from 'ember';
 /* global cordovaLoaded */
 /* global cordova */
 
-var CoursesController = Ember.ArrayController.extend({
+var CoursesController = Ember.Controller.extend({
     model:[],
     filteredData: function() {
         this.set('sortProperties', 'admin_id');
@@ -78,7 +78,7 @@ var CoursesController = Ember.ArrayController.extend({
                 type: 'PUT',
                 data: {"primaryKey":localStorage.getItem('primaryKey')},
                 success: function () {
-                    context.store.find('assignment',{'course_id':course.get('id')}).then(function(assignments){
+                    context.store.query('assignment',{'course_id':course.get('id')}).then(function(assignments){
                         assignments.content.forEach(function(assignment) {
                             assignment.destroyRecord();
                         }, context);

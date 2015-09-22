@@ -5,15 +5,14 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
     init: function () {
-
-
         /* Start store injection */
         CustomFunctions.setStore(this);
         CustomFunctions.setApplicationController(this);
         /* End store injection */
         var controller = this;
+        CustomFunctions.updateAssignments(controller);
         setInterval(function () {
-            CustomFunctions.updateAssignments(controller);
+            //CustomFunctions.updateAssignments(controller);
             //CustomFunctions.updateCourses(controller);
         }, 5000);
 
@@ -69,7 +68,7 @@ export default Ember.Controller.extend({
             }
         },
         transitionPage: function(destination, title){
-            this.transitionTo(destination);
+            this.transitionToRoute(destination);
             this.set('pageTitle', title);
             this.set('menuOpen', 'menuOpen');
         }

@@ -6,22 +6,22 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-    this.resource('courses', function(){
+    this.route('courses', function(){
     });
 
-    this.resource('assignments', {path: '/'}, function(){
+    this.route('assignments', {path: '/'}, function(){
     });
 
-    this.resource('completedAssignments', function(){
+    this.route('completedAssignments', function(){
     });
 
-    this.resource('support', function(){
+    this.route('support', function(){
     });
 
-    this.resource('messages', function(){
+    this.route('messages', function(){
     });
 
-    this.resource('reminders', function(){
+    this.route('settings', function(){
     });
 
     this.route('welcome', function() {

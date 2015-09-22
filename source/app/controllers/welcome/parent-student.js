@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
                 this.set('parentActive', "clear");
             }
             var route = this;
-            return this.store.find('student').then(function(records){
+            return this.store.findAll('student').then(function(records){
                 var record =  records.get('firstObject');
                 record.set('signup_date', moment().format());
                 record.set('role', role);

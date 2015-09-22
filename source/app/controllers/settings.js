@@ -25,24 +25,20 @@ export default Ember.Controller.extend({
             return 'not-active';
         }
     }.property('model.role'),
-    //save: function(){
-    //    this.get('student').save();
-    //}.observes('student.first_name', 'student.last_name'),
     actions: {
-        save: function(){
-            this.get('student').save();
-        },
         toggleAge: function(model){
             model.toggleProperty('over12');
             model.save();
         },
-        saveNotifications: function () {
-            this.get('model').toggleProperty('notifications');
-            this.save();
+        saveNotifications: function (component, event, state) {
+            var student = this.get('student');
+            student.set('notifications', state);
+            student.save();
         },
-        saveUpdateNotifications: function () {
-            this.get('model').toggleProperty('notification_updates');
-            this.save();
+        saveUpdateNotifications: function (component, event, state) {
+            var student = this.get('student');
+            student.set('notification_updates', state);
+            student.save();
         },
         setRole: function(model, role){
             model.set('role', role);

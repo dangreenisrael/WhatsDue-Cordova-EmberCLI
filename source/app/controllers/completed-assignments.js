@@ -1,7 +1,7 @@
 import Ember from 'ember';
 /* global CustomFunctions */
 
-var CompletedAssignmentsController = Ember.ArrayController.extend({
+var CompletedAssignmentsController = Ember.Controller.extend({
     filteredData: (function() {
         return this.get('model').filterBy('completed',true).sortBy('date_completed');
     }).property('model.@each.completed'),

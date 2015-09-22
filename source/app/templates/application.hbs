@@ -1,6 +1,10 @@
 <header id="appHeader" {{action "menuToggle"}}>
-    {{icon-device "menu" "pull-left"}}
-    {{icon-device "menu" "pull-right hide"}}
+    <span class="pull-left">
+        {{icon-device "menu"}}
+    </span>
+    <span class="pull-right hidden">
+        {{icon-device "menu"}}
+    </span>
     <h1 id="page-title">
         {{pageTitle}}
     </h1>
@@ -33,7 +37,7 @@
                     My Courses
                 </span>
             </li>
-            <li {{action "transitionPage" "reminders" "Settings"}}>
+            <li {{action "transitionPage" "settings" "Settings"}}>
 
                 <div>
                     {{icon-device "reminders"}}

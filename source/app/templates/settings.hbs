@@ -7,8 +7,9 @@
             <td>
                 {{bs-switch name="my-bs-switch"
                     btnSize="medium"
-                    status=student.notifications
-                    callback="saveNotifications"}}
+                    checked=student.notifications
+                    on-switch-change="saveNotifications"
+                }}
             </td>
             <td {{action "datePicker"}}>
                 Notify me at <span class="click-me">{{student.displayTime}}</span> about due dates
@@ -18,8 +19,10 @@
             <td>
                 {{bs-switch name="my-bs-switch"
                     btnSize="medium"
-                    status=student.notification_updates
-                    callback="saveUpdateNotifications"}}
+                    checked=student.notification_updates
+                    on-switch-change="saveUpdateNotifications"
+                }}
+
             </td>
             <td>
                 Notify me about all new assignments and updates
@@ -60,7 +63,7 @@
                 <p>
                     <br>
                     My parent's email address <br>
-                    {{input value=student.parent_email action="save" on="key-press"}}
+                    {{input value=student.parent_email  key-press="save"}}
                 </p>
             {{/unless}}
         </div>
