@@ -8,8 +8,7 @@ var CustomFunctions = {
     setApplicationController: function(context){
         this.applicationController = context;
     },
-
-    test: true,
+    test: false,
     site: function(){
         if (this.test == true) {
             return "http://test.whatsdueapp.com/app_dev.php/student";
@@ -23,7 +22,6 @@ var CustomFunctions = {
             return "https://admin.whatsdueapp.com/student";
         }
     },
-
     /*
      Analytics
      */

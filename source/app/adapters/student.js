@@ -6,6 +6,6 @@
 import DS from 'ember-data';
 
 export default DS.RESTAdapter.extend({
-    host: 'http://test.whatsdueapp.com',
+    host: 'http://admin.whatsdueapp.com',
     namespace: "student"
 });

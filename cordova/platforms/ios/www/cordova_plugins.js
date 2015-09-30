@@ -55,6 +55,14 @@ module.exports = [
         "clobbers": [
             "window.open"
         ]
+    },
+    {
+        "file": "plugins/io.branch.sdk/dist/build.js",
+        "id": "io.branch.sdk.branch",
+        "clobbers": [
+            "branch",
+            "Branch"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -69,7 +77,8 @@ module.exports.metadata =
     "cordova-plugin-whitelist": "1.0.0",
     "nl.x-services.plugins.socialsharing": "4.3.12",
     "org.apache.cordova.dialogs": "0.2.11",
-    "org.apache.cordova.inappbrowser": "0.6.0"
+    "org.apache.cordova.inappbrowser": "0.6.0",
+    "io.branch.sdk": "1.7.0"
 }
 // BOTTOM OF METADATA
 });

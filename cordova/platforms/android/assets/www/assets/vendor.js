@@ -82943,12 +82943,21 @@ var cordovaLoaded = false;
 
 function onDeviceReady() {
     cordovaLoaded = true;
-    $('#contentContainer').css("-webkit-transform", "translate3d(-33.33333%,0,0) scale3d(1,1,1)");
-    $('nav > .overdue').click();
-    $('nav > .due').click();
-
     CustomFunctions.trackEvent('App Opened');
     //cordova.plugins.Keyboard.disableScroll(true);
+    branch.init('key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4', function(err, data) {
+        console.log(data);
+        if (!err && data.data) {
+            var parsed_data = JSON.parse(data.data);
+            console.log(parsed_data);
+            var courseCode = parsed_data['course_code'];
+            if (courseCode) {
+               alert(courseCode);
+
+            }
+        }
+    });
+
 }
 
 function onResume() {
@@ -82975,9 +82984,6 @@ window.addEventListener('native.keyboardhide', keyboardHideHandler);
 
 function keyboardHideHandler(e){
     activeInput.blur();
-    //$('.welcome').css('top', 0);
-    //$('#settings').css('margin-top', 0);
-
 }
 
 document.addEventListener("backbutton", onBackKeyDown, false);
@@ -86791,7 +86797,6 @@ var CustomFunctions = {
     setApplicationController: function(context){
         this.applicationController = context;
     },
-
     test: false,
     site: function(){
         if (this.test == true) {
@@ -86806,7 +86811,6 @@ var CustomFunctions = {
             return "https://admin.whatsdueapp.com/student";
         }
     },
-
     /*
      Analytics
      */
@@ -87657,6 +87661,176 @@ define('ember-cli-fastclick', ['ember-cli-fastclick/index', 'ember', 'exports'],
   }));
 });
 
+define('ember-cli-font-awesome/helpers/fa-icon', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+  var FA_PREFIX = /^fa\-.+/;
+
+  var warn = Ember['default'].Logger.warn;
+  var typeOf = Ember['default'].typeOf;
+  var isArray = Ember['default'].isArray;
+
+  /**
+   * Handlebars helper for generating HTML that renders a FontAwesome icon.
+   *
+   * @param  {String} name   The icon name. Note that the `fa-` prefix is optional.
+   *                         For example, you can pass in either `fa-camera` or just `camera`.
+   * @param  {Object} params Options passed to helper.
+   * @return {Ember.Handlebars.SafeString} The HTML markup.
+   */
+  var faIcon = function faIcon(name) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+    var classNames = _ref.classNames;
+    var tagName = _ref.tagName;
+    var ariaHidden = _ref.ariaHidden;
+    var title = _ref.title;
+    var spin = _ref.spin;
+    var pulse = _ref.pulse;
+    var flip = _ref.flip;
+    var rotate = _ref.rotate;
+    var lg = _ref.lg;
+    var x = _ref.x;
+    var size = _ref.size;
+    var fixedWidth = _ref.fixedWidth;
+    var listItem = _ref.listItem;
+    var border = _ref.border;
+    var pull = _ref.pull;
+    var stack = _ref.stack;
+    var inverse = _ref.inverse;
+
+    if (typeOf(name) !== 'string') {
+      var message = "fa-icon: no icon specified";
+      warn(message);
+      return Ember['default'].String.htmlSafe(message);
+    }
+
+    if (classNames === undefined) {
+      classNames = [];
+    }
+
+    if (!isArray(classNames)) {
+      classNames = [classNames];
+    }
+
+    classNames.push("fa");
+
+    if (!name.match(FA_PREFIX)) {
+      name = 'fa-' + name;
+    }
+
+    classNames.push(name);
+
+    if (spin) {
+      classNames.push("fa-spin");
+    }
+
+    if (pulse) {
+      classNames.push("fa-pulse");
+    }
+
+    if (flip) {
+      classNames.push('fa-flip-' + flip);
+    }
+
+    if (rotate) {
+      classNames.push('fa-rotate-' + rotate);
+    }
+
+    if (lg) {
+      warn('fa-icon: the \'lg\' parameter is deprecated. Use \'size\' instead. I.e. {{fa-icon size="lg"}}');
+      classNames.push("fa-lg");
+    }
+
+    if (x) {
+      warn('fa-icon: the \'x\' parameter is deprecated. Use \'size\' instead. I.e. {{fa-icon size="' + x + '"}}');
+      classNames.push('fa-' + x + 'x');
+    }
+
+    if (size) {
+      if (typeOf(size) === "string" && size.match(/^\d+$/)) {
+        size = Number(size);
+      }
+
+      if (typeOf(size) === "number") {
+        classNames.push('fa-' + size + 'x');
+      } else {
+        classNames.push('fa-' + size);
+      }
+    }
+
+    if (fixedWidth) {
+      classNames.push("fa-fw");
+    }
+
+    if (listItem) {
+      classNames.push("fa-li");
+    }
+
+    if (pull) {
+      classNames.push("pull-" + pull);
+    }
+
+    if (border) {
+      classNames.push("fa-border");
+    }
+
+    if (stack) {
+      if (typeOf(stack) === "string" && stack.match(/^\d+$/)) {
+        size = Number(stack);
+      }
+
+      if (typeOf(stack) === "number") {
+        classNames.push('fa-stack-' + stack + 'x');
+      } else {
+        classNames.push('fa-stack-' + stack);
+      }
+    }
+
+    if (inverse) {
+      classNames.push("fa-inverse");
+    }
+
+    var showAriaHidden = ariaHidden === undefined || ariaHidden;
+
+    tagName = tagName || 'i';
+
+    var htmlClass = 'class="' + classNames.join(" ") + '"';
+    var htmlTitle = title ? 'title="' + title + '"' : "";
+    var htmlAriaHidden = showAriaHidden ? 'aria-hidden="true"' : "";
+
+    var html = '<' + tagName + ' ' + htmlClass + ' ' + htmlTitle + ' ' + htmlAriaHidden + '></' + tagName + '>';
+
+    // removes extra whitespaces
+    return html.replace(/\s+/g, " ");
+  };
+
+  exports['default'] = Ember['default'].Helper.helper(function faIconHelper(_ref2, params) {
+    var _ref22 = _slicedToArray(_ref2, 1);
+
+    var name = _ref22[0];
+
+    return Ember['default'].String.htmlSafe(faIcon(name, params));
+  });
+
+  exports.faIcon = faIcon;
+
+});
+define('ember-cli-font-awesome', ['ember-cli-font-awesome/index', 'ember', 'exports'], function(__index__, __Ember__, __exports__) {
+  'use strict';
+  var keys = Object.keys || __Ember__['default'].keys;
+  var forEach = Array.prototype.forEach && function(array, cb) {
+    array.forEach(cb);
+  } || __Ember__['default'].EnumerableUtils.forEach;
+
+  forEach(keys(__index__), (function(key) {
+    __exports__[key] = __index__[key];
+  }));
+});
+
 define('ember-cli-remote-inspector/debug-server', function () {
 
   'use strict';
@@ -87771,6 +87945,409 @@ define('ember-group-by/macros/group-by', ['exports', 'ember'], function (exports
 
 });
 define('ember-group-by', ['ember-group-by/index', 'ember', 'exports'], function(__index__, __Ember__, __exports__) {
+  'use strict';
+  var keys = Object.keys || __Ember__['default'].keys;
+  var forEach = Array.prototype.forEach && function(array, cb) {
+    array.forEach(cb);
+  } || __Ember__['default'].EnumerableUtils.forEach;
+
+  forEach(keys(__index__), (function(key) {
+    __exports__[key] = __index__[key];
+  }));
+});
+
+define('ember-in-viewport/index', ['exports', 'ember-in-viewport/mixins/in-viewport'], function (exports, InViewportMixin) {
+
+	'use strict';
+
+	exports['default'] = InViewportMixin['default'];
+
+});
+define('ember-in-viewport/mixins/in-viewport', ['exports', 'ember', 'ember-in-viewport/utils/can-use-dom', 'ember-in-viewport/utils/can-use-raf', 'ember-in-viewport/utils/is-in-viewport', 'ember-in-viewport/utils/check-scroll-direction'], function (exports, Ember, canUseDOM, canUseRAF, isInViewport, checkScrollDirection) {
+
+  'use strict';
+
+  var Mixin = Ember['default'].Mixin;
+  var setProperties = Ember['default'].setProperties;
+  var merge = Ember['default'].merge;
+  var typeOf = Ember['default'].typeOf;
+  var assert = Ember['default'].assert;
+  var on = Ember['default'].on;
+  var $ = Ember['default'].$;
+  var get = Ember['default'].get;
+  var set = Ember['default'].set;
+  var _Ember$run = Ember['default'].run;
+  var scheduleOnce = _Ember$run.scheduleOnce;
+  var debounce = _Ember$run.debounce;
+  var bind = _Ember$run.bind;
+  var next = _Ember$run.next;
+  var not = Ember['default'].computed.not;
+
+  var defaultListeners = [{ context: window, event: 'scroll.scrollable' }, { context: window, event: 'resize.resizable' }, { context: document, event: 'touchmove.scrollable' }];
+  var rAFIDS = {};
+  var lastDirection = {};
+  var lastPosition = {};
+
+  exports['default'] = Mixin.create({
+    viewportExited: not('viewportEntered').readOnly(),
+
+    _setInitialState: on('init', function () {
+      var options = merge({
+        viewportUseRAF: canUseRAF['default'](),
+        viewportEntered: false,
+        viewportListeners: defaultListeners
+      }, this._buildOptions());
+
+      setProperties(this, options);
+    }),
+
+    _buildOptions: function _buildOptions() {
+      var defaultOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+      if (this.container) {
+        return merge(defaultOptions, this.container.lookup('config:in-viewport'));
+      }
+    },
+
+    _setupElement: on('didInsertElement', function () {
+      var _this = this;
+
+      if (!canUseDOM['default']) {
+        return;
+      }
+
+      this._setInitialViewport(window);
+      this._addObserverIfNotSpying();
+      this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
+
+      var listeners = get(this, 'viewportListeners');
+
+      if (!get(this, 'viewportUseRAF')) {
+        listeners.forEach(function (listener) {
+          var context = listener.context;
+          var event = listener.event;
+
+          _this._bindListeners(context, event);
+        });
+      }
+    }),
+
+    _teardown: on('willDestroyElement', function () {
+      this._unbindListeners();
+    }),
+
+    _addObserverIfNotSpying: function _addObserverIfNotSpying() {
+      if (!get(this, 'viewportSpy')) {
+        this.addObserver('viewportEntered', this, this._unbindIfEntered);
+      }
+    },
+
+    _setViewportEntered: function _setViewportEntered() {
+      var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      assert('You must pass a valid context to _setViewportEntered', context);
+
+      var element = get(this, 'element');
+
+      if (!element) {
+        return;
+      }
+
+      var elementId = get(this, 'elementId');
+      var viewportUseRAF = get(this, 'viewportUseRAF');
+      var viewportTolerance = get(this, 'viewportTolerance');
+      var $contextEl = $(context);
+      var height = $contextEl.height();
+      var width = $contextEl.width();
+      var boundingClientRect = element.getBoundingClientRect();
+
+      this._triggerDidAccessViewport(isInViewport['default'](boundingClientRect, height, width, viewportTolerance));
+
+      if (boundingClientRect && viewportUseRAF) {
+        rAFIDS[elementId] = window.requestAnimationFrame(bind(this, this._setViewportEntered, context));
+      }
+    },
+
+    _triggerDidScrollDirection: function _triggerDidScrollDirection() {
+      var $contextEl = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+      var sensitivity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+      assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
+      assert('sensitivity cannot be 0', sensitivity);
+
+      var elementId = get(this, 'elementId');
+      var viewportEntered = get(this, 'viewportEntered');
+      var lastDirectionForEl = lastDirection[elementId];
+      var lastPositionForEl = lastPosition[elementId];
+      var newPosition = {
+        top: $contextEl.scrollTop(),
+        left: $contextEl.scrollLeft()
+      };
+
+      var scrollDirection = checkScrollDirection['default'](lastPositionForEl, newPosition, sensitivity);
+      var directionChanged = scrollDirection !== lastDirectionForEl;
+
+      if (scrollDirection && directionChanged && viewportEntered) {
+        this.trigger('didScroll', scrollDirection);
+        lastDirection[elementId] = scrollDirection;
+      }
+
+      lastPosition[elementId] = newPosition;
+    },
+
+    _triggerDidAccessViewport: function _triggerDidAccessViewport() {
+      var hasEnteredViewport = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+      var viewportEntered = get(this, 'viewportEntered');
+      var didEnter = !viewportEntered && hasEnteredViewport;
+      var didLeave = viewportEntered && !hasEnteredViewport;
+      var triggeredEventName = '';
+
+      if (didEnter) {
+        triggeredEventName = 'didEnterViewport';
+      }
+
+      if (didLeave) {
+        triggeredEventName = 'didExitViewport';
+      }
+
+      set(this, 'viewportEntered', hasEnteredViewport);
+
+      this.trigger(triggeredEventName);
+    },
+
+    _unbindIfEntered: function _unbindIfEntered() {
+      if (!get(this, 'viewportSpy') && get(this, 'viewportEntered')) {
+        this._unbindListeners();
+        this.removeObserver('viewportEntered', this, this._unbindIfEntered);
+        set(this, 'viewportEntered', true);
+      }
+    },
+
+    _setInitialViewport: function _setInitialViewport() {
+      var _this2 = this;
+
+      var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      assert('You must pass a valid context to _setInitialViewport', context);
+
+      return scheduleOnce('afterRender', this, function () {
+        _this2._setViewportEntered(context);
+      });
+    },
+
+    _debouncedEventHandler: function _debouncedEventHandler(methodName) {
+      var _this3 = this;
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      assert('You must pass a methodName to _debouncedEventHandler', methodName);
+      assert('methodName must be a string', typeOf(methodName) === 'string');
+
+      debounce(this, function () {
+        _this3[methodName].apply(_this3, args);
+      }, get(this, 'viewportRefreshRate'));
+    },
+
+    _bindScrollDirectionListener: function _bindScrollDirectionListener() {
+      var _this4 = this;
+
+      var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+      var sensitivity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+      assert('You must pass a valid context to _bindScrollDirectionListener', context);
+      assert('sensitivity cannot be 0', sensitivity);
+
+      var $contextEl = $(context);
+
+      $contextEl.on('scroll.directional#' + get(this, 'elementId'), function () {
+        _this4._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
+      });
+    },
+
+    _unbindScrollDirectionListener: function _unbindScrollDirectionListener() {
+      var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      assert('You must pass a valid context to _bindScrollDirectionListener', context);
+
+      var elementId = get(this, 'elementId');
+
+      $(context).off('scroll.directional#' + elementId);
+      delete lastPosition[elementId];
+      delete lastDirection[elementId];
+    },
+
+    _bindListeners: function _bindListeners() {
+      var _this5 = this;
+
+      var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+      var event = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+      assert('You must pass a valid context to _bindListeners', context);
+      assert('You must pass a valid event to _bindListeners', event);
+
+      $(context).on(event + '.' + get(this, 'elementId'), function () {
+        _this5._debouncedEventHandler('_setViewportEntered', context);
+      });
+    },
+
+    _unbindListeners: function _unbindListeners() {
+      var elementId = get(this, 'elementId');
+      var listeners = get(this, 'viewportListeners');
+
+      if (get(this, 'viewportUseRAF')) {
+        next(this, function () {
+          window.cancelAnimationFrame(rAFIDS[elementId]);
+          delete rAFIDS[elementId];
+        });
+      }
+
+      listeners.forEach(function (listener) {
+        var context = listener.context;
+        var event = listener.event;
+
+        $(context).off(event + '.' + elementId);
+      });
+
+      this._unbindScrollDirectionListener(window);
+    }
+  });
+
+});
+define('ember-in-viewport/utils/can-use-dom', ['exports'], function (exports) {
+
+	'use strict';
+
+	var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+	exports['default'] = canUseDOM;
+
+});
+define('ember-in-viewport/utils/can-use-raf', ['exports', 'ember-in-viewport/utils/can-use-dom'], function (exports, canUseDOM) {
+
+  'use strict';
+
+
+
+  exports['default'] = canUseRAF;
+  // Adapted from Paul Irish's rAF polyfill
+  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+  // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+  // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+
+  // MIT license
+
+  function checkRAF(window, rAF, cAF) {
+    var x = undefined;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+    for (x = 0; x < vendors.length && !window[rAF]; ++x) {
+      window[rAF] = window[vendors[x] + 'RequestAnimationFrame'];
+      window[cAF] = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+
+    if (window[rAF] && window[cAF]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  function canUseRAF() {
+    if (!canUseDOM['default']) {
+      return false;
+    }
+
+    return checkRAF(window, 'requestAnimationFrame', 'cancelAnimationFrame');
+  }
+
+});
+define('ember-in-viewport/utils/check-scroll-direction', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+
+
+  exports['default'] = checkScrollDirection;
+  var floor = Math.floor;
+
+  function checkScrollDirection() {
+    var lastPosition = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+    var newPosition = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var sensitivity = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+
+    if (!lastPosition) {
+      return 'none';
+    }
+
+    Ember['default'].assert('sensitivity cannot be 0', sensitivity);
+
+    var top = newPosition.top;
+    var left = newPosition.left;
+    var lastTop = lastPosition.top;
+    var lastLeft = lastPosition.left;
+
+    var delta = {
+      top: floor((top - lastTop) / sensitivity) * sensitivity,
+      left: floor((left - lastLeft) / sensitivity) * sensitivity
+    };
+
+    if (delta.top > 0) {
+      return 'down';
+    }
+
+    if (delta.top < 0) {
+      return 'up';
+    }
+
+    if (delta.left > 0) {
+      return 'right';
+    }
+
+    if (delta.left < 0) {
+      return 'left';
+    }
+  }
+
+});
+define('ember-in-viewport/utils/is-in-viewport', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+
+
+  exports['default'] = isInViewport;
+  var merge = Ember['default'].merge;
+
+  var defaultTolerance = {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  };
+  function isInViewport() {
+    var boundingClientRect = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var height = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+    var width = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+    var tolerance = arguments.length <= 3 || arguments[3] === undefined ? defaultTolerance : arguments[3];
+    var top = boundingClientRect.top;
+    var left = boundingClientRect.left;
+    var bottom = boundingClientRect.bottom;
+    var right = boundingClientRect.right;
+
+    var tolerances = merge(defaultTolerance, tolerance);
+    var topTolerance = tolerances.top;
+    var leftTolerance = tolerances.left;
+    var bottomTolerance = tolerances.bottom;
+    var rightTolerance = tolerances.right;
+
+    return top + topTolerance >= 0 && left + leftTolerance >= 0 && bottom - bottomTolerance <= height && right - rightTolerance <= width;
+  }
+
+});
+define('ember-in-viewport', ['ember-in-viewport/index', 'ember', 'exports'], function(__index__, __Ember__, __exports__) {
   'use strict';
   var keys = Object.keys || __Ember__['default'].keys;
   var forEach = Array.prototype.forEach && function(array, cb) {

@@ -55,6 +55,7 @@
 		92195D27266948D8B0C5B5F9 /* CDVNotification.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8D95701BC8BC469F8C4F1DF8 /* CDVNotification.bundle */; };
 		6CDBF72305814054A0490C39 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 426A3DFE322C4C3891ABA4CC /* AudioToolbox.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		58F2E0AAF6C04B198EF38691 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6C140B0E0A4F5BAB4D4207 /* CDVInAppBrowser.m */; };
+		28A62FA1C7304AEDAF6AF91F /* BNCDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FE0FDD82E44157A2D92B73 /* BNCDevice.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +148,8 @@
 		426A3DFE322C4C3891ABA4CC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "AudioToolbox.framework"; path = "System/Library/Frameworks/AudioToolbox.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 		9D6C140B0E0A4F5BAB4D4207 /* CDVInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVInAppBrowser.m"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.m"; sourceTree = "<group>"; fileEncoding = 4; };
 		6DCABE8CED4342A2AAE7DCDE /* CDVInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVInAppBrowser.h"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		50FE0FDD82E44157A2D92B73 /* BNCDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "BNCDevice.m"; path = "io.branch.sdk/BNCDevice.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		B37351C078F64DB189A85CE3 /* BNCDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "BNCDevice.h"; path = "io.branch.sdk/BNCDevice.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +278,8 @@
 				9C81FBEDD5F6461B810B708C /* CDVNotification.h */,
 				9D6C140B0E0A4F5BAB4D4207 /* CDVInAppBrowser.m */,
 				6DCABE8CED4342A2AAE7DCDE /* CDVInAppBrowser.h */,
+				50FE0FDD82E44157A2D92B73 /* BNCDevice.m */,
+				B37351C078F64DB189A85CE3 /* BNCDevice.h */,
 			);
 			name = Plugins;
 			path = "WhatsDue/Plugins";
@@ -472,6 +477,7 @@
 				8AD55ED6C5FA4ED79F20C722 /* SocialSharing.m in Sources */,
 				12690CD7A8C44FA9B32EFA76 /* CDVNotification.m in Sources */,
 				58F2E0AAF6C04B198EF38691 /* CDVInAppBrowser.m in Sources */,
+				28A62FA1C7304AEDAF6AF91F /* BNCDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

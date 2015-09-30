@@ -6,6 +6,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
     actions: {
         removeAssignment: function (assignment) {
+            this.$().remove();
             this.sendAction('removeAssignment', assignment);
         },
         toggleModal: function (assignment) {

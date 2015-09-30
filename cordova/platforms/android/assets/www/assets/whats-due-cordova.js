@@ -72,6 +72,7 @@ define('whats-due-cordova/components/assignment-card', ['exports', 'ember'], fun
     exports['default'] = Ember['default'].Component.extend({
         actions: {
             removeAssignment: function removeAssignment(assignment) {
+                this.$().remove();
                 this.sendAction('removeAssignment', assignment);
             },
             toggleModal: function toggleModal(assignment) {
@@ -104,19 +105,24 @@ define('whats-due-cordova/components/bs-switch', ['exports', 'ember-bootstrap-sw
 	exports['default'] = BootstrapSwitchComponent['default'];
 
 });
-define('whats-due-cordova/components/course-profile', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/components/in-viewport', ['exports', 'ember', 'ember-in-viewport'], function (exports, Ember, InViewportMixin) {
 
     'use strict';
 
-    var CourseProfileComponent = Ember['default'].Component.extend({
-        actions: {
-            toggleCourse: function toggleCourse() {
-                this.sendAction('toggleCourse');
-            }
+    /**
+     * Created by Dan on 5/26/15.
+     */
+    exports['default'] = Ember['default'].Component.extend(InViewportMixin['default'], {
+        viewportOptionsOverride: Ember['default'].on('didInsertElement', function () {
+            Ember['default'].setProperties(this, {
+                viewportSpy: true
+            });
+        }),
+        classNames: ['in-viewport'],
+        didEnterViewport: function didEnterViewport() {
+            this.sendAction('triggered');
         }
     });
-
-    exports['default'] = CourseProfileComponent;
 
 });
 define('whats-due-cordova/components/removeable-card', ['exports', 'ember'], function (exports, Ember) {
@@ -234,12 +240,44 @@ define('whats-due-cordova/controllers/array', ['exports', 'ember'], function (ex
 	exports['default'] = Ember['default'].Controller;
 
 });
+define('whats-due-cordova/controllers/assignments/due', ['exports', 'ember', 'ember-group-by'], function (exports, Ember, groupBy) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Controller.extend({
+        totalVisible: 10,
+        groupedCards: groupBy['default']('visible', 'daysAway'),
+        due: (function () {
+            return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', false).sortBy('due_date');
+        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        visible: (function () {
+            return this.get('due').slice(0, this.get('totalVisible'));
+        }).property('due', 'totalVisible'),
+        actions: {
+            more: function more() {
+                var totalVisible = this.get('totalVisible') + 10;
+                this.set('totalVisible', totalVisible);
+            }
+        }
+    });
+
+});
+define('whats-due-cordova/controllers/assignments/over-due', ['exports', 'ember', 'ember-group-by'], function (exports, Ember, groupBy) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Controller.extend({
+        overdue: (function () {
+            return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', true).filterBy('hidden', false).sortBy('due_date');
+        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived')
+    });
+
+});
 define('whats-due-cordova/controllers/assignments', ['exports', 'ember', 'ember-group-by'], function (exports, Ember, groupBy) {
 
     'use strict';
 
     exports['default'] = Ember['default'].Controller.extend({
-        showDue: true,
         due: (function () {
             return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', false).sortBy('due_date');
         }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
@@ -255,54 +293,7 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember', 'ember-
         }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
         totalOverdue: (function () {
             return this.get('overdue.length');
-        }).property('model.@each.due_date', 'model.@each.completed'),
-        isShowingModal: false,
-        shareContent: "",
-        actions: {
-            clickElement: function clickElement(assignment) {
-                this.set('activeElement', assignment);
-            },
-            removeAssignment: function removeAssignment(assignment) {
-                //CustomFunctions.trackEvent('Assignment Completed');
-                assignment.set('completed', true);
-                assignment.set('date_completed', Date.now());
-                assignment.save();
-                //var putData = {
-                //    assignment: {
-                //        completed:       true,
-                //        completed_date:  Date.now()
-                //    }
-                //};
-                //Ember.$.ajax({
-                //    url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
-                //    type: 'PUT',
-                //    data: JSON.stringify(putData),
-                //    contentType: "application/json"
-                //});
-            },
-            toggleModal: function toggleModal(assignment) {
-                var context = this;
-                if (this.isShowingModal === false) {
-                    assignment.get('course_id').then(function (course) {
-                        context.shareContent = assignment.get('daysAway') + " at " + assignment.get('timeDue') + ":\n\n" + assignment.get('assignment_name') + " is due for " + course.get('course_name');
-                    });
-                }
-                this.toggleProperty('isShowingModal');
-            },
-            share: function share() {
-                CustomFunctions.share(this.shareContent);
-                this.toggleProperty('isShowingModal');
-            },
-            cancel: function cancel() {
-                this.toggleProperty('isShowingModal');
-            },
-            showDue: function showDue() {
-                this.set('showDue', true);
-            },
-            showOverdue: function showOverdue() {
-                this.set('showDue', false);
-            }
-        }
+        }).property('model.@each.due_date', 'model.@each.completed')
     });
 
 });
@@ -646,6 +637,16 @@ define('whats-due-cordova/helpers/external-link', ['exports', 'ember'], function
     });
 
 });
+define('whats-due-cordova/helpers/fa-icon', ['exports', 'ember-cli-font-awesome/helpers/fa-icon'], function (exports, fa_icon) {
+
+	'use strict';
+
+
+
+	exports['default'] = fa_icon['default'];
+	exports.faIcon = fa_icon.faIcon;
+
+});
 define('whats-due-cordova/helpers/icon-device', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -734,6 +735,42 @@ define('whats-due-cordova/initializers/export-application-global', ['exports', '
   exports['default'] = {
     name: 'export-application-global',
 
+    initialize: initialize
+  };
+
+});
+define('whats-due-cordova/initializers/viewport-config', ['exports', 'ember', 'whats-due-cordova/config/environment'], function (exports, Ember, config) {
+
+  'use strict';
+
+  exports.initialize = initialize;
+
+  var defaultConfig = {
+    viewportSpy: false,
+    viewportScrollSensitivity: 1,
+    viewportRefreshRate: 100,
+    viewportListeners: [],
+    viewportTolerance: {
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0
+    }
+  };
+
+  var merge = Ember['default'].merge;
+
+  function initialize(_container, application) {
+    var _config$viewportConfig = config['default'].viewportConfig;
+    var viewportConfig = _config$viewportConfig === undefined ? {} : _config$viewportConfig;
+
+    var mergedConfig = merge(defaultConfig, viewportConfig);
+
+    application.register('config:in-viewport', mergedConfig, { instantiate: false });
+  }
+
+  exports['default'] = {
+    name: 'viewport-config',
     initialize: initialize
   };
 
@@ -934,17 +971,15 @@ define('whats-due-cordova/router', ['exports', 'ember', 'whats-due-cordova/confi
 
     Router.map(function () {
         this.route('courses', function () {});
-
-        this.route('assignments', { path: '/' }, function () {});
-
+        this.route('assignments', { path: '/' }, function () {
+            this.route('due', function () {});
+            this.route('over-due', function () {});
+        });
         this.route('completedAssignments', function () {});
 
         this.route('support', function () {});
-
         this.route('messages', function () {});
-
         this.route('settings', function () {});
-
         this.route('welcome', function () {
             this.route('parent-student', function () {});
             this.route('my-name', function () {});
@@ -962,7 +997,18 @@ define('whats-due-cordova/routes/application', ['exports', 'ember'], function (e
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/routes/assignments/due', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Route.extend({
+        model: function model() {
+            return this.store.findAll('assignment');
+        }
+    });
+
+});
+define('whats-due-cordova/routes/assignments/over-due', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
 
@@ -973,6 +1019,40 @@ define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (e
     });
 
     exports['default'] = AssignmentsRoute;
+
+});
+define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Route.extend({
+        model: function model() {
+            return this.store.findAll('assignment');
+        },
+        afterModel: function afterModel() {
+            this.transitionTo('assignments.due');
+        },
+        actions: {
+            removeAssignment: function removeAssignment(assignment) {
+                assignment.set('completed', true);
+                assignment.set('date_completed', Date.now());
+                assignment.save();
+                var putData = {
+                    assignment: {
+                        completed: true,
+                        completed_date: Date.now()
+                    }
+                };
+                Ember['default'].$.ajax({
+                    url: CustomFunctions.site() + "/assignments/" + assignment.get('id'),
+                    type: 'PUT',
+                    data: JSON.stringify(putData),
+                    contentType: "application/json"
+                });
+                CustomFunctions.trackEvent('Assignment Completed');
+            }
+        }
+    });
 
 });
 define('whats-due-cordova/routes/completed-assignments', ['exports', 'ember'], function (exports, Ember) {
@@ -1325,7 +1405,7 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
         ["content","pageTitle",["loc",[null,[9,8],[9,21]]]],
         ["attribute","class",["concat",[["get","menuOpen",["loc",[null,[12,27],[12,35]]]]," fastAnimate"]]],
         ["element","action",["menuToggle"],[],["loc",[null,[14,12],[14,35]]]],
-        ["element","action",["transitionPage","assignments","Assignments"],[],["loc",[null,[15,16],[15,71]]]],
+        ["element","action",["transitionPage","assignments.due","Assignments"],[],["loc",[null,[15,16],[15,75]]]],
         ["inline","icon-device",["assignments"],[],["loc",[null,[17,20],[17,49]]]],
         ["element","action",["transitionPage","completedAssignments","Completed"],[],["loc",[null,[24,16],[24,78]]]],
         ["inline","icon-device",["completed"],[],["loc",[null,[26,20],[26,47]]]],
@@ -1344,79 +1424,28 @@ define('whats-due-cordova/templates/application', ['exports'], function (exports
   }()));
 
 });
-define('whats-due-cordova/templates/assignments', ['exports'], function (exports) {
+define('whats-due-cordova/templates/assignments/due', ['exports'], function (exports) {
 
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       var child0 = (function() {
-        var child0 = (function() {
-          return {
-            meta: {
-              "revision": "Ember@2.0.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 23,
-                  "column": 20
-                },
-                "end": {
-                  "line": 27,
-                  "column": 20
-                }
-              },
-              "moduleName": "whats-due-cordova/templates/assignments.hbs"
-            },
-            arity: 1,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("                        ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("div");
-              var el2 = dom.createTextNode("\n                            ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n                        ");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element1 = dom.childAt(fragment, [1]);
-              var morphs = new Array(2);
-              morphs[0] = dom.createElementMorph(element1);
-              morphs[1] = dom.createMorphAt(element1,1,1);
-              return morphs;
-            },
-            statements: [
-              ["element","action",["clickElement",["get","assignment",["loc",[null,[24,53],[24,63]]]]],[],["loc",[null,[24,29],[24,65]]]],
-              ["inline","assignment-card",[],["assignment",["subexpr","@mut",[["get","assignment",["loc",[null,[25,57],[25,67]]]]],[],[]],"toggleModal","toggleModal","removeAssignment","removeAssignment"],["loc",[null,[25,28],[25,131]]]]
-            ],
-            locals: ["assignment"],
-            templates: []
-          };
-        }());
         return {
           meta: {
             "revision": "Ember@2.0.2",
             "loc": {
               "source": null,
               "start": {
-                "line": 21,
+                "line": 5,
                 "column": 12
               },
               "end": {
-                "line": 28,
+                "line": 9,
                 "column": 12
               }
             },
-            "moduleName": "whats-due-cordova/templates/assignments.hbs"
+            "moduleName": "whats-due-cordova/templates/assignments/due.hbs"
           },
           arity: 1,
           cachedFragment: null,
@@ -1426,117 +1455,12 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
             var el1 = dom.createTextNode("                ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
-            dom.setAttribute(el1,"class","day-divider");
+            var el2 = dom.createTextNode("\n                    ");
+            dom.appendChild(el1, el2);
             var el2 = dom.createComment("");
             dom.appendChild(el1, el2);
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var morphs = new Array(2);
-            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
-            morphs[1] = dom.createMorphAt(fragment,3,3,contextualElement);
-            dom.insertBoundary(fragment, null);
-            return morphs;
-          },
-          statements: [
-            ["content","day.value",["loc",[null,[22,41],[22,54]]]],
-            ["block","each",[["get","day.items",["loc",[null,[23,28],[23,37]]]]],[],0,null,["loc",[null,[23,20],[27,29]]]]
-          ],
-          locals: ["day"],
-          templates: [child0]
-        };
-      }());
-      return {
-        meta: {
-          "revision": "Ember@2.0.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 17,
-              "column": 4
-            },
-            "end": {
-              "line": 30,
-              "column": 4
-            }
-          },
-          "moduleName": "whats-due-cordova/templates/assignments.hbs"
-        },
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1,"id","assignments-due");
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","arrow-up");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("        ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element2 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element2,1,1);
-          morphs[1] = dom.createMorphAt(element2,5,5);
-          return morphs;
-        },
-        statements: [
-          ["content","firstOfDay",["loc",[null,[19,12],[19,26]]]],
-          ["block","each",[["get","groupedCards",["loc",[null,[21,20],[21,32]]]]],[],0,null,["loc",[null,[21,12],[28,21]]]]
-        ],
-        locals: [],
-        templates: [child0]
-      };
-    }());
-    var child1 = (function() {
-      var child0 = (function() {
-        return {
-          meta: {
-            "revision": "Ember@2.0.2",
-            "loc": {
-              "source": null,
-              "start": {
-                "line": 36,
-                "column": 12
-              },
-              "end": {
-                "line": 38,
-                "column": 12
-              }
-            },
-            "moduleName": "whats-due-cordova/templates/assignments.hbs"
-          },
-          arity: 1,
-          cachedFragment: null,
-          hasRendered: false,
-          buildFragment: function buildFragment(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("                ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
+            var el2 = dom.createTextNode("\n                ");
+            dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
             dom.appendChild(el0, el1);
@@ -1544,11 +1468,11 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
             return morphs;
           },
           statements: [
-            ["inline","assignment-card",[],["assignment",["subexpr","@mut",[["get","assignment",["loc",[null,[37,45],[37,55]]]]],[],[]],"toggleModal","toggleModal","removeAssignment","removeAssignment"],["loc",[null,[37,16],[37,119]]]]
+            ["inline","assignment-card",[],["assignment",["subexpr","@mut",[["get","assignment",["loc",[null,[7,49],[7,59]]]]],[],[]],"toggleModal","toggleModal","removeAssignment","removeAssignment"],["loc",[null,[7,20],[7,123]]]]
           ],
           locals: ["assignment"],
           templates: []
@@ -1560,12 +1484,232 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           "loc": {
             "source": null,
             "start": {
-              "line": 30,
+              "line": 3,
               "column": 4
             },
             "end": {
-              "line": 40,
+              "line": 10,
               "column": 4
+            }
+          },
+          "moduleName": "whats-due-cordova/templates/assignments/due.hbs"
+        },
+        arity: 2,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","day-divider");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          morphs[1] = dom.createMorphAt(fragment,3,3,contextualElement);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["content","day.value",["loc",[null,[4,33],[4,46]]]],
+          ["block","each",[["get","day.items",["loc",[null,[5,20],[5,29]]]]],[],0,null,["loc",[null,[5,12],[9,21]]]]
+        ],
+        locals: ["day","index"],
+        templates: [child0]
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@2.0.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 13,
+            "column": 0
+          }
+        },
+        "moduleName": "whats-due-cordova/templates/assignments/due.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"id","assignments-due");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","arrow-up");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createMorphAt(element0,3,3);
+        morphs[1] = dom.createMorphAt(element0,5,5);
+        return morphs;
+      },
+      statements: [
+        ["block","each",[["get","groupedCards",["loc",[null,[3,12],[3,24]]]]],[],0,null,["loc",[null,[3,4],[10,13]]]],
+        ["inline","in-viewport",[],["triggered","more"],["loc",[null,[11,4],[11,36]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
+define('whats-due-cordova/templates/assignments/over-due', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@2.0.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "line": 8,
+              "column": 4
+            }
+          },
+          "moduleName": "whats-due-cordova/templates/assignments/over-due.hbs"
+        },
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","assignment-card",[],["assignment",["subexpr","@mut",[["get","assignment",["loc",[null,[7,37],[7,47]]]]],[],[]],"toggleModal","toggleModal","removeAssignment","removeAssignment"],["loc",[null,[7,8],[7,111]]]]
+        ],
+        locals: ["assignment"],
+        templates: []
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@2.0.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 10,
+            "column": 0
+          }
+        },
+        "moduleName": "whats-due-cordova/templates/assignments/over-due.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"id","assignments-overdue");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","arrow-up");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","day-divider");
+        var el3 = dom.createTextNode("\n        Overdue\n    ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]),5,5);
+        return morphs;
+      },
+      statements: [
+        ["block","each",[["get","overdue",["loc",[null,[6,12],[6,19]]]]],[],0,null,["loc",[null,[6,4],[8,13]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
+define('whats-due-cordova/templates/assignments', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@2.0.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "line": 8,
+              "column": 8
             }
           },
           "moduleName": "whats-due-cordova/templates/assignments.hbs"
@@ -1575,27 +1719,15 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
+          var el1 = dom.createTextNode("                What's Due\n            ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1,"id","assignments-overdue");
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","arrow-up");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n            ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","day-divider");
-          var el3 = dom.createTextNode("\n                Overdue\n            ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n");
+          var el1 = dom.createElement("span");
+          dom.setAttribute(el1,"class","badge square black");
+          var el2 = dom.createTextNode("\n                ");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("        ");
+          var el2 = dom.createTextNode("\n            ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -1604,14 +1736,63 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),5,5);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
           return morphs;
         },
         statements: [
-          ["block","each",[["get","overdue",["loc",[null,[36,20],[36,27]]]]],[],0,null,["loc",[null,[36,12],[38,21]]]]
+          ["content","totalDue",["loc",[null,[6,16],[6,28]]]]
         ],
         locals: [],
-        templates: [child0]
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@2.0.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 12,
+              "column": 8
+            },
+            "end": {
+              "line": 17,
+              "column": 8
+            }
+          },
+          "moduleName": "whats-due-cordova/templates/assignments.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            Overdue\n            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("span");
+          dom.setAttribute(el1,"class","badge square black");
+          var el2 = dom.createTextNode("\n                ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n            ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["content","totalOverdue",["loc",[null,[15,16],[15,32]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child2 = (function() {
@@ -1621,11 +1802,11 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           "loc": {
             "source": null,
             "start": {
-              "line": 41,
+              "line": 22,
               "column": 4
             },
             "end": {
-              "line": 48,
+              "line": 29,
               "column": 4
             }
           },
@@ -1665,7 +1846,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
           return morphs;
         },
         statements: [
-          ["attribute","class",["concat",["static-content nothing-due ",["get","stuffDue",["loc",[null,[42,49],[42,57]]]]]]]
+          ["attribute","class",["concat",["static-content nothing-due ",["get","stuffDue",["loc",[null,[23,49],[23,57]]]]]]]
         ],
         locals: [],
         templates: []
@@ -1681,7 +1862,7 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
             "column": 0
           },
           "end": {
-            "line": 49,
+            "line": 30,
             "column": 6
           }
         },
@@ -1697,46 +1878,29 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("nav");
-        var el3 = dom.createTextNode("\n        ");
+        var el3 = dom.createTextNode("\n");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","due");
-        var el4 = dom.createTextNode("\n            What's Due\n            ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("span");
-        dom.setAttribute(el4,"class","badge square black");
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n            ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n        ");
-        dom.appendChild(el3, el4);
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
         dom.setAttribute(el3,"class","vertical-separator white");
         dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("    ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"id","newAssignments");
         var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","overdue");
-        var el4 = dom.createTextNode("\n            Overdue\n            ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("span");
-        dom.setAttribute(el4,"class","badge square black");
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n            ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n        ");
-        dom.appendChild(el3, el4);
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
@@ -1745,32 +1909,24 @@ define('whats-due-cordova/templates/assignments', ['exports'], function (exports
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element3 = dom.childAt(fragment, [0]);
-        var element4 = dom.childAt(element3, [1]);
-        var element5 = dom.childAt(element4, [1]);
-        var element6 = dom.childAt(element4, [5]);
-        var morphs = new Array(6);
-        morphs[0] = dom.createElementMorph(element5);
-        morphs[1] = dom.createMorphAt(dom.childAt(element5, [1]),1,1);
-        morphs[2] = dom.createElementMorph(element6);
-        morphs[3] = dom.createMorphAt(dom.childAt(element6, [1]),1,1);
-        morphs[4] = dom.createMorphAt(element3,3,3);
-        morphs[5] = dom.createMorphAt(element3,4,4);
+        var element1 = dom.childAt(fragment, [0]);
+        var element2 = dom.childAt(element1, [1]);
+        var morphs = new Array(4);
+        morphs[0] = dom.createMorphAt(element2,1,1);
+        morphs[1] = dom.createMorphAt(element2,5,5);
+        morphs[2] = dom.createMorphAt(dom.childAt(element1, [3]),1,1);
+        morphs[3] = dom.createMorphAt(element1,5,5);
         return morphs;
       },
       statements: [
-        ["element","action",["showDue"],[],["loc",[null,[3,25],[3,45]]]],
-        ["content","totalDue",["loc",[null,[6,16],[6,28]]]],
-        ["element","action",["showOverdue"],[],["loc",[null,[10,29],[10,53]]]],
-        ["content","totalOverdue",["loc",[null,[13,16],[13,32]]]],
-        ["block","if",[["get","showDue",["loc",[null,[17,10],[17,17]]]]],[],0,1,["loc",[null,[17,4],[40,11]]]],
-        ["block","unless",[["get","stuffDue",["loc",[null,[41,14],[41,22]]]]],[],2,null,["loc",[null,[41,4],[48,15]]]]
+        ["block","link-to",["assignments.due"],["class","due","tagName","div"],0,null,["loc",[null,[3,8],[8,20]]]],
+        ["block","link-to",["assignments.over-due"],["class","overdue","tagName","div"],1,null,["loc",[null,[12,8],[17,20]]]],
+        ["content","outlet",["loc",[null,[20,8],[20,18]]]],
+        ["block","unless",[["get","stuffDue",["loc",[null,[22,14],[22,22]]]]],[],2,null,["loc",[null,[22,4],[29,15]]]]
       ],
       locals: [],
       templates: [child0, child1, child2]
@@ -2125,6 +2281,54 @@ define('whats-due-cordova/templates/components/assignment-card', ['exports'], fu
       ],
       locals: [],
       templates: [child0, child1]
+    };
+  }()));
+
+});
+define('whats-due-cordova/templates/components/in-viewport', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      meta: {
+        "revision": "Ember@2.0.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 6
+          }
+        },
+        "moduleName": "whats-due-cordova/templates/components/in-viewport.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","in-viewport");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("i");
+        dom.setAttribute(el2,"class","fa fa-refresh fa-spin");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes() { return []; },
+      statements: [
+
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -3512,13 +3716,13 @@ define('whats-due-cordova/tests/components/assignment-card.jshint', function () 
   });
 
 });
-define('whats-due-cordova/tests/components/course-profile.jshint', function () {
+define('whats-due-cordova/tests/components/in-viewport.jshint', function () {
 
   'use strict';
 
   QUnit.module('JSHint - components');
-  QUnit.test('components/course-profile.js should pass jshint', function(assert) { 
-    assert.ok(true, 'components/course-profile.js should pass jshint.'); 
+  QUnit.test('components/in-viewport.js should pass jshint', function(assert) { 
+    assert.ok(true, 'components/in-viewport.js should pass jshint.'); 
   });
 
 });
@@ -3542,13 +3746,33 @@ define('whats-due-cordova/tests/controllers/application.jshint', function () {
   });
 
 });
+define('whats-due-cordova/tests/controllers/assignments/due.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - controllers/assignments');
+  QUnit.test('controllers/assignments/due.js should pass jshint', function(assert) { 
+    assert.ok(true, 'controllers/assignments/due.js should pass jshint.'); 
+  });
+
+});
+define('whats-due-cordova/tests/controllers/assignments/over-due.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - controllers/assignments');
+  QUnit.test('controllers/assignments/over-due.js should pass jshint', function(assert) { 
+    assert.ok(false, 'controllers/assignments/over-due.js should pass jshint.\ncontrollers/assignments/over-due.js: line 2, col 8, \'groupBy\' is defined but never used.\ncontrollers/assignments/over-due.js: line 5, col 1, \'CustomFunctions\' is defined but never used.\n\n2 errors'); 
+  });
+
+});
 define('whats-due-cordova/tests/controllers/assignments.jshint', function () {
 
   'use strict';
 
   QUnit.module('JSHint - controllers');
   QUnit.test('controllers/assignments.js should pass jshint', function(assert) { 
-    assert.ok(true, 'controllers/assignments.js should pass jshint.'); 
+    assert.ok(false, 'controllers/assignments.js should pass jshint.\ncontrollers/assignments.js: line 4, col 1, \'CustomFunctions\' is defined but never used.\n\n1 error'); 
   });
 
 });
@@ -3799,6 +4023,26 @@ define('whats-due-cordova/tests/routes/application.jshint', function () {
   });
 
 });
+define('whats-due-cordova/tests/routes/assignments/due.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - routes/assignments');
+  QUnit.test('routes/assignments/due.js should pass jshint', function(assert) { 
+    assert.ok(true, 'routes/assignments/due.js should pass jshint.'); 
+  });
+
+});
+define('whats-due-cordova/tests/routes/assignments/over-due.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - routes/assignments');
+  QUnit.test('routes/assignments/over-due.js should pass jshint', function(assert) { 
+    assert.ok(true, 'routes/assignments/over-due.js should pass jshint.'); 
+  });
+
+});
 define('whats-due-cordova/tests/routes/assignments.jshint', function () {
 
   'use strict';
@@ -3934,7 +4178,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0+5a858a60"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0+cc050ca2"});
 }
 
 /* jshint ignore:end */

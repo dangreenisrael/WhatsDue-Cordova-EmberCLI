@@ -76,4 +76,8 @@
     <access origin="http://192.168.1.100" />
     <access origin="http://*.whatsdueapp.com" />
     <access origin="https://*.whatsdueapp.com" />
+    <feature name="BranchDevice">
+        <param name="ios-package" value="BNCDevice" />
+        <param name="onload" value="true" />
+    </feature>
 </widget>

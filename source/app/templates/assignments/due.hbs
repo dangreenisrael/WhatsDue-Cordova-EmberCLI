@@ -1,0 +1,12 @@
+<div id="assignments-due">
+    <div class="arrow-up"></div>
+    {{#each groupedCards as |day index|}}
+        <div class="day-divider">{{day.value}}</div>
+            {{#each day.items as |assignment|}}
+                <div>
+                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                </div>
+            {{/each}}
+    {{/each}}
+    {{in-viewport triggered='more'}}
+</div>

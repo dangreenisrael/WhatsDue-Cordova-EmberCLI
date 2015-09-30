@@ -8,22 +8,21 @@ var Router = Ember.Router.extend({
 Router.map(function() {
     this.route('courses', function(){
     });
-
     this.route('assignments', {path: '/'}, function(){
+        this.route('due', function () {
+        });
+        this.route('over-due', function () {
+        });
     });
-
     this.route('completedAssignments', function(){
     });
 
     this.route('support', function(){
     });
-
     this.route('messages', function(){
     });
-
     this.route('settings', function(){
     });
-
     this.route('welcome', function() {
         this.route('parent-student', function () {
         });

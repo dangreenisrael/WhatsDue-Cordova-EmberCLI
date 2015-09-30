@@ -1,43 +1,24 @@
 <div id="newAssignments">
     <nav>
-        <div class="due" {{action 'showDue'}}>
-            What's Due
+        {{#link-to 'assignments.due' class="due" tagName="div"}}
+                What's Due
             <span class="badge square black">
                 {{totalDue}}
             </span>
-        </div>
+        {{/link-to}}
+
         <div class="vertical-separator white"></div>
-        <div class="overdue" {{action 'showOverdue'}}>
+
+        {{#link-to 'assignments.over-due' class="overdue" tagName="div"}}
             Overdue
             <span class="badge square black">
                 {{totalOverdue}}
             </span>
-        </div>
+        {{/link-to}}
     </nav>
-    {{#if showDue}}
-        <div id="assignments-due">
-            {{firstOfDay}}
-            <div class="arrow-up"></div>
-            {{#each groupedCards as |day|}}
-                <div class="day-divider">{{day.value}}</div>
-                    {{#each day.items as |assignment|}}
-                        <div {{action "clickElement" assignment}}>
-                            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-                        </div>
-                    {{/each}}
-            {{/each}}
-        </div>
-    {{else}}
-        <div id="assignments-overdue">
-            <div class="arrow-up"></div>
-            <div class="day-divider">
-                Overdue
-            </div>
-            {{#each overdue as |assignment|}}
-                {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-            {{/each}}
-        </div>
-    {{/if}}
+    <div id="newAssignments">
+        {{outlet}}
+    </div>
     {{#unless stuffDue}}
         <div class="static-content nothing-due {{stuffDue}}">
             <img src="assets/img/thumbs-up.png">

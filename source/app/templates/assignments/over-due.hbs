@@ -1,0 +1,9 @@
+<div id="assignments-overdue">
+    <div class="arrow-up"></div>
+    <div class="day-divider">
+        Overdue
+    </div>
+    {{#each overdue as |assignment|}}
+        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+    {{/each}}
+</div>

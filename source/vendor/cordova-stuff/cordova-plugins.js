@@ -9,12 +9,21 @@ var cordovaLoaded = false;
 
 function onDeviceReady() {
     cordovaLoaded = true;
-    $('#contentContainer').css("-webkit-transform", "translate3d(-33.33333%,0,0) scale3d(1,1,1)");
-    $('nav > .overdue').click();
-    $('nav > .due').click();
-
     CustomFunctions.trackEvent('App Opened');
     //cordova.plugins.Keyboard.disableScroll(true);
+    branch.init('key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4', function(err, data) {
+        console.log(data);
+        if (!err && data.data) {
+            var parsed_data = JSON.parse(data.data);
+            console.log(parsed_data);
+            var courseCode = parsed_data['course_code'];
+            if (courseCode) {
+               alert(courseCode);
+
+            }
+        }
+    });
+
 }
 
 function onResume() {
@@ -41,9 +50,6 @@ window.addEventListener('native.keyboardhide', keyboardHideHandler);
 
 function keyboardHideHandler(e){
     activeInput.blur();
-    //$('.welcome').css('top', 0);
-    //$('#settings').css('margin-top', 0);
-
 }
 
 document.addEventListener("backbutton", onBackKeyDown, false);

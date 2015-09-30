@@ -31,6 +31,10 @@
         <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
         <param name="onload" value="true" />
     </feature>
+    <feature name="BranchDevice">
+        <param name="android-package" value="io.branch.BranchDevice" />
+        <param name="onload" value="true" />
+    </feature>
     <icon density="ldpi" src="www/res/android/ldpi.png" />
     <icon density="mdpi" src="www/res/android/mdpi.png" />
     <icon density="hdpi" src="www/res/android/hdpi.png" />
