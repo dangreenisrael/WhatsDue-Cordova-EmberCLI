@@ -6,24 +6,21 @@ export default Ember.Route.extend({
         return this.store.findAll('assignment');
     },
     afterModel() {
-            this.transitionTo('assignments.due');
+        this.transitionTo('assignments.due');
     },
+    pageLeave: function(){
+        let store = this.store;
+        store.peekAll('assignment').filterBy('completed', false).forEach(function(record){
+            store.unloadRecord(record);
+        })
+    }.on('deactivate'),
     actions: {
         removeAssignment: function(assignment) {
+            let store = this.store;
             assignment.set('completed', true);
             assignment.set('date_completed', Date.now());
-            assignment.save();
-            var putData = {
-                assignment: {
-                    completed:       true,
-                    completed_date:  Date.now()
-                }
-            };
-            Ember.$.ajax({
-                url: CustomFunctions.site()+"/assignments/"+assignment.get('id'),
-                type: 'PUT',
-                data: JSON.stringify(putData),
-                contentType: "application/json"
+            assignment.save().then(function(record){
+                store.unloadRecord(record);
             });
             CustomFunctions.trackEvent('Assignment Completed');
         }

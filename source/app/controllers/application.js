@@ -10,7 +10,7 @@ export default Ember.Controller.extend({
         CustomFunctions.setApplicationController(this);
         /* End store injection */
         var controller = this;
-        CustomFunctions.updateAssignments(controller);
+        //CustomFunctions.updateAssignments(controller);
         setInterval(function () {
             //CustomFunctions.updateAssignments(controller);
             //CustomFunctions.updateCourses(controller);

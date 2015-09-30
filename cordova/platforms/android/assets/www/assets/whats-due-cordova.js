@@ -3,7 +3,35 @@
 
 /* jshint ignore:end */
 
-define('whats-due-cordova/adapters/application', ['exports', 'ember-localforage-adapter/adapters/localforage'], function (exports, LFAdapter) {
+define('whats-due-cordova/adapters/application', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  /**
+   * Created by dan on 2014-05-13.
+   */
+
+  exports['default'] = DS['default'].RESTAdapter.extend({
+    host: 'http://test.whatsdueapp.com/app_dev.php',
+    namespace: "student"
+  });
+
+});
+define('whats-due-cordova/adapters/assignment', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  /**
+   * Created by dan on 2014-05-13.
+   */
+
+  exports['default'] = DS['default'].RESTAdapter.extend({
+    host: 'http://test.whatsdueapp.com/app_dev.php',
+    namespace: "student/student"
+  });
+
+});
+define('whats-due-cordova/adapters/setting', ['exports', 'ember-localforage-adapter/adapters/localforage'], function (exports, LFAdapter) {
 
   'use strict';
 
@@ -13,20 +41,6 @@ define('whats-due-cordova/adapters/application', ['exports', 'ember-localforage-
 
   exports['default'] = LFAdapter['default'].extend({
     namespace: 'WhatsDue'
-  });
-
-});
-define('whats-due-cordova/adapters/student', ['exports', 'ember-data'], function (exports, DS) {
-
-  'use strict';
-
-  /**
-   * Created by dan on 2014-05-13.
-   */
-
-  exports['default'] = DS['default'].RESTAdapter.extend({
-    host: 'http://admin.whatsdueapp.com',
-    namespace: "student"
   });
 
 });
@@ -125,6 +139,13 @@ define('whats-due-cordova/components/in-viewport', ['exports', 'ember', 'ember-i
     });
 
 });
+define('whats-due-cordova/components/infinity-loader', ['exports', 'ember-infinity/components/infinity-loader'], function (exports, infinityLoader) {
+
+	'use strict';
+
+	exports['default'] = infinityLoader['default'];
+
+});
 define('whats-due-cordova/components/removeable-card', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -168,7 +189,7 @@ define('whats-due-cordova/controllers/application', ['exports', 'ember'], functi
             CustomFunctions.setApplicationController(this);
             /* End store injection */
             var controller = this;
-            CustomFunctions.updateAssignments(controller);
+            //CustomFunctions.updateAssignments(controller);
             setInterval(function () {
                 //CustomFunctions.updateAssignments(controller);
                 //CustomFunctions.updateCourses(controller);
@@ -245,20 +266,10 @@ define('whats-due-cordova/controllers/assignments/due', ['exports', 'ember', 'em
     'use strict';
 
     exports['default'] = Ember['default'].Controller.extend({
-        totalVisible: 10,
-        groupedCards: groupBy['default']('visible', 'daysAway'),
+        groupedCards: groupBy['default']('due', 'daysAway'),
         due: (function () {
             return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', false).sortBy('due_date');
-        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
-        visible: (function () {
-            return this.get('due').slice(0, this.get('totalVisible'));
-        }).property('due', 'totalVisible'),
-        actions: {
-            more: function more() {
-                var totalVisible = this.get('totalVisible') + 10;
-                this.set('totalVisible', totalVisible);
-            }
-        }
+        }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived')
     });
 
 });
@@ -286,7 +297,12 @@ define('whats-due-cordova/controllers/assignments', ['exports', 'ember', 'ember-
             return this.get('model').filterBy('completed', false).filterBy('archived', false).filterBy('overdue', true).filterBy('hidden', false).sortBy('due_date');
         }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
         totalDue: (function () {
-            return this.get('due.length');
+            var dueLength = this.get('due.length');
+            if (dueLength > 10) {
+                return "10+";
+            } else {
+                return dueLength;
+            }
         }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
         stuffDue: (function () {
             return this.get('due.length') > 0;
@@ -789,7 +805,6 @@ define('whats-due-cordova/models/assignment', ['exports', 'ember-data'], functio
         time_visible: DS['default'].attr('boolean', { defaultValue: true }),
         last_updated: DS['default'].attr('number', { defaultValue: null }),
         date_completed: DS['default'].attr('number', { defaultValue: null }),
-        enrolled: DS['default'].attr('boolean', { defaultValue: true }),
         completed: DS['default'].attr('boolean', { defaultValue: false }),
         course_id: DS['default'].belongsTo('course', { async: true }),
         overdue: (function () {
@@ -997,13 +1012,14 @@ define('whats-due-cordova/routes/application', ['exports', 'ember'], function (e
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('whats-due-cordova/routes/assignments/due', ['exports', 'ember'], function (exports, Ember) {
+define('whats-due-cordova/routes/assignments/due', ['exports', 'ember', 'ember-infinity/mixins/route'], function (exports, Ember, InfinityRoute) {
 
     'use strict';
 
-    exports['default'] = Ember['default'].Route.extend({
+    exports['default'] = Ember['default'].Route.extend(InfinityRoute['default'], {
         model: function model() {
-            return this.store.findAll('assignment');
+            /* Load pages of the Product Model, starting from page 1, in groups of 12. */
+            return this.infinityModel("assignment", { perPage: 20, startingPage: 1 });
         }
     });
 
@@ -1027,6 +1043,7 @@ define('whats-due-cordova/routes/assignments', ['exports', 'ember'], function (e
 
     exports['default'] = Ember['default'].Route.extend({
         model: function model() {
+            this.store.findAll('course');
             return this.store.findAll('assignment');
         },
         afterModel: function afterModel() {
@@ -1494,7 +1511,7 @@ define('whats-due-cordova/templates/assignments/due', ['exports'], function (exp
           },
           "moduleName": "whats-due-cordova/templates/assignments/due.hbs"
         },
-        arity: 2,
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
@@ -1523,7 +1540,7 @@ define('whats-due-cordova/templates/assignments/due', ['exports'], function (exp
           ["content","day.value",["loc",[null,[4,33],[4,46]]]],
           ["block","each",[["get","day.items",["loc",[null,[5,20],[5,29]]]]],[],0,null,["loc",[null,[5,12],[9,21]]]]
         ],
-        locals: ["day","index"],
+        locals: ["day"],
         templates: [child0]
       };
     }());
@@ -1579,7 +1596,7 @@ define('whats-due-cordova/templates/assignments/due', ['exports'], function (exp
       },
       statements: [
         ["block","each",[["get","groupedCards",["loc",[null,[3,12],[3,24]]]]],[],0,null,["loc",[null,[3,4],[10,13]]]],
-        ["inline","in-viewport",[],["triggered","more"],["loc",[null,[11,4],[11,36]]]]
+        ["inline","infinity-loader",[],["infinityModel",["subexpr","@mut",[["get","model",["loc",[null,[11,36],[11,41]]]]],[],[]]],["loc",[null,[11,4],[11,43]]]]
       ],
       locals: [],
       templates: [child0]
@@ -2329,6 +2346,222 @@ define('whats-due-cordova/templates/components/in-viewport', ['exports'], functi
       ],
       locals: [],
       templates: []
+    };
+  }()));
+
+});
+define('whats-due-cordova/templates/components/infinity-loader', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@2.0.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 0
+            }
+          },
+          "moduleName": "whats-due-cordova/templates/components/infinity-loader.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["content","yield",["loc",[null,[2,2],[2,11]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      var child0 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@2.0.2",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 4,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 2
+              }
+            },
+            "moduleName": "whats-due-cordova/templates/components/infinity-loader.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("span");
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+            return morphs;
+          },
+          statements: [
+            ["content","loadedText",["loc",[null,[5,10],[5,24]]]]
+          ],
+          locals: [],
+          templates: []
+        };
+      }());
+      var child1 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@2.0.2",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 8,
+                "column": 2
+              }
+            },
+            "moduleName": "whats-due-cordova/templates/components/infinity-loader.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("span");
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+            return morphs;
+          },
+          statements: [
+            ["content","loadingText",["loc",[null,[7,10],[7,25]]]]
+          ],
+          locals: [],
+          templates: []
+        };
+      }());
+      return {
+        meta: {
+          "revision": "Ember@2.0.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 9,
+              "column": 0
+            }
+          },
+          "moduleName": "whats-due-cordova/templates/components/infinity-loader.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","if",[["get","infinityModel.reachedInfinity",["loc",[null,[4,8],[4,37]]]]],[],0,1,["loc",[null,[4,2],[8,9]]]]
+        ],
+        locals: [],
+        templates: [child0, child1]
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@2.0.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 10,
+            "column": 0
+          }
+        },
+        "moduleName": "whats-due-cordova/templates/components/infinity-loader.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","if",[["get","hasBlock",["loc",[null,[1,6],[1,14]]]]],[],0,1,["loc",[null,[1,0],[9,7]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -3686,13 +3919,23 @@ define('whats-due-cordova/tests/adapters/application.jshint', function () {
   });
 
 });
-define('whats-due-cordova/tests/adapters/student.jshint', function () {
+define('whats-due-cordova/tests/adapters/assignment.jshint', function () {
 
   'use strict';
 
   QUnit.module('JSHint - adapters');
-  QUnit.test('adapters/student.js should pass jshint', function(assert) { 
-    assert.ok(true, 'adapters/student.js should pass jshint.'); 
+  QUnit.test('adapters/assignment.js should pass jshint', function(assert) { 
+    assert.ok(true, 'adapters/assignment.js should pass jshint.'); 
+  });
+
+});
+define('whats-due-cordova/tests/adapters/setting.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - adapters');
+  QUnit.test('adapters/setting.js should pass jshint', function(assert) { 
+    assert.ok(true, 'adapters/setting.js should pass jshint.'); 
   });
 
 });
@@ -3772,7 +4015,7 @@ define('whats-due-cordova/tests/controllers/assignments.jshint', function () {
 
   QUnit.module('JSHint - controllers');
   QUnit.test('controllers/assignments.js should pass jshint', function(assert) { 
-    assert.ok(false, 'controllers/assignments.js should pass jshint.\ncontrollers/assignments.js: line 4, col 1, \'CustomFunctions\' is defined but never used.\n\n1 error'); 
+    assert.ok(false, 'controllers/assignments.js should pass jshint.\ncontrollers/assignments.js: line 25, col 25, Missing semicolon.\ncontrollers/assignments.js: line 4, col 1, \'CustomFunctions\' is defined but never used.\n\n2 errors'); 
   });
 
 });
@@ -4178,7 +4421,7 @@ catch(err) {
 if (runningTests) {
   require("whats-due-cordova/tests/test-helper");
 } else {
-  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0+cc050ca2"});
+  require("whats-due-cordova/app")["default"].create({"name":"whats-due-cordova","version":"0.0.0+02a3f6db"});
 }
 
 /* jshint ignore:end */

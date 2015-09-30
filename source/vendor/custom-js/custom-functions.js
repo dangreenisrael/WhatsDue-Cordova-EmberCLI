@@ -8,10 +8,10 @@ var CustomFunctions = {
     setApplicationController: function(context){
         this.applicationController = context;
     },
-    test: false,
+    test: true,
     site: function(){
         if (this.test == true) {
-            return "http://test.whatsdueapp.com/app_dev.php/student";
+            return "http://test.whatsdueapp.com/app_dev.php/api/v1/student";
             //return "http://192.168.1.100/app_dev.php/student";
         } else {
             function ignoreError()

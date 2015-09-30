@@ -3,13 +3,13 @@ import groupBy from 'ember-group-by';
 
 /* global CustomFunctions */
 export default Ember.Controller.extend({
-    due:(function() {
+    due:function() {
         return this.get('model')
             .filterBy('completed',false)
             .filterBy('archived',false)
             .filterBy('overdue',false)
             .sortBy('due_date');
-    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     groupedCards: groupBy('due', 'daysAway'),
     overdue:(function() {
         return this.get('model')
@@ -20,7 +20,12 @@ export default Ember.Controller.extend({
             .sortBy('due_date');
     }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     totalDue: function() {
-        return this.get('due.length');
+        var dueLength = this.get('due.length');
+        if (dueLength > 10){
+            return "10+"
+        } else{
+            return dueLength;
+        }
     }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
     stuffDue: function(){
         return (this.get('due.length') > 0);

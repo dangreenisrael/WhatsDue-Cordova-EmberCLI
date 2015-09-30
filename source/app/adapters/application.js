@@ -3,8 +3,9 @@
  */
 
 
-import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
+import DS from 'ember-data';
 
-export default LFAdapter.extend({
-    namespace: 'WhatsDue'
+export default DS.RESTAdapter.extend({
+    host: 'http://test.whatsdueapp.com/app_dev.php',
+    namespace: "api/v1/student"
 });

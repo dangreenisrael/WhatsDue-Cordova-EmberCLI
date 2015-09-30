@@ -10,8 +10,7 @@ var Assignment = DS.Model.extend({
     archived:           DS.attr('boolean'),
     time_visible:       DS.attr('boolean', {defaultValue: true}),
     last_updated:       DS.attr('number', {defaultValue: null}),
-    date_completed:     DS.attr('number', {defaultValue: null}),
-    enrolled:           DS.attr('boolean', {defaultValue: true}),
+    completed_date:     DS.attr('number', {defaultValue: null}),
     completed:          DS.attr('boolean', {defaultValue: false}),
     course_id:          DS.belongsTo('course', {async:true}),
     overdue: function(){
