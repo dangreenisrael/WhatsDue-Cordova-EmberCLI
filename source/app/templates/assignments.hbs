@@ -1,23 +1,46 @@
 <div id="newAssignments">
     <nav>
-        {{#link-to 'assignments.due' class="due" tagName="div"}}
+        <div{{action 'showDue'}} class="due">
                 What's Due
             <span class="badge square black">
                 {{totalDue}}
             </span>
-        {{/link-to}}
-
+        </div>
         <div class="vertical-separator white"></div>
-
-        {{#link-to 'assignments.over-due' class="overdue" tagName="div"}}
+        <div {{action 'showOverdue'}} class="overdue">
             Overdue
             <span class="badge square black">
                 {{totalOverdue}}
             </span>
-        {{/link-to}}
+        </div>
     </nav>
-    <div id="newAssignments">
-        {{outlet}}
+    <div>
+        <div id="assignments-due" class="{{showDue}}">
+            <div class="arrow-up"></div>
+            <!--<button {{action 'getUpdates'}}>Get Updates</button>-->
+            {{#each groupedCards as |day|}}
+                <div class="day-divider">{{day.value}}</div>
+                {{#each day.items as |assignment|}}
+                    <div>
+                        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                    </div>
+                {{/each}}
+            {{/each}}
+            {{#infinity-loader infinityModel=model destroyOnInfinity=true}}
+                <div class="in-viewport">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+            {{/infinity-loader}}
+        </div>
+        <div id="assignments-overdue" class="{{showOverdue}}">
+            <div class="arrow-up"></div>
+            <div class="day-divider">
+                Overdue
+            </div>
+            {{#each overdue as |assignment|}}
+                {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+            {{/each}}
+        </div>
     </div>
     {{#unless stuffDue}}
         <div class="static-content nothing-due {{stuffDue}}">

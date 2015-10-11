@@ -7,20 +7,20 @@
             <td>
                 {{bs-switch name="my-bs-switch"
                     btnSize="medium"
-                    checked=student.notifications
-                    on-switch-change="saveNotifications"
+                    checked=model.notifications
+                    on-switch-change="save"
                 }}
             </td>
             <td {{action "datePicker"}}>
-                Notify me at <span class="click-me">{{student.displayTime}}</span> about due dates
+                Notify me at <span class="click-me">{{model.displayTime}}</span> about due dates
             </td>
         </tr>
         <tr>
             <td>
                 {{bs-switch name="my-bs-switch"
                     btnSize="medium"
-                    checked=student.notification_updates
-                    on-switch-change="saveUpdateNotifications"
+                    checked=model.notification_updates
+                    on-switch-change="save"
                 }}
 
             </td>
@@ -36,14 +36,14 @@
 
     <p class="static-content">
         My name is
-        {{input value=student.first_name    focus-out="save"}}
-        {{input value=student.last_name     focus-out="save"}}
+        {{input value=model.first_name focus-out="save"}}
+        {{input value=model.last_name focus-out="save"}}
     </p>
     <div class="buttons">
-        <a {{action "setRole" student "student"}} class="box square {{studentActive}} double">
+        <a {{action "setRole" model "student"}} class="box square {{studentActive}} double">
             Student
         </a>
-        <a {{action "setRole" student "parent"}} class="box square {{parentActive}} double">
+        <a {{action "setRole" model "parent"}} class="box square {{parentActive}} double">
             Parent
         </a>
     </div>
@@ -63,7 +63,7 @@
                 <p>
                     <br>
                     My parent's email address <br>
-                    {{input value=student.parent_email  key-press="save"}}
+                    {{input value=model.parent_email  focus-out="save"}}
                 </p>
             {{/unless}}
         </div>

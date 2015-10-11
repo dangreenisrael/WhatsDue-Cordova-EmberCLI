@@ -1,7 +1,3 @@
-/**
- * Created by Dan on 5/12/15.
- */
-
 var Migration = {
     getCourses: function(){
         var courses = localStorage.getItem('whatsdue-courses');
@@ -31,7 +27,7 @@ var Migration = {
         // Add each course
         Ember.$.each(this.getCourses(), function(index, course) {
             Ember.$.ajax({
-                url: CustomFunctions.site() + "/courses/"+course.course_code + "/enroll",
+                url: baseURL + "/courses/"+course.course_code + "/enroll",
                 type: 'PUT'
             });
             store.createRecord('course', course).save().then(

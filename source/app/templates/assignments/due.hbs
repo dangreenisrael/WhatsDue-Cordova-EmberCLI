@@ -1,5 +1,7 @@
 <div id="assignments-due">
     <div class="arrow-up"></div>
+    {{log route}}
+    <!--<button {{action 'getUpdates'}}>Get Updates</button>-->
     {{#each groupedCards as |day|}}
         <div class="day-divider">{{day.value}}</div>
             {{#each day.items as |assignment|}}
@@ -8,9 +10,4 @@
                 </div>
             {{/each}}
     {{/each}}
-    {{#infinity-loader infinityModel=model}}
-        <div class="in-viewport">
-            <i class="fa fa-refresh fa-spin"></i>
-        </div>
-    {{/infinity-loader}}
 </div>

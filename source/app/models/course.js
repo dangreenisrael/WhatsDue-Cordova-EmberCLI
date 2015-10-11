@@ -10,6 +10,7 @@ var Course = DS.Model.extend({
     school_name:         DS.attr('string',  {defaultValue: "IDC Herzliya"}),
     enrolled:            DS.attr('boolean', {defaultValue: true}),
     archived:            DS.attr('boolean', {defaultValue: false}),
+    error:               DS.attr('string', {defaultValue: null}),
     assignments:         DS.hasMany('assignment'),
     hidden: function(){
         if (this.get('archived') === true){

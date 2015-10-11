@@ -9,10 +9,11 @@ var Assignment = DS.Model.extend({
     last_modified:      DS.attr('number'),
     archived:           DS.attr('boolean'),
     time_visible:       DS.attr('boolean', {defaultValue: true}),
-    last_updated:       DS.attr('number', {defaultValue: null}),
     completed_date:     DS.attr('number', {defaultValue: null}),
     completed:          DS.attr('boolean', {defaultValue: false}),
     course_id:          DS.belongsTo('course', {async:true}),
+    hiding:             DS.attr('string', {defaultValue: null}),
+    open:               DS.attr('string', {defaultValue: null}),
     overdue: function(){
         return moment().isAfter(this.get('due_date'));
     }.property('due_date'),

@@ -1,11 +1,11 @@
-<div class="slider left-box" {{action 'slideOver' assignment on="swipe"}}>
+<div class="slider left-box {{assignment.hiding}}" {{action 'slideOver' assignment on="swipe"}}>
     <div {{action 'removeAssignment' assignment}} class="reveal">
            <p>
                Mark as <br>
                Done
            </p>
     </div>
-    <div {{action 'slideOver' assignment }} id="{{assignment.id}}" class ="fastAnimate removable {{assignment.urgencyLabel}}">
+    <div {{action 'slideOver' assignment }} id="{{assignment.id}}" class ="fastAnimate {{assignment.open}} {{assignment.urgencyLabel}}">
         <div class="time">
             {{#if assignment.time_visible}}
                 <span class="from-now">

@@ -1,19 +1,39 @@
 /* Main Menu */
+@menuAnimationTime: 300ms;
+.menuAnimate{
+  transition: transform @menuAnimationTime ease;
+  -webkit-transition:-webkit-transform @menuAnimationTime ease;
+}
 
-#content.menuOpen{
-    -webkit-transform: translate3d(100vw,0,0);
+.menuOpen{
     height: 90vh;
     #main{
       height: 90vh;
       overflow: hidden;
+      opacity: 0;
     }
+  #menu{
+    -webkit-transform: translate3d(0,0,0);
+  }
 }
+
+#main{
+  transition: opacity @menuAnimationTime ease;
+  -webkit-transition:opacity @menuAnimationTime ease;
+  opacity: 1;
+}
+#main.loading{
+  opacity: 0;
+}
+
 #menu{
+  background-color: @backgroundColor;
   overflow-y: visible;
   width: 100vw;
   height: 90vh;
   position: absolute;
-  left: -100vw;
+  -webkit-transform: translate3d(-100vw,0,0);
+  z-index: 10;
   ul {
     li {
       list-style: none;
@@ -46,5 +66,6 @@
     }
   }
 }
+
 
 

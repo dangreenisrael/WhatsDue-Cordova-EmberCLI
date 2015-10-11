@@ -9,18 +9,18 @@ for (var dev in ifaces) {
         }
     });
 }
-
 module.exports = function(environment) {
-  var ENV = {
-    modulePrefix: 'whats-due-cordova',
-    environment: environment,
-    baseURL: '/',
-    locationType: 'hash',
-    EmberENV: {
-      FEATURES: {
-        // Here you can enable experimental features on an ember canary build
-        // e.g. 'with-controller': true
-      }
+    var ENV = {
+      modulePrefix: 'whats-due-cordova',
+      environment: environment,
+      baseURL: '/',
+      namespace: "api/v1/student",
+      locationType: 'hash',
+      EmberENV: {
+          FEATURES: {
+          // Here you can enable experimental features on an ember canary build
+          // e.g. 'with-controller': true
+          }
     },
       contentSecurityPolicy: {
           'default-src': "*",
@@ -33,34 +33,42 @@ module.exports = function(environment) {
 
 
       APP: {
-      // Here you can pass flags/options to your application instance
-      // when it is created
+          // Here you can pass flags/options to your application instance
+          // when it is created
+      }
+    };
+
+    if (environment === 'development') {
+        ENV.host = "http://test.whatsdueapp.com/app_dev.php";
+        // ENV.APP.LOG_RESOLVER = true;
+        // ENV.APP.LOG_ACTIVE_GENERATION = true;
+        // ENV.APP.LOG_TRANSITIONS = true;
+        // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
+        // ENV.APP.LOG_VIEW_LOOKUPS = true;
     }
-  };
 
-  if (environment === 'development') {
-    // ENV.APP.LOG_RESOLVER = true;
-    // ENV.APP.LOG_ACTIVE_GENERATION = true;
-    // ENV.APP.LOG_TRANSITIONS = true;
-    // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-    // ENV.APP.LOG_VIEW_LOOKUPS = true;
-  }
+    if (environment === 'test') {
+        // Testem prefers this...
+        ENV.baseURL = '/';
+        ENV.locationType = 'none';
 
-  if (environment === 'test') {
-    // Testem prefers this...
-    ENV.baseURL = '/';
-    ENV.locationType = 'none';
+        // keep test console output quieter
+        ENV.APP.LOG_ACTIVE_GENERATION = false;
+        ENV.APP.LOG_VIEW_LOOKUPS = false;
 
-    // keep test console output quieter
-    ENV.APP.LOG_ACTIVE_GENERATION = false;
-    ENV.APP.LOG_VIEW_LOOKUPS = false;
+        ENV.APP.rootElement = '#ember-testing';
+    }
 
-    ENV.APP.rootElement = '#ember-testing';
-  }
+    if (environment === 'wifi') {
+        ENV.host = "http://192.168.1.100";
+    }
 
-  if (environment === 'production') {
-
-  }
+    if (environment === 'stage') {
+        ENV.host = "http://stage.whatsdueapp.com";
+    }
+    if (environment === 'production') {
+        ENV.host = "http://stage.whatsdueapp.com";
+    }
 
   return ENV;
 };

@@ -5,16 +5,7 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
     init: function () {
-        /* Start store injection */
         CustomFunctions.setStore(this);
-        CustomFunctions.setApplicationController(this);
-        /* End store injection */
-        var controller = this;
-        //CustomFunctions.updateAssignments(controller);
-        setInterval(function () {
-            //CustomFunctions.updateAssignments(controller);
-            //CustomFunctions.updateCourses(controller);
-        }, 5000);
 
         function checkVersion(version){
             version = parseFloat(version);
@@ -58,11 +49,12 @@ export default Ember.Controller.extend({
 
     },
     pageTitle: "Assignments",
-    menuOpen: null,
+    menuOpen: "menuClosed",
+    loading: null,
     actions:{
         menuToggle: function(){
-            if (this.get('menuOpen')){
-                this.set('menuOpen', null);
+            if (this.get('menuOpen') === "menuOpen"){
+                this.set('menuOpen', "menuClosed");
             } else{
                 this.set('menuOpen', "menuOpen");
             }

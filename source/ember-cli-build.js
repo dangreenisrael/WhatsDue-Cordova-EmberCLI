@@ -5,6 +5,12 @@ module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
     fingerprint: {
       enabled: false
+    },
+    'delay-app-boot': {
+      // Delay in milliseconds
+      delay: 250,
+      // Array of environments that should have the boot delay
+      environments: ['production']
     }
   });
 

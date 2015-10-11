@@ -4,21 +4,25 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+    open: false,
     actions: {
         removeAssignment: function (assignment) {
-            this.$().remove();
-            this.sendAction('removeAssignment', assignment);
+            let controller=this;
+            /* Hacks for older mobile devices */
+            assignment.set('hiding', 'animateHide');
+            setTimeout(function(){
+                controller.sendAction('removeAssignment', assignment);
+                Ember.$(window).scroll();
+            },300);
         },
         toggleModal: function (assignment) {
             this.sendAction('toggleModal', assignment);
         },
         slideOver: function (assignment) {
-            var element = Ember.$("#"+ assignment.get('id'));
-            Ember.$('.removable:not(#' + assignment.get('id')+')').css("-webkit-transform", "translateX(0)");
-            if (element.css("-webkit-transform") !== "matrix(1, 0, 0, 1, -100, 0)") {
-                element.css("-webkit-transform", "translateX(-100px)");
+            if (!assignment.get('open')){
+                assignment.set('open', 'open');
             } else{
-                element.css("-webkit-transform", "translateX(0)");
+                assignment.set('open', null);
             }
         }
     }

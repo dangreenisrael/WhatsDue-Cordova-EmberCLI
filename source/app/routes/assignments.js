@@ -1,28 +1,32 @@
 import Ember from 'ember';
+import InfinityRoute from "ember-infinity/mixins/route";
 /* global CustomFunctions */
+/* global localforage */
 
-export default Ember.Route.extend({
+export default Ember.Route.extend(InfinityRoute,{
     model: function() {
-        return this.store.findAll('assignment');
+        return this.infinityModel("assignment", {perPage: 10, startingPage: 1}).then(function (data) {
+            localforage.setItem('assignmentTimestamp', data.get('meta').timestamp);
+            return data;
+        });
     },
     afterModel() {
-        this.transitionTo('assignments.due');
+        this.controllerFor('application').set('loading', null);
     },
-    pageLeave: function(){
-        let store = this.store;
-        store.peekAll('assignment').filterBy('completed', false).forEach(function(record){
-            store.unloadRecord(record);
-        })
-    }.on('deactivate'),
+    beforeModel: function(){
+        this.controllerFor('application').set('loading', 'loading');
+    },
     actions: {
         removeAssignment: function(assignment) {
-            let store = this.store;
             assignment.set('completed', true);
-            assignment.set('date_completed', Date.now());
-            assignment.save().then(function(record){
-                store.unloadRecord(record);
-            });
-            CustomFunctions.trackEvent('Assignment Completed');
+            assignment.set('completed_date', Date.now());
+            //Ember.run.later(function(){
+                assignment.save().then(function(){
+                    CustomFunctions.trackEvent('Assignment Completed');
+                }, function(){
+                    CustomFunctions.trackEvent('Assignment Complete Failed');
+                });
+            //},50);
         }
     }
 });
