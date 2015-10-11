@@ -10,6 +10,8 @@ cordova/platforms
 cordova/platforms/*
 cordova/plugins
 cordova/plugins/*
+cordova/platforms/android/assets/www
+cordova/platforms/android/assets/www/*
 
 *tmp/*
 *.idea
