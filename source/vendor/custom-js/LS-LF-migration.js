@@ -1,16 +1,16 @@
 var Migration = {
-    getCourses: function(){
-        var courses = localStorage.getItem('whatsdue-courses');
-        if (courses!= null){
-            return (JSON.parse(courses)).course.records;
-        }
-    },
-    getAssignments: function(){
-        var assignments = localStorage.getItem('whatsdue-assignment');
-        if (assignments!= null){
-            return (JSON.parse(assignments)).assignment.records;
-        }
-    },
+    //getCourses: function(){
+    //    var courses = localStorage.getItem('whatsdue-courses');
+    //    if (courses!= null){
+    //        return (JSON.parse(courses)).course.records;
+    //    }
+    //},
+    //getAssignments: function(){
+    //    var assignments = localStorage.getItem('whatsdue-assignment');
+    //    if (assignments!= null){
+    //        return (JSON.parse(assignments)).assignment.records;
+    //    }
+    //},
     setDefaultSettings:function(){
         CustomFunctions.store.findAll('student').then(function(records){
             var student = records.get('firstObject');
@@ -21,29 +21,29 @@ var Migration = {
             student.set('notification_time_utc', defaultTime.utcOffset('UTC').format('HHmm'));
             student.save();
         });
-    },
-    runMigration: function(){
-        var store = CustomFunctions.store;
-        // Add each course
-        Ember.$.each(this.getCourses(), function(index, course) {
-            Ember.$.ajax({
-                url: baseURL + "/courses/"+course.course_code + "/enroll",
-                type: 'PUT'
-            });
-            store.createRecord('course', course).save().then(
-                function(course){
-                    // Add assignments for each course
-                    Ember.$.each(Migration.getAssignments(), function(index, assignment) {
-                        if (course.id === assignment.course_id){
-                            console.log(course);
-                            assignment.course_id = course;
-                            store.createRecord('assignment', assignment).save();
-                        }
-                        CustomFunctions.updateCourseList();
-                    });
-                }
-            );
-        });
-        CustomFunctions.updateCourseList();
     }
+    //runMigration: function(){
+    //    var store = CustomFunctions.store;
+    //    // Add each course
+    //    Ember.$.each(this.getCourses(), function(index, course) {
+    //        Ember.$.ajax({
+    //            url: baseURL + "/courses/"+course.course_code + "/enroll",
+    //            type: 'PUT'
+    //        });
+    //        store.createRecord('course', course).save().then(
+    //            function(course){
+    //                // Add assignments for each course
+    //                Ember.$.each(Migration.getAssignments(), function(index, assignment) {
+    //                    if (course.id === assignment.course_id){
+    //                        console.log(course);
+    //                        assignment.course_id = course;
+    //                        store.createRecord('assignment', assignment).save();
+    //                    }
+    //                    CustomFunctions.updateCourseList();
+    //                });
+    //            }
+    //        );
+    //    });
+    //    CustomFunctions.updateCourseList();
+    //}
 };

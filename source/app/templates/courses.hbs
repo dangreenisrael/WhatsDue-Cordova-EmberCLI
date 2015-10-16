@@ -9,7 +9,7 @@
         }}
     {{/each}}
     <div id="addCourse">
-        <button {{action 'addCourse' course_code model}}  class="{{disabled}} fastAnimate">Join</button>
+        <button {{action 'addCourse' course_code}}  class="{{disabled}} fastAnimate">Join</button>
         {{input type="text" value=course_code  maxlength="6" placeholder="Course Code"  class="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"}}
     </div>
     <p class="triangle-isosceles topleft hidden bubble">

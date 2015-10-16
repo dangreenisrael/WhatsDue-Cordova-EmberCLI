@@ -57,7 +57,17 @@
         </ul>
     </div>
     <div id="main" class="{{loading}}">
-        {{outlet}}
+        <i class="fa fa-spinner fa-pulse"></i>
+        <div class="content">
+            {{outlet}}
+        </div>
     </div>
 </div>
 {{outlet 'welcome'}}
+
+<!--Allow cordova to trigger actions -->
+<div class="hidden">
+    <div id="addCourseProgrammatically" {{action 'addCourse' courseCodeForBranch}}>
+        {{input value=courseCodeForBranch}}
+    </div>
+</div>

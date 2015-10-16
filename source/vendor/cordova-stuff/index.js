@@ -67,7 +67,6 @@ var cordovaApp = {
                 console.log(postData);
                 console.log(response);
                 localforage.setItem('studentId', response.student.id);
-                CustomFunctions.store.push('student', response.student);
                 CustomFunctions.dealWithUser(response.student);
                 studentId = response.student.id;
             },
@@ -81,6 +80,7 @@ var cordovaApp = {
         console.log('Success Handler = '+result)
     },
     errorHandler:function(error) {
+        console.log(error);
         navigator.notification.alert(
             "We couldn't register your device for push notifications.\n\nPlease contact us through the website.",
             null,
@@ -104,7 +104,6 @@ var cordovaApp = {
                     data: postData,
                     success: function (response) {
                         localforage.setItem('studentId', response.student.id);
-                        CustomFunctions.store.push('student', response.student);
                         CustomFunctions.dealWithUser(response.student);
                         studentId = response.student.id;
                         console.log(studentId);

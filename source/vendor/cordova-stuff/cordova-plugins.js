@@ -11,27 +11,29 @@ function onDeviceReady() {
     cordovaLoaded = true;
     CustomFunctions.trackEvent('App Opened');
     //cordova.plugins.Keyboard.disableScroll(true);
+    initializeBranch();
+}
+
+function onResume() {
+    initializeBranch();
+}
+
+function onPause() {
+    initializeBranch();
+}
+
+var initializeBranch = function(){
     branch.init('key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4', function(err, data) {
-        console.log(data);
         if (!err && data.data) {
             var parsed_data = JSON.parse(data.data);
             console.log(parsed_data);
             var courseCode = parsed_data['course_code'];
             if (courseCode) {
-               alert(courseCode);
-
+                $('#addCourseProgrammatically').children('input').val(courseCode).trigger("change").click();
             }
         }
     });
-
-}
-
-function onResume() {
-}
-
-function onPause() {
-}
-
+};
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
 
 var activeInput;

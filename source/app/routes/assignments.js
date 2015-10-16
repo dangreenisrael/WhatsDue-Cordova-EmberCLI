@@ -12,21 +12,9 @@ export default Ember.Route.extend(InfinityRoute,{
     },
     afterModel() {
         this.controllerFor('application').set('loading', null);
+        console.log('loaded');
     },
     beforeModel: function(){
         this.controllerFor('application').set('loading', 'loading');
-    },
-    actions: {
-        removeAssignment: function(assignment) {
-            assignment.set('completed', true);
-            assignment.set('completed_date', Date.now());
-            //Ember.run.later(function(){
-                assignment.save().then(function(){
-                    CustomFunctions.trackEvent('Assignment Completed');
-                }, function(){
-                    CustomFunctions.trackEvent('Assignment Complete Failed');
-                });
-            //},50);
-        }
     }
 });

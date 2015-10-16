@@ -8,7 +8,7 @@ var Router = Ember.Router.extend({
 Router.map(function() {
     this.route('courses', function(){
     });
-    this.route('assignments', {path: '/'}, function(){
+    this.route('assignments', function(){
         this.route('due', function () {
         });
         this.route('over-due', function () {

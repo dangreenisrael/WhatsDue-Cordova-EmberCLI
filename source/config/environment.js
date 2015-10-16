@@ -67,7 +67,7 @@ module.exports = function(environment) {
         ENV.host = "http://stage.whatsdueapp.com";
     }
     if (environment === 'production') {
-        ENV.host = "http://stage.whatsdueapp.com";
+        ENV.host = "http://admin.whatsdueapp.com";
     }
 
   return ENV;

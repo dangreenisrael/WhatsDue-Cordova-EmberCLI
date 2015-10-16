@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
                 navigator.notification.alert(
                     'Double check that email',
                     null,
-                    'Woops');
+                    'Whoops');
             }
         }
     }

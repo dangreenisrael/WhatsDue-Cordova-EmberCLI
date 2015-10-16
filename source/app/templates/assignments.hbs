@@ -26,17 +26,19 @@
                     </div>
                 {{/each}}
             {{/each}}
-            {{#infinity-loader infinityModel=model destroyOnInfinity=true}}
+            {{#infinity-loader infinityModel=model destroyOnInfinity=true developmentMode=false}}
                 <div class="in-viewport">
-                    <i class="fa fa-refresh fa-spin"></i>
+                    <i class="fa fa-spinner fa-spin fa-pulse"></i>
                 </div>
             {{/infinity-loader}}
         </div>
         <div id="assignments-overdue" class="{{showOverdue}}">
             <div class="arrow-up"></div>
-            <div class="day-divider">
-                Overdue
-            </div>
+            {{#if stuffOverdue}}
+                <div class="day-divider">
+                    Overdue
+                </div>
+            {{/if}}
             {{#each overdue as |assignment|}}
                 {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
             {{/each}}

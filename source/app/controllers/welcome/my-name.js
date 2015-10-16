@@ -25,7 +25,7 @@ export default Ember.Controller.extend({
                 navigator.notification.alert(
                     'We need your first and last name',
                     null,
-                    'Woops');
+                    'hWoops');
             }
         }
     }

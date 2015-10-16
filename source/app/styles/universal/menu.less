@@ -1,36 +1,61 @@
 /* Main Menu */
-@menuAnimationTime: 300ms;
+@menuAnimationTime: 600ms;
 .menuAnimate{
-  transition: transform @menuAnimationTime ease;
-  -webkit-transition:-webkit-transform @menuAnimationTime ease;
+  transition: all @menuAnimationTime ease;
+  -webkit-transition:all @menuAnimationTime ease;
 }
 
+
 .menuOpen{
-    height: 90vh;
-    #main{
-      height: 90vh;
-      overflow: hidden;
+  height: ~"calc(100% - 80px)";
+  margin-top: @mainTopMargin;
+  >div{
+
+  }
+  #main{
+    .content{
       opacity: 0;
     }
+    overflow: hidden;
+    height: calc(~"100vh" - (@mainTopMargin + 20px));
+  }
   #menu{
     -webkit-transform: translate3d(0,0,0);
+    position: absolute;
+    top: 0;
   }
 }
 
-#main{
+#main > *, {
   transition: opacity @menuAnimationTime ease;
   -webkit-transition:opacity @menuAnimationTime ease;
-  opacity: 1;
 }
-#main.loading{
+
+#main > .fa-spinner{
   opacity: 0;
+  font-size: 80px;
+  margin-left: ~"calc(50vw - 40px)";
+  margin-top: ~"calc(50vh - 40vw)";
+  color: @darkGrey;
+  position: fixed;
 }
+
+#main.loading{
+  >div{
+    opacity: 0;
+  }
+  &>.fa-spinner{
+    opacity: 1;
+  }
+}
+
+
 
 #menu{
   background-color: @backgroundColor;
   overflow-y: visible;
   width: 100vw;
-  height: 90vh;
+  height: calc(~"100vh" - (@mainTopMargin + 20px));
   position: absolute;
   -webkit-transform: translate3d(-100vw,0,0);
   z-index: 10;

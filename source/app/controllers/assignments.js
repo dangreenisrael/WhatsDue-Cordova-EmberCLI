@@ -2,7 +2,7 @@ import Ember from 'ember';
 import groupBy from 'ember-group-by';
 import ENV from 'whats-due-cordova/config/environment';
 
-/* global device, localforage */
+/* global device, localforage, CustomFunctions */
 export default Ember.Controller.extend({
     groupedCards: groupBy('due', 'daysAway'),
     due:function() {
@@ -11,7 +11,7 @@ export default Ember.Controller.extend({
             .filterBy('archived',false)
             .filterBy('overdue',false)
             .sortBy('due_date');
-    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived', 'updateCount'),
+    }.property('model.[]','updateCount'),
     overdue:(function() {
         return this.get('model')
             .filterBy('completed',false)
@@ -19,7 +19,7 @@ export default Ember.Controller.extend({
             .filterBy('overdue',true)
             .filterBy('hidden',false)
             .sortBy('due_date');
-    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    }).property('model.[]','updateCount'),
     totalDue: function() {
         var dueLength = this.get('due.length');
         if (dueLength > 10){
@@ -27,11 +27,14 @@ export default Ember.Controller.extend({
         } else{
             return dueLength;
         }
-    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    }.property('due'),
     stuffDue: function(){
-        return (this.get('model.length') > 0);
+        return (this.get('due.length')+this.get('overdue.length') > 0);
     }
-    .property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+    .property('due','overdue'),
+    stuffOverdue: function(){
+        return (this.get('overdue.length') > 0);
+    }.property('overdue'),
     totalOverdue: function() {
         var overdueLength = this.get('overdue.length');
         if (overdueLength > 10){
@@ -39,7 +42,7 @@ export default Ember.Controller.extend({
         } else{
             return overdueLength;
         }
-    }.property('model.@each.due_date', 'model.@each.completed'),
+    }.property('overdue'),
     getUpdates: function(){
         let controller = this;
         let baseURL = ENV.host+"/"+ENV.namespace;
@@ -83,6 +86,16 @@ export default Ember.Controller.extend({
         showOverdue: function(){
             this.set('showOverdue', null);
             this.set('showDue', "hidden");
+        },
+        removeAssignment: function(assignment) {
+            assignment.set('completed', true);
+            assignment.set('completed_date', Date.now());
+            this.set('updateCount', Math.random());
+            assignment.save().then(function(){
+                CustomFunctions.trackEvent('Assignment Completed');
+            }, function(){
+                CustomFunctions.trackEvent('Assignment Complete Failed');
+            });
         }
     }
 });

@@ -2,33 +2,40 @@
     <h3>
         Reminders
     </h3>
-    <table class="static-content">
-        <tr>
-            <td>
-                {{bs-switch name="my-bs-switch"
-                    btnSize="medium"
-                    checked=model.notifications
-                    on-switch-change="save"
-                }}
-            </td>
-            <td {{action "datePicker"}}>
-                Notify me at <span class="click-me">{{model.displayTime}}</span> about due dates
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{bs-switch name="my-bs-switch"
-                    btnSize="medium"
-                    checked=model.notification_updates
-                    on-switch-change="save"
-                }}
 
-            </td>
-            <td>
-                Notify me about all new assignments and updates
-            </td>
-        </tr>
-    </table>
+    <div class="static-content reminders">
+        <p {{action "datePicker"}}>
+            Daily Notification Time: <span class="click-me">{{model.displayTime}}</span>
+        </p>
+        <table>
+            <tr>
+                <td>
+                    {{bs-switch name="my-bs-switch"
+                        btnSize="medium"
+                        checked=model.notifications
+                        on-switch-change="save"
+                    }}
+                </td>
+                <td>
+                    Daily reminder at {{model.displayTime}} if you have tasks due tomorrow
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{bs-switch name="my-bs-switch"
+                        btnSize="medium"
+                        checked=model.notification_updates
+                        on-switch-change="save"
+                    }}
+
+                </td>
+                <td>
+                    Notifications about assignment updates in real time (all day)
+                </td>
+            </tr>
+        </table>
+
+    </div>
 
     <h3>
         Details

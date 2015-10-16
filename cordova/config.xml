@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.whatsdue.app" version="2.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.whatsdue.app" version="2.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WhatsDue</name>
     <description>
         A simple app that tells you what's due for all your courses.
     </description>
-    <author email="dan@tlvwebdevelopment.com" href="http://whatsdueapp.com">
-        TLV Web Development
+    <author email="dan@whatsdueapp" href="http://whatsdueapp.com">
+        WhatsDue
     </author>
     <content src="index.html" />
     <access origin="*" />

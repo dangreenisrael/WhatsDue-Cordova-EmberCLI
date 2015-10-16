@@ -16,11 +16,12 @@ export default DS.RESTAdapter.extend({
         return ENV.namespace;
     }.property(),
     headers: function(){
-        console.log(ENV.environment);
-        if (ENV.environment === 'development' || ENV.environment === ('wifi')) {
+        if (ENV.environment === 'development') {
             return {"X-Student-Id": 1};
         } else{
-           return {"X-Student-Id": device.uuid};
+            while (typeof device === 'undefined') {
+            }
+           return {"X-UUID": device.uuid};
         }
     }.property()
 });

@@ -6,19 +6,26 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
     init: function () {
         CustomFunctions.setStore(this);
-
+        let controller = this;
         function checkVersion(version){
             version = parseFloat(version);
+            console.log(version);
             if(version < 2){
-                CustomFunctions.setSetting('version', 2.1);
+                CustomFunctions.setSetting('version', 2.2);
+                //Migration.setDefaultSettings();
+                controller.store.findAll('student').then(function(records){
+                    var student = records.get('firstObject');
+                    var defaultTime = moment();
+                    defaultTime.hours(18);
+                    defaultTime.minutes(0);
+                    student.set('notification_time_local', defaultTime.format('HHmm'));
+                    student.set('notification_time_utc', defaultTime.utcOffset('UTC').format('HHmm'));
+                    student.save();
+                });
                 controller.transitionToRoute('welcome.parent-student');
                 controller.set('pageTitle', "Courses");
-                Migration.runMigration();
-            } else if (version === 2){
-                CustomFunctions.setSetting('version', 2.1);
-                setTimeout(function(){
-                    Migration.setDefaultSettings();
-                },5000);
+            } else{
+                controller.transitionToRoute('assignments.due');
             }
         }
         CustomFunctions.getSetting('version', checkVersion);
@@ -58,11 +65,6 @@ export default Ember.Controller.extend({
             } else{
                 this.set('menuOpen', "menuOpen");
             }
-        },
-        transitionPage: function(destination, title){
-            this.transitionToRoute(destination);
-            this.set('pageTitle', title);
-            this.set('menuOpen', 'menuOpen');
         }
     }
 });
