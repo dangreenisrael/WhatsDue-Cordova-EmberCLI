@@ -108,9 +108,6 @@
         }
     },
     "installed_plugins": {
-        "android.support.v4": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
         "com.ionic.keyboard": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
