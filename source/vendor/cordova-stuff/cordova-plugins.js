@@ -19,11 +19,10 @@ function onResume() {
 }
 
 function onPause() {
-    initializeBranch();
 }
 
 var initializeBranch = function(){
-    branch.init('key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4', function(err, data) {
+    branch.init('key_live_gciLF5xo0PGSi2ijbxdlvmjlAwifbofU', function(err, data) {
         if (!err && data.data) {
             var parsed_data = JSON.parse(data.data);
             console.log(parsed_data);
@@ -34,6 +33,7 @@ var initializeBranch = function(){
         }
     });
 };
+
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
 
 var activeInput;
@@ -52,6 +52,9 @@ window.addEventListener('native.keyboardhide', keyboardHideHandler);
 
 function keyboardHideHandler(e){
     activeInput.blur();
+    //$('.welcome').css('top', 0);
+    //$('#settings').css('margin-top', 0);
+
 }
 
 document.addEventListener("backbutton", onBackKeyDown, false);

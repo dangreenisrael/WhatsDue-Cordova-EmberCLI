@@ -48,7 +48,7 @@ export default Ember.Controller.extend({
         let baseURL = ENV.host+"/"+ENV.namespace;
         let headers;
         if (ENV.environment === 'development' || ENV.environment === 'wifi') {
-            headers =  {"X-Student-Id": 1};
+            headers =  {"X-UUID": "28a60846d242fbe7"};
         } else{
             headers = {"X-UUID": device.uuid};
         }
