@@ -17,10 +17,10 @@
     <preference name="BackupWebStorage" value="local" />
     <preference name="disallowOverscroll" value="false" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="4000"/>
+    <preference name="SplashScreenDelay" value="5000"/>
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
-    
+        
     <icon src="www/res/icon.png" />
     
     <platform name="android">
@@ -59,5 +59,6 @@
     <access origin="http://192.168.1.100"/>
     <access origin="http://*.whatsdueapp.com"/>
     <access origin="https://*.whatsdueapp.com"/>
+    
     
 </widget>
