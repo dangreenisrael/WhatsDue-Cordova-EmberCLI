@@ -18,8 +18,6 @@ export default DS.RESTAdapter.extend({
         if (ENV.environment === 'development') {
             return {"X-Student-Id": 3714};
         } else{
-            while (typeof device === 'undefined') {
-            }
            return {"X-UUID": device.uuid};
         }
     }.property()

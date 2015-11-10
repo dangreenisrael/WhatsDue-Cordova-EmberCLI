@@ -5,34 +5,35 @@
 document.addEventListener("deviceready", onDeviceReady, false);
 document.addEventListener("resume", onResume, false);
 document.addEventListener("pause", onPause, false);
-var cordovaLoaded = false;
+//var cordovaLoaded = false;
+
+//var initializeBranch = function(){
+//    //window.branch.init('key_live_gciLF5xo0PGSi2ijbxdlvmjlAwifbofU', function(err, data) {
+//    //    if (!err && data.data) {
+//    //        var parsed_data = JSON.parse(data.data);
+//    //        console.log(parsed_data);
+//    //        var courseCode = parsed_data['course_code'];
+//    //        if (courseCode) {
+//    //            $('#addCourseProgrammatically').children('input').val(courseCode).trigger("change").click();
+//    //        }
+//    //    }
+//    //});
+//};
 
 function onDeviceReady() {
-    cordovaLoaded = true;
-    CustomFunctions.trackEvent('App Opened');
-    //cordova.plugins.Keyboard.disableScroll(true);
-    initializeBranch();
+    //cordovaLoaded = true;
+    //window.mixpanel.track('App Opened');
+    //initializeBranch();
 }
 
 function onResume() {
-    initializeBranch();
+    //initializeBranch();
 }
 
 function onPause() {
+    //window.branch.logout();
 }
 
-var initializeBranch = function(){
-    branch.init('key_live_gciLF5xo0PGSi2ijbxdlvmjlAwifbofU', function(err, data) {
-        if (!err && data.data) {
-            var parsed_data = JSON.parse(data.data);
-            console.log(parsed_data);
-            var courseCode = parsed_data['course_code'];
-            if (courseCode) {
-                $('#addCourseProgrammatically').children('input').val(courseCode).trigger("change").click();
-            }
-        }
-    });
-};
 
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
 
@@ -52,8 +53,6 @@ window.addEventListener('native.keyboardhide', keyboardHideHandler);
 
 function keyboardHideHandler(e){
     activeInput.blur();
-    //$('.welcome').css('top', 0);
-    //$('#settings').css('margin-top', 0);
 
 }
 

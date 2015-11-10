@@ -15,7 +15,7 @@ export default Ember.Route.extend({
                 Ember.$.get(ENV.host +"/"+ENV.namespace+"/test/connection")
                     .done(onSuccess)
                     .fail(onFail);
-            }, 2500);
+            }, 500);
         };
         timeout();
     }

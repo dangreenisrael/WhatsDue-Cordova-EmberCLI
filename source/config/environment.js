@@ -40,6 +40,7 @@ module.exports = function(environment) {
 
     if (environment === 'development') {
         ENV.host = "http://test.whatsdueapp.com/app_dev.php";
+        ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
         // ENV.APP.LOG_RESOLVER = true;
         // ENV.APP.LOG_ACTIVE_GENERATION = true;
         // ENV.APP.LOG_TRANSITIONS = true;
@@ -57,17 +58,28 @@ module.exports = function(environment) {
         ENV.APP.LOG_VIEW_LOOKUPS = false;
 
         ENV.APP.rootElement = '#ember-testing';
+        ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
+
     }
 
     if (environment === 'wifi') {
         ENV.host = "http://192.168.1.100";
+        ENV.mixpanelId = "38749de545164d92aac16ff263eb5898";
+        ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
+
     }
 
     if (environment === 'stage') {
         ENV.host = "http://stage.whatsdueapp.com";
+        ENV.mixpanelId = "38749de545164d92aac16ff263eb5898";
+        ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
+
     }
     if (environment === 'production') {
         ENV.host = "http://admin.whatsdueapp.com";
+        ENV.mixpanelId = "05a7faf77162927e0773b9f3646b2a2c";
+        ENV.branchKey = "key_live_gciLF5xo0PGSi2ijbxdlvmjlAwifbofU";
+
     }
 
   return ENV;

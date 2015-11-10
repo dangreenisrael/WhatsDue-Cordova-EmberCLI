@@ -17,7 +17,6 @@
     <div>
         <div id="assignments-due" class="{{showDue}}">
             <div class="arrow-up"></div>
-            <!--<button {{action 'getUpdates'}}>Get Updates</button>-->
             {{#each groupedCards as |day|}}
                 <div class="day-divider">{{day.value}}</div>
                 {{#each day.items as |assignment|}}

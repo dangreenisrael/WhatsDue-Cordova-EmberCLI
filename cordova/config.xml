@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.whatsdue.app" version="2.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.whatsdue.app" version="2.1.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WhatsDue</name>
     <description>
         A simple app that tells you what's due for all your courses.
@@ -7,8 +7,11 @@
     <author email="dan@whatsdueapp" href="http://whatsdueapp.com">
         WhatsDue
     </author>
-    <content src="index.html" />
     <access origin="*" />
+   <!-- <access origin="http://192.168.1.100"/>
+    <access origin="http://*.whatsdueapp.com"/>
+    <access origin="https://*.whatsdueapp.com"/>-->
+    
     <access origin="mailto:*" launch-external="yes"/>
     <preference name="Fullscreen" value="false" />
 
@@ -20,45 +23,31 @@
     <preference name="SplashScreenDelay" value="5000"/>
     <preference name="webviewbounce" value="true" />
     <preference name="SplashMaintainAspectRatio" value="true" />
+    <preference name="LoadUrlTimeoutValue" value="30000"/>
         
     <icon src="www/res/icon.png" />
     
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="mailto:*" />
     <platform name="android">
-        <icon src="www/res/android/ldpi.png" density="ldpi" />
-        <icon src="www/res/android/mdpi.png" density="mdpi" />
-        <icon src="www/res/android/hdpi.png" density="hdpi" />
-        <icon src="www/res/android/xhdpi.png" density="xhdpi" />
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
     </platform>
     
-    <platform name="ios">
-		<!-- iOS 7.0+ -->
-		<!-- iPhone / iPod Touch  -->
-		<icon src="www/res/ios/icon-60.png" width="60" height="60" />
-		<icon src="www/res/ios/icon-60@2x.png" width="120" height="120" />
-		<!-- iPad -->
-		<icon src="www/res/ios/icon-76.png" width="76" height="76" />
-		<icon src="www/res/ios/icon-76@2x.png" width="152" height="152" />
-		<!-- iOS 6.1 -->
-		<!-- Spotlight Icon -->
-		<icon src="www/res/ios/icon-40.png" width="40" height="40" />
-		<icon src="www/res/ios/icon-40@2x.png" width="80" height="80" />
-		<!-- iPhone / iPod Touch -->
-		<icon src="www/res/ios/icon.png" width="57" height="57" />
-		<icon src="www/res/ios/icon@2x.png" width="114" height="114" />
-		<!-- iPad -->
-		<icon src="www/res/ios/icon-72.png" width="72" height="72" />
-		<icon src="www/res/ios/icon-72@2x.png" width="144" height="144" />
-		<!-- iPhone Spotlight and Settings Icon -->
-		<icon src="www/res/ios/icon-small.png" width="29" height="29" />
-		<icon src="www/res/ios/icon-small@2x.png" width="58" height="58" />
-		<!-- iPad Spotlight and Settings Icon -->
-		<icon src="www/res/ios/icon-50.png" width="50" height="50" />
-		<icon src="www/res/ios/icon-50@2x.png" width="100" height="100" />
-    </platform>
-
-    <access origin="http://192.168.1.100"/>
-    <access origin="http://*.whatsdueapp.com"/>
-    <access origin="https://*.whatsdueapp.com"/>
+    
+   
+    
+    
+    <feature name="Custom URL scheme">
+      <param name="id" value="cordova-plugin-customurlscheme" />
+      <param name="url" value="https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git" />
+      <variable name="URL_SCHEME" value="whatsdue" />
+    </feature>
+    
     
     
 </widget>

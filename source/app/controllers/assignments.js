@@ -2,7 +2,7 @@ import Ember from 'ember';
 import groupBy from 'ember-group-by';
 import ENV from 'whats-due-cordova/config/environment';
 
-/* global device, localforage, CustomFunctions */
+/* global device, localforage */
 export default Ember.Controller.extend({
     groupedCards: groupBy('due', 'daysAway'),
     due:function() {
@@ -92,9 +92,9 @@ export default Ember.Controller.extend({
             assignment.set('completed_date', Date.now());
             this.set('updateCount', Math.random());
             assignment.save().then(function(){
-                CustomFunctions.trackEvent('Assignment Completed');
+                window.mixpanel.track('Assignment Completed');
             }, function(){
-                CustomFunctions.trackEvent('Assignment Complete Failed');
+                window.mixpanel.track('Assignment Complete Failed');
             });
         }
     }

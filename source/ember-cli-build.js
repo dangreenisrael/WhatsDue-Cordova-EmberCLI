@@ -21,8 +21,8 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
   //  app.import('vendor/cordova-stuff/push-notifications.js');
-    app.import('vendor/cordova-stuff/cordova-plugins.js');
-    //app.import('vendor/cordova-stuff/index.js');
+  //app.import('vendor/cordova-stuff/cordova-plugins.js');
+  //app.import('vendor/cordova-stuff/index.js');
 
     app.import('bower_components/moment/moment.js');
     app.import('bower_components/moment-timezone/moment-timezone.js');
