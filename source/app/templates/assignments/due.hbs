@@ -1,0 +1,13 @@
+<div id="assignments-due">
+    <div class="arrow-up"></div>
+    {{log route}}
+    <!--<button {{action 'getUpdates'}}>Get Updates</button>-->
+    {{#each groupedCards as |day|}}
+        <div class="day-divider">{{day.value}}</div>
+            {{#each day.items as |assignment|}}
+                <div>
+                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                </div>
+            {{/each}}
+    {{/each}}
+</div>

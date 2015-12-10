@@ -5,53 +5,59 @@
 document.addEventListener("deviceready", onDeviceReady, false);
 document.addEventListener("resume", onResume, false);
 document.addEventListener("pause", onPause, false);
-var cordovaLoaded = false;
+//var cordovaLoaded = false;
+
+//var initializeBranch = function(){
+//    //window.branch.init('key_live_gciLF5xo0PGSi2ijbxdlvmjlAwifbofU', function(err, data) {
+//    //    if (!err && data.data) {
+//    //        var parsed_data = JSON.parse(data.data);
+//    //        console.log(parsed_data);
+//    //        var courseCode = parsed_data['course_code'];
+//    //        if (courseCode) {
+//    //            $('#addCourseProgrammatically').children('input').val(courseCode).trigger("change").click();
+//    //        }
+//    //    }
+//    //});
+//};
 
 function onDeviceReady() {
-
-    cordovaLoaded = true;
-    $('#contentContainer').css("-webkit-transform", "translate3d(-33.33333%,0,0) scale3d(1,1,1)");
-    $('nav > .overdue').click();
-    $('nav > .due').click();
-    Localytics.init("343efcc05aba1feeedd4ce3-3f4a6c12-5e6b-11e4-4dc6-00a426b17dd8");
-    Localytics.resume();
-    Localytics.upload();
-    CustomFunctions.trackEvent('App Opened');
-
-
+    //cordovaLoaded = true;
+    //window.mixpanel.track('App Opened');
+    //initializeBranch();
 }
 
 function onResume() {
-    Localytics.resume();
-    Localytics.upload();
+    //initializeBranch();
 }
 
 function onPause() {
-    Localytics.close();
-    Localytics.upload();
+    //window.branch.logout();
 }
+
 
 window.addEventListener('native.keyboardshow', keyboardShowHandler);
 
+var activeInput;
 function keyboardShowHandler(e){
-    var newReminder = $('#new-reminder').position();
-    if (typeof newReminder !== 'undefined') {
-        var scrollTop = newReminder.top;
-        //$('#reminders').css('margin-top',-scrollTop)
-    }
-
+    /*
+     iPhone 4 hack
+     */
+    Ember.$('#contentContainer').css({
+        'overflow-y': 'scroll',
+        '-webkit-overflow-scrolling': 'touch'
+    });
+    activeInput = $(':focus');
 }
 
 window.addEventListener('native.keyboardhide', keyboardHideHandler);
 
 function keyboardHideHandler(e){
-    //$('#reminders').css('margin-top', 0)
-}
+    activeInput.blur();
 
+}
 
 document.addEventListener("backbutton", onBackKeyDown, false);
 
 function onBackKeyDown() {
-    $.modal.close();
-    goHome();
+    CustomFunctions.applicationController.sendAction("transitionPage", "assignments", "Assignments");
 }

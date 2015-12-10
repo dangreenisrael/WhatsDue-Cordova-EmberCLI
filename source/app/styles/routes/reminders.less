@@ -1,0 +1,74 @@
+@import "../mixins";
+@import "../variables";
+
+#settings{
+  font-size: 18px;
+  h3{
+    padding: 12px 15px;
+    border-bottom: solid @black 1px;
+  }
+  input{
+    font-size: 18px;
+    width: 60px;
+    padding: 5px 5px 2px 6px;
+    border-radius: 0;
+    border: 1px solid #cccccc;
+    -webkit-appearance:none;  /* Remove default shadow */
+  }
+  .box{
+    display: inline-block;
+    text-align: center;
+    padding: 15px 0;
+    border: 1px solid;
+    font-size: 20px;
+    width:43%;
+    &.not-active{
+      color: #cccccc;
+      background: #EEEEEE;
+      border-color: #cccccc;
+    }
+    &.active{
+      color: @blue;
+      background-color: white;
+      border-color: @blue;
+    }
+    &.double{
+      margin: 2.5%;
+    }
+    &.full{
+      width: 96%;
+      margin: auto;
+      display: block;
+    }
+    &.centered{
+      margin: auto;
+      display: block;
+    }
+    &.join{
+      margin-top: 50px;
+    }
+  }
+  .over13{
+    img{
+      height: 20px;
+      margin-bottom: -3px;
+    }
+    input{
+      width: 90%;
+    }
+  }
+  .bootstrap-switch {
+    .bootstrap-switch-handle-on{
+      &.bootstrap-switch-primary{
+        background: @blue;
+      }
+    }
+  }
+  .static-content.reminders{
+    padding-top: 10px;
+    p, td{
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+  }
+}

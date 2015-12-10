@@ -1,0 +1,209 @@
+/* Assignments */
+
+#newAssignments{
+  .description{
+    word-wrap: break-word;
+    a.linkified{
+      color: #4fc2d5;
+      text-decoration: none;
+      font-weight: 900;
+    }
+  }
+
+  #assignments-overdue{
+    .arrow-up{
+      top: 52px;
+      margin-left: 70%;
+    }
+    .slider{
+      > div:nth-child(2){
+        border-bottom: none!important;
+      }
+    }
+  }
+
+  #assignments-due{
+    position: relative;
+    .arrow-up{
+      top: -6px;
+      margin-left: 25%;
+    }
+    .slider{
+      > div{
+        border-bottom: none;
+        border-top: 1px solid #d6d6d6;
+      }
+    }
+  }
+  .reveal{
+    background-color: @blue;
+    p{
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      -webkit-transform: translateY(-50%);
+      width: 100px;
+      text-align: center;
+      float: right;
+      color: white;
+      font-size: 20px;
+    }
+  }
+  .slider{
+    .info{
+      margin-left: 110px;
+      width: auto;
+    }
+  }
+}
+
+
+
+
+/* Sliders*/
+.slider {
+  transform: translateZ(0);
+  perspective: 1000px;
+  backface-visibility: hidden;
+  min-height: @sliderHeight;
+  overflow-y: hidden;
+  position: relative;
+
+  > div:nth-child(2) {
+    padding: 10px 20px;
+    min-height: @innerSliderHeight;
+    position: relative;
+    border-bottom: 1px solid #d6d6d6;
+    background-color: #f2f2f2;
+  }
+
+  .open{
+    -webkit-transform: translateX(-100px);
+  }
+  .info {
+    display: inline-block;
+    position: relative;
+    min-height: @innerSliderHeight;
+    padding-left: 10px;
+    border-left: 1px solid #9d9d9d;
+    width: 90%;
+  }
+  .title {
+    font-size: 16px;
+    margin-top: -3px;
+    font-weight: 100;
+    overflow-x: hidden;
+  }
+
+  .course {
+    font-size: 12px;
+    margin-top: -15px;
+    color: #808080;
+
+  }
+}
+
+
+
+/*
+ * New Assignments
+ */
+
+#newAssignments {
+  > nav > .due, > nav > .overdue{
+    padding-top:15px;
+    padding-bottom: 15px;
+  }
+
+  > nav > div{
+    width: 49%;
+    float: left;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  > nav{
+    height: 60px;
+    background-color: #3a4944;
+    color: white;
+    line-height: 30px;
+    position: relative;
+  }
+
+  .day-divider{
+    line-height: 40px;
+    font-size: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    font-weight: bold;
+    border-top: black 1px solid;
+  }
+
+  .sliders-list{
+    position: relative;
+  }
+
+  .title{
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .description{
+    padding-top: 5px;
+    font-size: 14px;
+    font-weight: 100;
+    letter-spacing: 0.3px;
+  }
+}
+
+
+
+.from-now{
+  display: none;
+}
+.Today {
+  .time-due {
+    //display: none;
+  }
+  .from-now {
+    //display: inline !important;
+  }
+}
+
+
+
+/* Left Box */
+
+.slider.left-box {
+  .red {
+    border-top: 1px solid #c1272f;
+  }
+
+  .time {
+    height: 60px;
+    width: 110px;
+
+    font-size: 20px;
+    float: left;
+
+    font-weight: bold;
+    color: #808080;
+    position: absolute;
+    overflow: hidden;
+    .course{
+      margin-top: 5px;
+    }
+  }
+
+}
+
+
+.nothing-due{
+  h2{
+    font-size: 22px;
+  }
+  img{
+    width: 40%;
+    margin: 40px 30%;
+  }
+}
+

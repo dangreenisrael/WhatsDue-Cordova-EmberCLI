@@ -1,33 +1,58 @@
 /**
- * Created by Dan on 5/28/15.
- */
-
-/*!
- * linkify - v0.3 - 6/27/2009
+ * This project is maintained by Dan Green
+ *
+ * This project is licenced under the MIT license (included below)
+ *
+ * The code here is a slightly modified version of  js-linkify by Ben Alman
+ *
+ * You can find the original code at
  * http://benalman.com/code/test/js-linkify/
  *
- * Copyright (c) 2009 "Cowboy" Ben Alman
- * Licensed under the MIT license
- * http://benalman.com/about/license/
+ * At the time it was taken, this code was licensed under the MIT license
+ *
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
+
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+ *
  *
  * Some regexps adapted from http://userscripts.org/scripts/review/7122
  */
 
-// Turn text into linkified html.
-//
-// var html = linkify( text, options );
-//
-// options:
-//
-//  callback (Function) - default: undefined - if defined, this will be called
-//    for each link- or non-link-chunk with two arguments, text and href. If the
-//    chunk is non-link, href will be omitted.
-//
-//  punct_regexp (RegExp | Boolean) - a RegExp that can be used to trim trailing
-//    punctuation from links, instead of the default.
-//
-// This is a work in progress, please let me know if (and how) it fails!
 
+/*
+  Turn text into linkified html.
+
+  var html = linkify( text, options );
+
+  options:
+
+  callback (Function) - default: undefined - if defined, this will be called
+    for each link- or non-link-chunk with two arguments, text and href. If the
+    chunk is non-link, href will be omitted.
+
+  punct_regexp (RegExp | Boolean) - a RegExp that can be used to trim trailing
+    punctuation from links, instead of the default.
+
+    This is a work in progress, please let me know if (and how) it fails!
+
+*/
 window.linkifyCordova = (function(){
     var
         SCHEME = "[a-z\\d.-]+://",
@@ -59,7 +84,7 @@ window.linkifyCordova = (function(){
         default_options = {
             callback: function( text, href ) {
 
-                return href ? '<a href="#" onclick="window.open(\''+href+'\', \'_system\');">'+href+'</a>' : text;
+                return href ? '<a href="#" onclick="window.open(\''+href+'\', \'_system\');">'+text+'</a>' : text;
 
             },
             punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/

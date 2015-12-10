@@ -1,0 +1,22 @@
+<div class="removeable-card">
+    <div class="reveal">
+        <span {{action 'remove' item }}>
+            {{icon-device icon}}
+        </span>
+    </div>
+    <div class="putBackable fastAnimate" {{action 'slideBack'}}>
+        <div class="info">
+            <span {{action 'slideOver'}}>
+                {{icon-device "minus-red"}}
+            </span>
+
+            <div class="courseName">
+                {{title}}
+            </div>
+
+            <div class="instructorName">
+                {{text}}
+            </div>
+        </div>
+    </div>
+</div>

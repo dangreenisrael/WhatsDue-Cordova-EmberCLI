@@ -1,7 +1,3 @@
-/**
- * Created by Dan on 5/28/15.
- */
-
 import Ember from 'ember';
 
 var get = Ember.get,
@@ -14,7 +10,7 @@ export default function (dependentKey, property) {
 
         initialValue: [],
 
-        addedItem: function(array, item) {
+        addedItem: function(array, item, changeMeta, instanceMeta) {
 
             var key   = get(item, property),
                 group = array.findBy('key', key);
@@ -34,7 +30,7 @@ export default function (dependentKey, property) {
         },
 
 
-        removedItem: function(array, item) {
+        removedItem: function(array, item, changeMeta, instanceMeta) {
 
             var key   = get(item, property),
                 group = array.findBy('key', key);

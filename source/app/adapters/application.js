@@ -1,10 +1,24 @@
 /**
  * Created by dan on 2014-05-13.
  */
+import DS from 'ember-data';
+import ENV from 'whats-due-cordova/config/environment';
+/* global baseURL, device*/
 
+/* Hack for Cordova */
 
-import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
-
-export default LFAdapter.extend({
-    namespace: 'WhatsDue'
+export default DS.RESTAdapter.extend({
+    host: function(){
+        return ENV.host;
+    }.property(),
+    namespace: function(){
+        return ENV.namespace;
+    }.property(),
+    headers: function(){
+        if (ENV.environment === 'development') {
+            return {"X-Student-Id": 1};
+        } else{
+           return {"X-UUID": device.uuid};
+        }
+    }.property()
 });

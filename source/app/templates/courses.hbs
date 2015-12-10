@@ -1,39 +1,21 @@
-<div class="courses">
-    {{#each course in filteredData}}
-        <div class="slider left-box">
-            <div {{action 'removeCourse' course}} class="reveal">
-                {{icon-device "X"}}
-            </div>
-
-            <div class="putBackable fastAnimate">
-                <div class="info">
-                    {{icon-device "minus-red"}}
-
-                    <div class="courseName">
-                        {{course.course_name}}
-                    </div>
-
-                    <div class="instructorName">
-                        {{course.instructor_name}}
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="courses loaded">
+    {{#each model as |course|}}
+        {{removeable-card
+            item=course
+            title=course.course_name
+            text=course.instructor_name
+            icon="X"
+            remove='removeCourse'
+        }}
     {{/each}}
-
-
-    <!--<div class="add-something">-->
-        <!--<img src="assets/icons/ios/plus-big.png" {{action 'addCourse'}}>-->
-        <!--Add a Course-->
-    <!--</div>-->
     <div id="addCourse">
-        <button {{action 'addCourse' course_code}} disabled class="disabled fastAnimate">Join</button>
+        <button {{action 'addCourse' course_code}}  class="{{disabled}} fastAnimate">Join</button>
         {{input type="text" value=course_code  maxlength="6" placeholder="Course Code"  class="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"}}
     </div>
-
-    <p class="triangle-isosceles topleft hidden bubble">
+    {{#unless model}}
+    <p class="triangle-isosceles topleft bubble">
         Enter your unique class code to join<br>
         If you don't have one, ask your teacher
     </p>
-
+    {{/unless}}
 </div>

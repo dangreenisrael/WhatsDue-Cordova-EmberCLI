@@ -1,12 +1,13 @@
 import Ember from 'ember';
 
-/* global CustomUI */
-
-var CoursesRoute = Ember.Route.extend({
+export default Ember.Route.extend({
     model: function() {
-        CustomUI.setTitle('My Courses');
-        return this.store.find('course');
+        return this.store.findAll('course');
+    },
+    beforeModel: function(){
+        this.controllerFor('application').set('loading', 'loading');
+    },
+    afterModel: function(){
+        this.controllerFor('application').set('loading', null);
     }
 });
-
-export default CoursesRoute;

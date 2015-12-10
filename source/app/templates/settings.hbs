@@ -1,0 +1,78 @@
+<div id="settings">
+    <h3>
+        Reminders
+    </h3>
+
+    <div class="static-content reminders">
+        <p {{action "datePicker"}}>
+            Daily Notification Time: <span class="click-me">{{model.displayTime}}</span>
+        </p>
+        <table>
+            <tr>
+                <td>
+                    {{bs-switch name="my-bs-switch"
+                        btnSize="medium"
+                        checked=model.notifications
+                        on-switch-change="save"
+                    }}
+                </td>
+                <td>
+                    Daily reminder at {{model.displayTime}} if you have tasks due tomorrow
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{bs-switch name="my-bs-switch"
+                        btnSize="medium"
+                        checked=model.notification_updates
+                        on-switch-change="save"
+                    }}
+
+                </td>
+                <td>
+                    Notifications about assignment updates in real time (all day)
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <h3>
+        Details
+    </h3>
+
+    <p class="static-content">
+        My name is
+        {{input value=model.first_name focus-out="save"}}
+        {{input value=model.last_name focus-out="save"}}
+    </p>
+    <div class="buttons">
+        <a {{action "setRole" model "student"}} class="box square {{studentActive}} double">
+            Student
+        </a>
+        <a {{action "setRole" model "parent"}} class="box square {{parentActive}} double">
+            Parent
+        </a>
+    </div>
+    {{#unless model.isParent}}
+        <div class="over13 static-content">
+            <p>
+                I am over 13 years old
+                <span {{action "toggleAge" model}}>
+                    {{#if model.over12}}
+                        <img src="assets/img/checked-black-blue.png">
+                    {{else}}
+                        <img src="assets/img/unchecked-black.png">
+                    {{/if}}
+                </span>
+            </p>
+            {{#unless model.over12}}
+                <p>
+                    <br>
+                    My parent's email address <br>
+                    {{input value=model.parent_email  focus-out="save"}}
+                </p>
+            {{/unless}}
+        </div>
+    {{/unless}}
+</div>

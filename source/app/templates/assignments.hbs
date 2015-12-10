@@ -1,58 +1,54 @@
 <div id="newAssignments">
     <nav>
-        <div class="due">
-            What's Due
+        <div{{action 'showDue'}} class="due">
+                Upcoming
             <span class="badge square black">
                 {{totalDue}}
             </span>
         </div>
-        <div class="vertical-seperator white"></div>
-        <div class="overdue">
+        <div class="vertical-separator white"></div>
+        <div {{action 'showOverdue'}} class="overdue">
             Overdue
             <span class="badge square black">
                 {{totalOverdue}}
             </span>
         </div>
     </nav>
-    <div id="assignments-due" class="needsclick">
-        {{firstOfDay}}
-        <div class="arrow-up"></div>
-        {{#each day in groupedCards}}
-            <div class="day-divider">{{day.key}}</div>
-                {{#each assignment in day}}
-                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+    <div>
+        <div id="assignments-due" class="{{showDue}}">
+            <div class="arrow-up"></div>
+            {{#each groupedCards as |day|}}
+                <div class="day-divider">{{day.value}}</div>
+                {{#each day.items as |assignment|}}
+                    <div>
+                        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                    </div>
                 {{/each}}
-        {{/each}}
-    </div>
-
-    <div id="assignments-overdue">
-        <div class="arrow-up"></div>
-        <div class="day-divider">
-            Overdue
+            {{/each}}
+            {{#infinity-loader infinityModel=model destroyOnInfinity=true developmentMode=false}}
+                <div class="in-viewport">
+                    <i class="fa fa-spinner fa-spin fa-pulse"></i>
+                </div>
+            {{/infinity-loader}}
         </div>
-        {{#each assignment in overdue}}
-            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-        {{/each}}
+        <div id="assignments-overdue" class="{{showOverdue}}">
+            <div class="arrow-up"></div>
+            {{#if stuffOverdue}}
+                <div class="day-divider">
+                    Overdue
+                </div>
+            {{/if}}
+            {{#each overdue as |assignment|}}
+                {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+            {{/each}}
+        </div>
     </div>
-    <div class="static-content nothing-due hidden">
-        <img src="assets/img/thumbs-up.png">
-        <h2 class="centered">
-            Looks like you've got nothing due
-        </h2>
-    </div>
+    {{#unless stuffDue}}
+        <div class="static-content nothing-due {{stuffDue}}">
+            <img src="assets/img/thumbs-up.png">
+            <h2 class="centered">
+                Looks like you've got nothing due
+            </h2>
+        </div>
+    {{/unless}}
 </div>
-{{#if isShowingModal}}
-    {{#modal-dialog close="toggleModal"
-    alignment="center"
-    translucentOverlay=true}}
-            <div class="buttons">
-                <div {{action 'share'}} class="button share">
-                    Share
-                </div>
-
-                <div {{action 'cancel'}} class="button close">
-                    Cancel
-                </div>
-            </div>
-    {{/modal-dialog}}
-{{/if}}

@@ -1,0 +1,45 @@
+header#appHeader {
+  color: white;
+  padding-top: @headerTopPadding;
+  font-size: 10px;
+  text-align: center;
+  background-color: @blue;
+  /* background-image: linear-gradient(#4fc2d5, #61c7bc);*/
+  text-transform: uppercase;
+  position: fixed;
+  z-index: 99;
+  width: 100%;
+  top:0;
+  left:0;
+  //-webkit-transform: translateZ(0);
+  //-webkit-backface-visibility: hidden;
+  img {
+    height: 20px;
+    padding: 20px 10px 15px;
+  }
+
+  .message-count {
+    position: relative;
+
+  }
+
+  .message-count img {
+    height: 35px;
+    margin-top: -15px;
+  }
+
+  .message-count span {
+    position: absolute;
+    top: 6px;
+    left: 26px;
+    font-size: 20px;
+    margin-left: 10px;
+
+  }
+
+  h1 {
+    padding: 20px 0 13px;
+    position: fixed;
+    width: 100vw;
+  }
+}

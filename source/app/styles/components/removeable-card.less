@@ -1,0 +1,68 @@
+.removeable-card{
+  transform: translateZ(0);
+  perspective: 1000px;
+  backface-visibility: hidden;
+  min-height: @sliderHeight;
+  overflow-y: hidden;
+  position: relative;
+
+  > div:nth-child(2) {
+    padding: 10px 20px;
+    min-height: @innerSliderHeight;
+    position: relative;
+    border-bottom: 1px solid #d6d6d6;
+    background-color: #f2f2f2;
+  }
+
+  .info {
+    display: inline-block;
+    position: relative;
+    min-height: @innerSliderHeight;
+    padding-left: 10px;
+    border-left: 1px solid #9d9d9d;
+    width: 90%;
+  }
+  .title {
+    font-size: 16px;
+    margin-top: -3px;
+    font-weight: 100;
+    overflow-x: hidden;
+  }
+
+  .course {
+    font-size: 12px;
+    margin-top: -15px;
+    color: #808080;
+
+  }
+  .info {
+    padding-left: 0;
+    border: none;
+    padding-top: 15px;
+  }
+
+  .reveal img{
+    padding: 22px 5px;
+  }
+  .putBackable{
+    span{
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+  .course {
+    margin-top: 10px;
+    font-weight: bold;
+    font-style: italic;
+  }
+
+  .full {
+    height: 100%;
+  }
+  .helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+}

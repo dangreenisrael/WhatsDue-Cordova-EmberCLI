@@ -1,51 +1,101 @@
 import Ember from 'ember';
-import groupBy from '../utils/group-by';
+import groupBy from 'ember-group-by';
+import ENV from 'whats-due-cordova/config/environment';
 
-/* global CustomFunctions */
-var AssignmentsController = Ember.ArrayController.extend({
-    due:(function() {
-        return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',false).sortBy('due_date');
-    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+/* global device, localforage */
+export default Ember.Controller.extend({
     groupedCards: groupBy('due', 'daysAway'),
+    due:function() {
+        return this.store.peekAll('assignment')
+            .filterBy('completed',false)
+            .filterBy('archived',false)
+            .filterBy('overdue',false)
+            .sortBy('due_date');
+    }.property('model.[]','updateCount'),
     overdue:(function() {
-        return this.get('model').filterBy('completed',false).filterBy('archived',false).filterBy('overdue',true).filterBy('hidden',false).sortBy('due_date');
-    }).property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        return this.get('model')
+            .filterBy('completed',false)
+            .filterBy('archived',false)
+            .filterBy('overdue',true)
+            .filterBy('hidden',false)
+            .sortBy('due_date');
+    }).property('model.[]','updateCount'),
     totalDue: function() {
-        return this.get('due.length');
-    }.property('model.@each.due_date', 'model.@each.completed', 'model.@each.archived'),
+        var dueLength = this.get('due.length');
+        if (dueLength > 10){
+            return "10+";
+        } else{
+            return dueLength;
+        }
+    }.property('due'),
+    stuffDue: function(){
+        return (this.get('due.length')+this.get('overdue.length') > 0);
+    }
+    .property('due','overdue'),
+    stuffOverdue: function(){
+        return (this.get('overdue.length') > 0);
+    }.property('overdue'),
     totalOverdue: function() {
-        return this.get('overdue.length');
-    }.property('model.@each.due_date', 'model.@each.completed'),
-    isShowingModal: false,
-    shareContent: "",
-    actions: {
-        removeAssignment: function(assignment) {
-            CustomFunctions.trackEvent('Assignment Completed');
-            this.store.find('setReminder',{'assignment': assignment.get('id')}).then(function(setReminders){
-                CustomFunctions.removeSetReminders(setReminders);
+        var overdueLength = this.get('overdue.length');
+        if (overdueLength > 10){
+            return "10+";
+        } else{
+            return overdueLength;
+        }
+    }.property('overdue'),
+    getUpdates: function(){
+        let controller = this;
+        let baseURL = ENV.host+"/"+ENV.namespace;
+        let headers;
+        if (ENV.environment === 'development' || ENV.environment === 'wifi') {
+            headers =  {"X-UUID": "28a60846d242fbe7"};
+        } else{
+            headers = {"X-UUID": device.uuid};
+        }
+        localforage.getItem('assignmentTimestamp').then(function(timestamp){
+            Ember.$.ajax({
+                url: baseURL+"/updates/"+timestamp+"/assignments",
+                headers: headers
+            }).done(function(data) {
+                localforage.setItem('assignmentTimestamp', data.meta.timestamp);
+                if (data.records.assignment.length > 0){
+                    controller.store.pushPayload('assignment', data.records);
+                    controller.set('updateCount', Math.random());
+                }
             });
+        });
+    },
+    updateCount: 0.1,
+    updateTimer: function() {
+        let controller=this;
+        setInterval(function(){
+            Ember.run(this, function() {
+                controller.getUpdates();
+            });
+        }, 5000);
+    }.on('init'),
+    showOverdue: "hidden",
+    actions:{
+        getUpdates: function(){
+            this.getUpdates();
+        },
+        showDue: function(){
+            this.set('showDue', null);
+            this.set('showOverdue', "hidden");
+        },
+        showOverdue: function(){
+            this.set('showOverdue', null);
+            this.set('showDue', "hidden");
+        },
+        removeAssignment: function(assignment) {
             assignment.set('completed', true);
-            assignment.set('date_completed', Date.now());
-            assignment.save();
-        },
-        toggleModal: function(assignment){
-            console.log('Show Modal');
-            var context = this;
-            if (this.isShowingModal === false){
-                assignment.get('course_id').then(function(course){
-                    context.shareContent = assignment.get('daysAway') + " at " + assignment.get('timeDue') + ":\n\n" + assignment.get('assignment_name') + " is due for " + course.get('course_name');
-                });
-            }
-            this.toggleProperty('isShowingModal');
-        },
-        share: function(){
-            CustomFunctions.share(this.shareContent);
-            this.toggleProperty('isShowingModal');
-        },
-        cancel:function(){
-            this.toggleProperty('isShowingModal');
+            assignment.set('completed_date', Date.now());
+            this.set('updateCount', Math.random());
+            assignment.save().then(function(){
+                window.mixpanel.track('Assignment Completed');
+            }, function(){
+                window.mixpanel.track('Assignment Complete Failed');
+            });
         }
     }
 });
-
-export default AssignmentsController;

@@ -1,82 +1,73 @@
-<header id="appHeader">
-    {{icon-device "menu" "pull-left" "menuToggle"}}
-    {{icon-device "menu" "pull-right hide" "menuToggle"}}
-
-    <h1 id="page-title" {{action 'test'}}>
-        Assignments Due
+<header id="appHeader" {{action "menuToggle"}}>
+    <span class="pull-left">
+        {{icon-device "menu"}}
+    </span>
+    <span class="pull-right hidden">
+        {{icon-device "menu"}}
+    </span>
+    <h1 id="page-title">
+        WhatsDue
     </h1>
-
 </header>
+<div id="content" class="{{menuOpen}}">
+    <div id="menu" class="menuAnimate">
+        <ul {{action 'menuToggle'}}>
+            <li {{action "transitionPage" "assignments.due" "Assignments"}}>
+                <div>
+                    {{icon-device "assignments"}}
+                </div>
+                <span>
+                    Assignments
+                </span>
+                <!--span class="whatsdue count"></span-->
+            </li>
+            <li {{action "transitionPage" "completedAssignments" "Completed"}}>
+                <div>
+                    {{icon-device "completed"}}
+                </div>
+                <span>
+                    Completed
+                </span>
+            </li>
+            <li {{action "transitionPage" "courses" "My Courses"}}>
+                <div>
+                    {{icon-device "courses"}}
+                </div>
+                <span>
+                    My Courses
+                </span>
+            </li>
+            <li {{action "transitionPage" "settings" "Settings"}}>
 
-<div id="content">
-    <div id="contentContainer">
-    <div id="left" class="fastAnimate">
-        <div id="menu">
-            <ul id="leftMenu">
-
-                {{#link-to 'assignments' tagName='li'}}
-                    <div>
-                        {{icon-device "assignments"}}
-                    </div>
-                    <span>
-                        What's Due
-                    </span>
-                    <!--span class="whatsdue count"></span-->
-                {{/link-to}}
-
-                {{#link-to 'completedAssignments' tagName='li'}}
-                    <div>
-                        {{icon-device "completed"}}
-                    </div>
-                    <span>
-                        Completed
-                    </span>
-                {{/link-to}}
-
-
-                {{#link-to 'courses' tagName='li'}}
-                    <div>
-                        {{icon-device "courses"}}
-                    </div>
-                    <span>
-                        My Courses
-                    </span>
-                {{/link-to}}
-
-                {{#link-to 'reminders' tagName='li'}}
-
-                    <div>
-                        {{icon-device "reminders"}}
-                    </div>
-                    <span>
-                        Reminders
-                    </span>
-                {{/link-to}}
-
-                
-
-                {{#link-to 'support' tagName='li'}}
-
-                    <div>
-                        {{icon-device "info"}}
-                    </div>
-                    <span>
-                        Feedback &amp; Support
-                    </span>
-                {{/link-to}}
-
-            </ul>
-
+                <div>
+                    {{icon-device "reminders"}}
+                </div>
+                <span>
+                    Settings
+                </span>
+            </li>
+            <li{{action "transitionPage" "support" "Support"}}>
+                <div>
+                    {{icon-device "info"}}
+                </div>
+                <span>
+                    Feedback &amp; Support
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div id="main" class="{{loading}}">
+        <i class="fa fa-spinner fa-pulse"></i>
+        <div class="content">
+            {{outlet}}
         </div>
     </div>
-    <div id="middle">
-        {{outlet}}
-
-    </div>
-    <div id="right"></div>
-    </div>
 </div>
+{{outlet 'welcome'}}
 
-<div id="welcome">
-
+<!--Allow cordova to trigger actions -->
+<div class="hidden">
+    <div id="addCourseProgrammatically" {{action 'addCourse' courseCodeForBranch}}>
+        {{input value=courseCodeForBranch}}
+    </div>
 </div>

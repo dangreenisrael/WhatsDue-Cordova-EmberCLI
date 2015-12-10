@@ -1,23 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 var pushNotification = window.plugins.pushNotification;
 var cordovaLoaded = false;
+var baseURL;
+var studentId;
 var cordovaApp = {
     // Application Constructor
     initialize: function() {
@@ -72,17 +56,19 @@ var cordovaApp = {
         var postData = {
             "uuid":      device.uuid,
             "platform":  device.platform,
-            "pushId":    result,
-            "school":    getSchool()
+            "pushId":    result
         };
-        //console.log(postData);
+        console.log(postData);
         $.ajax({
-            url: site+"/students",
+            url: baseURL+"/students",
             type: 'POST',
             data: postData,
             success: function (response) {
+                console.log(postData);
                 console.log(response);
-                localStorage.setItem("primaryKey", response.primaryKey)
+                localforage.setItem('studentId', response.student.id);
+                CustomFunctions.dealWithUser(response.student);
+                studentId = response.student.id;
             },
             error: function(response){
                 console.log(response)
@@ -94,47 +80,53 @@ var cordovaApp = {
         console.log('Success Handler = '+result)
     },
     errorHandler:function(error) {
-        alert('Error Handler = '+error);
+        console.log(error);
+        navigator.notification.alert(
+            "We couldn't register your device for push notifications.\n\nPlease contact us through the website.",
+            null,
+            'Oy Gevalt');
     },
-    /* These are for Push Notifications*/
+    /* These are for Android Push Notifications*/
     onNotificationGCM: function(e) {
         switch( e.event )
         {
             case 'registered':
+                console.log(baseURL);
+
                 var postData = {
                     "uuid":      device.uuid,
                     "platform":  device.platform,
                     "pushId":    e.regid
                 };
-                //console.log(postData);
                 $.ajax({
-                    url: site+"/students",
+                    url: baseURL+"/students",
                     type: 'POST',
                     data: postData,
                     success: function (response) {
-                        //console.log(response);
-                        localStorage.setItem("primaryKey", response.primaryKey)
+                        localforage.setItem('studentId', response.student.id);
+                        CustomFunctions.dealWithUser(response.student);
+                        studentId = response.student.id;
+                        console.log(studentId);
                     }
                 });
                 break;
-
             case 'message':
                 console.log(e);
                 var data = e.payload;
-                if (data.assignmentId){
-                    // This deals with updated assignments
-                    var updatedAssignment = new CustomEvent('updatedAssignment');
-                    window.dispatchEvent(updatedAssignment);
-                    function alertDismissed() {
-                        window.location.hash = '/';
-                    }
-                    navigator.notification.alert(
-                        data.message,  // message
-                        alertDismissed,         // callback
-                        data.title,            // title
-                        'OK'                  // buttonName
-                    );
-                }
+                //if (data.assignmentId){
+                //    // This deals with updated assignments
+                //    //var updatedAssignment = new CustomEvent('updatedAssignment');
+                //    //window.dispatchEvent(updatedAssignment);
+                //    function alertDismissed() {
+                //        window.location.hash = '/';
+                //    }
+                //    navigator.notification.alert(
+                //        data.message,  // message
+                //        alertDismissed,         // callback
+                //        data.title,            // title
+                //        'OK'                  // buttonName
+                //    );
+                //}
                 break;
 
             case 'error':
