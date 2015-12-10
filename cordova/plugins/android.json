@@ -43,6 +43,14 @@
                         {
                             "xml": "<feature name=\"PushNotification\"><param name=\"android-package\" value=\"com.adobe.phonegap.push.PushPlugin\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Mixpanel\"><param name=\"android-package\" value=\"com.samz.cordova.mixpanel.MixpanelPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LaunchMyApp\"><param name=\"android-package\" value=\"nl.xservices.plugins.LaunchMyApp\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -66,7 +74,7 @@
                         },
                         {
                             "xml": "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />",
-                            "count": 1
+                            "count": 2
                         },
                         {
                             "xml": "<uses-permission android:name=\"android.permission.WAKE_LOCK\" />",
@@ -87,6 +95,10 @@
                         {
                             "xml": "<uses-permission android:name=\"com.whatsdue.app.permission.C2D_MESSAGE\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
+                            "count": 1
                         }
                     ],
                     "/manifest/application": [
@@ -100,6 +112,12 @@
                         },
                         {
                             "xml": "<service android:name=\"com.adobe.phonegap.push.GCMIntentService\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/*/application/activity": [
+                        {
+                            "xml": "<intent-filter><data android:scheme=\"whatsdue\" /><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /></intent-filter>",
                             "count": 1
                         }
                     ]
@@ -123,9 +141,6 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "io.branch.sdk": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
         "nl.x-services.plugins.socialsharing": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
@@ -136,6 +151,16 @@
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "phonegap-plugin-push": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-mixpanel": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "io.branch.sdk": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-customurlscheme": {
+            "URL_SCHEME": "whatsdue",
             "PACKAGE_NAME": "com.whatsdue.app"
         }
     },

@@ -12,9 +12,18 @@ export default Ember.Route.extend(InfinityRoute,{
     },
     afterModel() {
         this.controllerFor('application').set('loading', null);
-        console.log('loaded');
     },
     beforeModel: function(){
         this.controllerFor('application').set('loading', 'loading');
+    },
+    init: function(){
+        if (window.cordova){
+            window.initializeBranch();
+        }
+    },
+    willDestroy: function(){
+        if (window.cordova){
+            window.branch.logout();
+        }
     }
 });

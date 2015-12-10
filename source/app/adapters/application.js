@@ -16,7 +16,7 @@ export default DS.RESTAdapter.extend({
     }.property(),
     headers: function(){
         if (ENV.environment === 'development') {
-            return {"X-Student-Id": 3714};
+            return {"X-Student-Id": 1};
         } else{
            return {"X-UUID": device.uuid};
         }

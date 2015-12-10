@@ -7,13 +7,10 @@ export default Ember.Controller.extend({
             var emailValid = emailRegEx.test(this.get('model').get('parent_email'));
             if (emailValid) {
                 this.get('model').save();
-                this.transitionToRoute('courses');
+                this.transitionToRoute('assignments.due');
                 CustomFunctions.setUserProperty('Parent\'s Email', this.get('model').get('parent_email'));
             }else{
-                navigator.notification.alert(
-                    'Double check that email',
-                    null,
-                    'Whoops');
+               alert('Double check that email');
             }
         }
     }

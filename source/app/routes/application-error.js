@@ -4,6 +4,7 @@ import ENV from 'whats-due-cordova/config/environment';
 export default Ember.Route.extend({
     init: function(){
         let route = this;
+        window.mixpanel.track('Error Page Shown');
         let timeout =  function() {
             setTimeout(function () {
                 let onSuccess = function(){

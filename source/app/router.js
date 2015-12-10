@@ -16,7 +16,6 @@ Router.map(function() {
     });
     this.route('completedAssignments', function(){
     });
-
     this.route('support', function(){
     });
     this.route('messages', function(){
@@ -31,6 +30,7 @@ Router.map(function() {
         this.route('under13', function () {
         });
     });
+    this.route('blankRoute');
 });
 
 export default Router;

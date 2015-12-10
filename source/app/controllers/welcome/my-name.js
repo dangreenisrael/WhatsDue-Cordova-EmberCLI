@@ -19,13 +19,10 @@ export default Ember.Controller.extend({
 
                 } else{
                     CustomFunctions.setUserProperty('Under 13',  false);
-                    this.transitionToRoute('courses');
+                    this.transitionToRoute('assignments.due');
                 }
             } else{
-                navigator.notification.alert(
-                    'We need your first and last name',
-                    null,
-                    'hWoops');
+                alert('We need your first and last name');
             }
         }
     }

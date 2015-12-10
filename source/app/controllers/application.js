@@ -1,34 +1,29 @@
 import Ember from 'ember';
-/* global CustomFunctions */
 /* global Migration */
 /* global moment */
 
 export default Ember.Controller.extend({
     init: function () {
+
+
         CustomFunctions.setStore(this);
         let controller = this;
-        function checkVersion(version){
-            version = parseFloat(version);
-            console.log(version);
-            if(version < 2){
-                CustomFunctions.setSetting('version', 2.2);
-                //Migration.setDefaultSettings();
-                controller.store.findAll('student').then(function(records){
-                    var student = records.get('firstObject');
-                    var defaultTime = moment();
-                    defaultTime.hours(18);
-                    defaultTime.minutes(0);
-                    student.set('notification_time_local', defaultTime.format('HHmm'));
-                    student.set('notification_time_utc', defaultTime.utcOffset('UTC').format('HHmm'));
-                    student.save();
-                });
-                controller.transitionToRoute('welcome.parent-student');
-                controller.set('pageTitle', "Courses");
-            } else{
+        controller.store.findAll('student').then(function(records){
+            var student = records.get('firstObject');
+            if (student.get('first_name') && student.get('last_name')){
                 controller.transitionToRoute('assignments.due');
+            } else{
+                var defaultTime = moment();
+                defaultTime.hours(18);
+                defaultTime.minutes(0);
+                student.set('notification_time_local', defaultTime.format('HHmm'));
+                student.set('notification_time_utc', defaultTime.utcOffset('UTC').format('HHmm'));
+                student.save().then(function(){
+                    controller.transitionToRoute('welcome.parent-student');
+                });
             }
-        }
-        CustomFunctions.getSetting('version', checkVersion);
+        });
+        /* Initialize Moment */
         moment.locale('en', {
             calendar : {
                 lastDay : '[Yesterday] ',

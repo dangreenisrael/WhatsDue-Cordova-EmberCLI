@@ -63,7 +63,7 @@ module.exports = function(environment) {
     }
 
     if (environment === 'wifi') {
-        ENV.host = "http://192.168.1.100";
+        ENV.host = "http://192.168.0.10/app_dev.php";
         ENV.mixpanelId = "38749de545164d92aac16ff263eb5898";
         ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
 

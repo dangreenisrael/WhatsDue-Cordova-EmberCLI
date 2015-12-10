@@ -12,8 +12,10 @@
         <button {{action 'addCourse' course_code}}  class="{{disabled}} fastAnimate">Join</button>
         {{input type="text" value=course_code  maxlength="6" placeholder="Course Code"  class="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"}}
     </div>
-    <p class="triangle-isosceles topleft hidden bubble">
+    {{#unless model}}
+    <p class="triangle-isosceles topleft bubble">
         Enter your unique class code to join<br>
         If you don't have one, ask your teacher
     </p>
+    {{/unless}}
 </div>

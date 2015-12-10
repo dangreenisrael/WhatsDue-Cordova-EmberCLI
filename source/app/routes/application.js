@@ -14,8 +14,12 @@ export default Ember.Route.extend({
     }.on('init'),
     actions: {
         addCourse: function(course_code) {
-            this.transitionTo('courses');
             let route = this;
+            var updateModel = function(){
+                route.transitionTo('blankRoute').then(function(){
+                    route.transitionTo('assignments.due');
+                });
+            };
             course_code = course_code.toUpperCase();
             this.store.createRecord('course',{
                 course_code: course_code,
@@ -26,9 +30,22 @@ export default Ember.Route.extend({
                     record.unloadRecord();
                     route.errorMessage(error);
                     window.mixpanel.track('Course not Added', {reason: error});
+                } else{
+                    window.mixpanel.track("Course Added");
+                    let courseName = record.get('course_name');
+                    updateModel();
+                    if (window.cordova){
+                        navigator.notification.alert(
+                            "All of your tasks will appear here. \n\n" +
+                            "When you finish a task, just tap on it and mark it as done!"
+                            ,
+                            function(){},
+                            "You just joined " + courseName,
+                            "Got It");
+                    }
                 }
-                window.mixpanel.track("Course Added");
-            }).catch(function(){
+            }).catch(function(error){
+                console.log(error);
                 route.errorMessage("Are you connected to the internet?");
                 window.mixpanel.track("Course Not Added", {reason: "unknown"});
             });
@@ -47,25 +64,11 @@ export default Ember.Route.extend({
             this.set('menuOpen', 'menuOpen');
         },
         errorMessage: function(message){
-            if (navigator.notification){
-                navigator.notification.alert(
-                    message,
-                    null,
-                    'Whoops');
-            } else{
-                alert(message);
-            }
+            alert(message);
         }
     },
     errorMessage: function(message){
-        if (navigator.notification){
-            navigator.notification.alert(
-                message,
-                null,
-                'Whoops');
-        } else{
-            alert(message);
-        }
+        alert(message);
     }
 });
 
