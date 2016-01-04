@@ -7,6 +7,7 @@
     <author email="dan@whatsdueapp" href="http://whatsdueapp.com">
         WhatsDue
     </author>
+    <plugin name="cordova-plugin-whitelist" version="1" />   
     <access origin="*" />
    <!-- <access origin="http://192.168.1.100"/>
     <access origin="http://*.whatsdueapp.com"/>
