@@ -10,7 +10,7 @@ export default Ember.Route.extend({
         let store = this.store;
         store.peekAll('assignment').filterBy('completed', true).forEach(function(record){
             store.unloadRecord(record);
-        })
+        });
     }.on('deactivate'),
     actions: {
         unRemoveAssignment: function(assignment) {

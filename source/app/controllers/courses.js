@@ -1,7 +1,4 @@
 import Ember from 'ember';
-/* global CustomFunctions */
-/* global cordovaLoaded */
-/* global cordova */
 
 export default Ember.Controller.extend({
     model:[],

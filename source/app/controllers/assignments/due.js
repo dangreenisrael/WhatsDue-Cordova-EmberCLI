@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import groupBy from 'ember-group-by';
 import ENV from 'whats-due-cordova/config/environment';
+/* global localforage */
 
 export default Ember.Controller.extend({
     groupedCards: groupBy('due', 'daysAway'),
@@ -17,7 +18,7 @@ export default Ember.Controller.extend({
         let baseURL = ENV.host+"/"+ENV.namespace;
         let headers = ENV.APIHeaders;
         localforage.getItem('assignmentTimestamp').then(function(timestamp){
-            $.ajax({
+            Ember.$.ajax({
                 url: baseURL+"/updates/"+timestamp+"/assignments",
                 headers: headers
             }).done(function(data) {
@@ -33,7 +34,6 @@ export default Ember.Controller.extend({
         });
     },
     updateTimer: function() {
-        let controller=this;
         setInterval(function(){
             Ember.run(this, function() {
                //controller.getUpdates();

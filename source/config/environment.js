@@ -11,27 +11,25 @@ for (var dev in ifaces) {
 }
 module.exports = function(environment) {
     var ENV = {
-      modulePrefix: 'whats-due-cordova',
-      environment: environment,
-      baseURL: '/',
-      namespace: "api/v1/student",
-      locationType: 'hash',
-      EmberENV: {
-          FEATURES: {
-          // Here you can enable experimental features on an ember canary build
-          // e.g. 'with-controller': true
+        modulePrefix: 'whats-due-cordova',
+        environment: environment,
+        baseURL: '/',
+        namespace: "api/v1/student",
+        locationType: 'hash',
+        EmberENV: {
+            FEATURES: {
+            // Here you can enable experimental features on an ember canary build
+            // e.g. 'with-controller': true
           }
-    },
-      contentSecurityPolicy: {
-          'default-src': "*",
-          'script-src': "* 'self' 'unsafe-inline' 'unsafe-eval'",
-          'font-src': "'self'",
-          'connect-src': "*",
-          'img-src': "*",
-          'style-src': "'self' 'unsafe-inline' "
-      },
-
-
+        },
+        contentSecurityPolicy: {
+            'default-src': "*",
+            'script-src': "* 'self' 'unsafe-inline' 'unsafe-eval'",
+            'font-src': "'self'",
+            'connect-src': "*",
+            'img-src': "*",
+            'style-src': "'self' 'unsafe-inline' "
+        },
       APP: {
           // Here you can pass flags/options to your application instance
           // when it is created
@@ -59,7 +57,6 @@ module.exports = function(environment) {
 
         ENV.APP.rootElement = '#ember-testing';
         ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
-
     }
 
     if (environment === 'wifi') {

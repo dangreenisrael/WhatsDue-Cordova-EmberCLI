@@ -1,11 +1,8 @@
 import Ember from 'ember';
-/* global Migration */
-/* global moment */
+/* global CustomFunctions, moment */
 
 export default Ember.Controller.extend({
     init: function () {
-
-
         CustomFunctions.setStore(this);
         let controller = this;
         controller.store.findAll('student').then(function(records){
