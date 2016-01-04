@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript">window._trackJs = { token: 'ed023dce1f6541dca83fb39850b776a9' };</script>
+    <script type="text/javascript" src="vendors/trackJS.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>WhatsDueCordova</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
 
-    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com  'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src * data: gap: https://ssl.gstatic.com  'unsafe-eval' 'unsafe-inline' file:;
+    style-src * file: 'self' 'unsafe-inline';
+    media-src *;
+    connect-src * 'self' 'unsafe-inline' 'unsafe-eval' blob: file:
+    ">
 
-    <script type="text/javascript">window._trackJs = { token: 'ed023dce1f6541dca83fb39850b776a9' };</script>
-    <script type="text/javascript" src="./vendors/trackJS.js"></script>
 
     {{content-for 'head'}}
-      <link rel="stylesheet" href="./assets/vendor.css">
-      <link rel="stylesheet" href="./assets/whats-due-cordova.css">
+      <link rel="stylesheet" href="assets/vendor.css">
+      <link rel="stylesheet" href="assets/whats-due-cordova.css">
       <script src="cordova.js"></script>
       <style id="dynamicStyle"></style>
-      <script src="./assets/vendor.js"></script>
-      <script src="./assets/whats-due-cordova.js"></script>
+      <script src="assets/vendor.js"></script>
+      <script src="assets/whats-due-cordova.js"></script>
     {{content-for 'head-footer'}}
 
     <style type="text/css">* {font-family:GibsonFixed, sans-serif;}</style>

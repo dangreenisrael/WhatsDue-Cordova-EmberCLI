@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import InfinityRoute from "ember-infinity/mixins/route";
-/* global CustomFunctions */
 /* global localforage */
 
 export default Ember.Route.extend(InfinityRoute,{
@@ -12,14 +11,12 @@ export default Ember.Route.extend(InfinityRoute,{
     },
     afterModel() {
         this.controllerFor('application').set('loading', null);
-    },
-    beforeModel: function(){
-        this.controllerFor('application').set('loading', 'loading');
-    },
-    init: function(){
         if (window.cordova){
             window.initializeBranch();
         }
+    },
+    beforeModel: function(){
+        this.controllerFor('application').set('loading', 'loading');
     },
     willDestroy: function(){
         if (window.cordova){
