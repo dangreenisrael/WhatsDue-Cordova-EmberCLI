@@ -1,4 +1,6 @@
 /* jshint node: true */
+
+/* jshint ignore:start */
 var os     = require('os');
 var ifaces = os.networkInterfaces();
 var addresses = [];
@@ -9,6 +11,8 @@ for (var dev in ifaces) {
         }
     });
 }
+/* jshint ignore:end */
+
 module.exports = function(environment) {
     var ENV = {
         modulePrefix: 'whats-due-cordova',
@@ -30,20 +34,26 @@ module.exports = function(environment) {
             'img-src': "*",
             'style-src': "'self' 'unsafe-inline' "
         },
-      APP: {
+        APP: {
           // Here you can pass flags/options to your application instance
           // when it is created
-      }
-    };
+        },
+        cordova: {
+            rebuildOnChange: true,
+            emulate: false
+        }
+        //EMBER_CLI_CORDOVA : 0
+};
 
     if (environment === 'development') {
         ENV.host = "http://test.whatsdueapp.com/app_dev.php";
         ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
+        ENV.EMBER_CLI_CORDOVA = 0;
         // ENV.APP.LOG_RESOLVER = true;
-        // ENV.APP.LOG_ACTIVE_GENERATION = true;
+         ENV.APP.LOG_ACTIVE_GENERATION = true;
         // ENV.APP.LOG_TRANSITIONS = true;
         // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-        // ENV.APP.LOG_VIEW_LOOKUPS = true;
+         ENV.APP.LOG_VIEW_LOOKUPS = true;
     }
 
     if (environment === 'test') {
@@ -60,10 +70,14 @@ module.exports = function(environment) {
     }
 
     if (environment === 'wifi') {
-        ENV.host = "http://192.168.0.10/app_dev.php";
+        ENV.host = "http://192.168.1.112/app_dev.php";
         ENV.mixpanelId = "38749de545164d92aac16ff263eb5898";
         ENV.branchKey = "key_test_pnpGrYydWQUPl7fgotkbxojgrBkdnpe4";
-
+        //ENV.cordova.liveReload.enabled = true;
+        //ENV.cordova.liveReload.platform = "ios";
+        //ENV.remoteDebugHost = '192.168.178.29';
+        //ENV.remoteDebugScheme =  'http';
+        //ENV.cordova.emberUrl = "http://192.168.1.106:4200";
     }
 
     if (environment === 'stage') {

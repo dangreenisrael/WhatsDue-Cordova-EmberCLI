@@ -1,0 +1,936 @@
+/*
+ * LESS CSS
+ */
+@font-face {
+  font-family: GibsonFixed;
+  src: url('GibsonFixedLight.ttf') format('truetype');
+}
+/* 57/0 for Android, 62/5 for iOS */
+html {
+  -webkit-user-select: none;
+}
+body {
+  background-color: #f2f2f2;
+}
+#middle {
+  min-height: 420px;
+}
+* {
+  padding: 0;
+  margin: 0;
+  font-family: GibsonFixed, sans-serif;
+}
+img {
+  max-height: 100%;
+}
+*:focus {
+  outline: 0;
+}
+li {
+  list-style: none;
+}
+.link {
+  color: #4fc2d5;
+  text-decoration: none;
+}
+/* Helpers */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+.pull-left {
+  float: left!important;
+}
+.pull-right {
+  float: right!important;
+}
+.black,
+.black * {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: white;
+}
+.red,
+.red * {
+  background-color: #f2534f!important;
+  color: white!important;
+}
+.orange,
+.orange * {
+  background-color: #f2534f!important;
+  color: white!important;
+}
+.white {
+  background-color: white!important;
+}
+.badge {
+  padding: 7px;
+}
+.square {
+  border-radius: 0;
+}
+.hidden {
+  display: none!important;
+  visibility: hidden!important;
+}
+.circle {
+  border-radius: 30px;
+}
+.centered {
+  text-align: center;
+}
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #f2f2f2;
+  position: absolute;
+}
+.vertical-separator {
+  width: 1px!important;
+  height: 100%;
+  overflow: hidden!important;
+  position: relative;
+  display: inline-block;
+  background-color: #818181;
+}
+.fastAnimate {
+  transition: transform 200ms ease;
+  -webkit-transition: -webkit-transform 200ms ease;
+}
+button.disabled {
+  opacity: 0.1!important;
+  background: none!important;
+  color: #000000!important;
+}
+.click-me {
+  background-color: rgba(254, 92, 95, 0.2);
+  padding: 3px 5px 0 3px;
+  border-radius: 5px;
+}
+/* Reveal*/
+.reveal {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #333333;
+}
+.reveal img {
+  padding: 15px 10px;
+  height: 40px;
+}
+.putBackable img {
+  height: 40px;
+  float: right;
+  margin-right: -20px;
+}
+tr {
+  height: 50px;
+}
+tr td:first-of-type {
+  padding-right: 20px;
+}
+.animateHide {
+  transition: opacity 1000ms ease;
+  -webkit-transition: opacity 1000ms ease;
+  opacity: 0;
+}
+/* Static Content */
+.static-content {
+  padding: 20px;
+}
+.static-content .static-content h3 {
+  padding: 10px;
+}
+header#appHeader {
+  color: white;
+  padding-top: 5px;
+  font-size: 10px;
+  text-align: center;
+  background-color: #4fc2d5;
+  /* background-image: linear-gradient(#4fc2d5, #61c7bc);*/
+  text-transform: uppercase;
+  position: fixed;
+  z-index: 99;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+header#appHeader img {
+  height: 20px;
+  padding: 20px 10px 15px;
+}
+header#appHeader .message-count {
+  position: relative;
+}
+header#appHeader .message-count img {
+  height: 35px;
+  margin-top: -15px;
+}
+header#appHeader .message-count span {
+  position: absolute;
+  top: 6px;
+  left: 26px;
+  font-size: 20px;
+  margin-left: 10px;
+}
+header#appHeader h1 {
+  padding: 20px 0 13px;
+  position: fixed;
+  width: 100vw;
+}
+/* Main Content */
+#content {
+  position: relative;
+}
+#content > div {
+  -webkit-overflow-scrolling: touch;
+}
+#main {
+  margin-top: 62px;
+}
+/* Main Menu */
+.menuAnimate {
+  transition: all 600ms ease;
+  -webkit-transition: all 600ms ease;
+}
+.menuOpen {
+  height: calc(100% - 80px);
+  margin-top: 62px;
+}
+.menuOpen #main {
+  overflow: hidden;
+  height: calc(100vh - 82px);
+}
+.menuOpen #main .content {
+  opacity: 0;
+}
+.menuOpen #menu {
+  -webkit-transform: translate3d(0, 0, 0);
+  position: absolute;
+  top: 0;
+}
+#main > * {
+  transition: opacity 600ms ease;
+  -webkit-transition: opacity 600ms ease;
+}
+#main > .fa-spinner {
+  opacity: 0;
+  font-size: 80px;
+  margin-left: calc(50vw - 40px);
+  margin-top: calc(50vh - 40vw);
+  color: #666666;
+  position: fixed;
+}
+#main.loading > div {
+  opacity: 0;
+}
+#main.loading > .fa-spinner {
+  opacity: 1;
+}
+#menu {
+  background-color: #f2f2f2;
+  overflow-y: visible;
+  width: 100vw;
+  height: calc(100vh - 82px);
+  position: absolute;
+  -webkit-transform: translate3d(-100vw, 0, 0);
+  z-index: 10;
+}
+#menu ul li {
+  list-style: none;
+  padding: 20px;
+  height: 25px;
+  font-size: 25px;
+  color: #323232;
+  border-bottom: 1px solid #d6d6d6;
+}
+#menu ul li > div {
+  display: inline-block;
+  width: 35px;
+  border-right: 1px solid #9d9d9d;
+}
+#menu ul li img {
+  max-height: 17px;
+  max-width: 17px;
+  text-align: center;
+}
+#menu ul li span {
+  height: 20px;
+  padding-left: 10px;
+}
+#menu ul li span.count {
+  float: right;
+  color: #f1544d;
+}
+#application-error {
+  background-color: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#application-error .inner {
+  width: 90vw;
+  padding: 5vw;
+  background-color: white;
+}
+#application-error .inner > * {
+  margin-top: 5vw;
+}
+#application-error .inner p {
+  color: #4fc2d5;
+  text-align: center;
+  font-size: 6vw;
+  font-weight: bold;
+}
+#application-error .inner .main-logo {
+  width: 54%;
+  margin-left: 25%;
+}
+#application-error .inner .cloud {
+  width: 40%;
+  margin-left: 30%;
+}
+/* Assignments */
+#newAssignments .description {
+  word-wrap: break-word;
+}
+#newAssignments .description a.linkified {
+  color: #4fc2d5;
+  text-decoration: none;
+  font-weight: 900;
+}
+#newAssignments #assignments-overdue .arrow-up {
+  top: 52px;
+  margin-left: 70%;
+}
+#newAssignments #assignments-overdue .slider > div:nth-child(2) {
+  border-bottom: none!important;
+}
+#newAssignments #assignments-due {
+  position: relative;
+}
+#newAssignments #assignments-due .arrow-up {
+  top: -6px;
+  margin-left: 25%;
+}
+#newAssignments #assignments-due .slider > div {
+  border-bottom: none;
+  border-top: 1px solid #d6d6d6;
+}
+#newAssignments .reveal {
+  background-color: #4fc2d5;
+}
+#newAssignments .reveal p {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  width: 100px;
+  text-align: center;
+  float: right;
+  color: white;
+  font-size: 20px;
+}
+#newAssignments .slider .info {
+  margin-left: 110px;
+  width: auto;
+}
+/* Sliders*/
+.slider {
+  transform: translateZ(0);
+  perspective: 1000px;
+  backface-visibility: hidden;
+  min-height: 70px;
+  overflow-y: hidden;
+  position: relative;
+}
+.slider > div:nth-child(2) {
+  padding: 10px 20px;
+  min-height: 50px;
+  position: relative;
+  border-bottom: 1px solid #d6d6d6;
+  background-color: #f2f2f2;
+}
+.slider .open {
+  -webkit-transform: translateX(-100px);
+}
+.slider .info {
+  display: inline-block;
+  position: relative;
+  min-height: 50px;
+  padding-left: 10px;
+  border-left: 1px solid #9d9d9d;
+  width: 90%;
+}
+.slider .title {
+  font-size: 16px;
+  margin-top: -3px;
+  font-weight: 100;
+  overflow-x: hidden;
+}
+.slider .course {
+  font-size: 12px;
+  margin-top: -15px;
+  color: #808080;
+}
+/*
+ * New Assignments
+ */
+#newAssignments > nav > .due,
+#newAssignments > nav > .overdue {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+#newAssignments > nav > div {
+  width: 49%;
+  float: left;
+  text-align: center;
+  font-size: 18px;
+}
+#newAssignments > nav {
+  height: 60px;
+  background-color: #3a4944;
+  color: white;
+  line-height: 30px;
+  position: relative;
+}
+#newAssignments .day-divider {
+  line-height: 40px;
+  font-size: 20px;
+  padding: 10px;
+  background-color: #f2f2f2;
+  font-weight: bold;
+  border-top: black 1px solid;
+}
+#newAssignments .sliders-list {
+  position: relative;
+}
+#newAssignments .title {
+  font-size: 16px;
+  font-weight: 700;
+}
+#newAssignments .description {
+  padding-top: 5px;
+  font-size: 14px;
+  font-weight: 100;
+  letter-spacing: 0.3px;
+}
+.from-now {
+  display: none;
+}
+/* Left Box */
+.slider.left-box .red {
+  border-top: 1px solid #c1272f;
+}
+.slider.left-box .time {
+  height: 60px;
+  width: 110px;
+  font-size: 20px;
+  float: left;
+  font-weight: bold;
+  color: #808080;
+  position: absolute;
+  overflow: hidden;
+}
+.slider.left-box .time .course {
+  margin-top: 5px;
+}
+.nothing-due h2 {
+  font-size: 22px;
+}
+.nothing-due img {
+  width: 40%;
+  margin: 40px 30%;
+}
+/* Courses */
+.courses .instructorName {
+  font-size: 14px;
+  font-style: italic;
+  color: #808080;
+  margin-top: 10px;
+}
+.courses .send-syllabus p {
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 24px;
+}
+.courses .send-syllabus .btn {
+  display: table;
+  margin: auto;
+}
+.courses #addCourse {
+  height: 50px;
+  background: url("icons/ios/search.png") no-repeat 10px center;
+  background-size: 30px;
+  padding-left: 60px;
+  border-bottom: 1px solid!important;
+}
+.courses #addCourse input {
+  height: 50px;
+  background: none;
+  font-size: 20px;
+  text-transform: uppercase;
+  border: 0;
+  width: 150px;
+}
+.courses #addCourse button {
+  height: 30px;
+  width: 80px;
+  font-size: 20px;
+  text-transform: uppercase;
+  float: right;
+  margin-top: 10px;
+  margin-right: 15px;
+  background-color: #4fc2d5;
+  border: 0;
+  color: white;
+  border-radius: 5px;
+  font-weight: 900;
+}
+input.search::-webkit-input-placeholder {
+  text-transform: none;
+}
+.add-something {
+  width: 300px;
+  text-align: center;
+  margin: 40px auto;
+  color: #666666;
+  font-size: 30px;
+  z-index: 999;
+}
+.add-something img {
+  width: 100px;
+  display: block;
+  margin: 20px auto;
+}
+/* Messages */
+#messages .message {
+  margin: 30px;
+  border: #cccccc solid 1px;
+  background-color: white;
+}
+#messages .message header {
+  color: #333333;
+  line-height: 20px;
+  height: 20px;
+  padding: 20px;
+  padding-bottom: 10px;
+}
+#messages .message header .pull-left {
+  font-size: 20px;
+  font-weight: 600;
+}
+#messages .message header .pull-right {
+  font-size: 14px;
+}
+#messages .message article {
+  clear: both;
+  padding: 20px;
+  padding-top: 10px;
+}
+#settings {
+  font-size: 18px;
+}
+#settings h3 {
+  padding: 12px 15px;
+  border-bottom: solid #333333 1px;
+}
+#settings input {
+  font-size: 18px;
+  width: 60px;
+  padding: 5px 5px 2px 6px;
+  border-radius: 0;
+  border: 1px solid #cccccc;
+  -webkit-appearance: none;
+  /* Remove default shadow */
+}
+#settings .box {
+  display: inline-block;
+  text-align: center;
+  padding: 15px 0;
+  border: 1px solid;
+  font-size: 20px;
+  width: 43%;
+}
+#settings .box.not-active {
+  color: #cccccc;
+  background: #EEEEEE;
+  border-color: #cccccc;
+}
+#settings .box.active {
+  color: #4fc2d5;
+  background-color: white;
+  border-color: #4fc2d5;
+}
+#settings .box.double {
+  margin: 2.5%;
+}
+#settings .box.full {
+  width: 96%;
+  margin: auto;
+  display: block;
+}
+#settings .box.centered {
+  margin: auto;
+  display: block;
+}
+#settings .box.join {
+  margin-top: 50px;
+}
+#settings .over13 img {
+  height: 20px;
+  margin-bottom: -3px;
+}
+#settings .over13 input {
+  width: 90%;
+}
+#settings .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary {
+  background: #4fc2d5;
+}
+#settings .static-content.reminders {
+  padding-top: 10px;
+}
+#settings .static-content.reminders p,
+#settings .static-content.reminders td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#support h3.show-welcome {
+  text-align: center;
+}
+#support a {
+  text-decoration: none;
+  color: #408CBE;
+}
+#support p {
+  font-size: 18px;
+  padding-bottom: 20px;
+}
+/*
+ * Welcome Screens
+ */
+.welcome {
+  background-color: #4fc2d5;
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.welcome .outer {
+  display: table;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.welcome .middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+.welcome .inner {
+  margin-left: auto;
+  margin-right: auto;
+}
+.welcome div p {
+  color: white;
+  text-align: center;
+  font-size: 30px;
+}
+.welcome div p.over13 {
+  font-size: 22px;
+}
+.welcome div p.over13 img {
+  height: 20px;
+  margin-bottom: -3px;
+}
+.welcome div p.terms {
+  margin-top: 10px;
+  font-size: 12px;
+}
+.welcome div p a {
+  color: white;
+  text-decoration: underline;
+}
+.welcome div .box {
+  display: inline-block;
+  text-align: center;
+  padding: 15px 0;
+  border: 1px solid white;
+  -webkit-appearance: none;
+  /* Remove default shadow */
+  font-size: 20px;
+  width: 43%;
+  color: white;
+}
+.welcome div .box.clear {
+  color: white;
+  background-color: #4fc2d5;
+}
+.welcome div .box.white {
+  color: #4fc2d5;
+  background-color: white;
+}
+.welcome div .box.double {
+  margin: 2.5%;
+}
+.welcome div .box.full {
+  width: 96%;
+  margin: auto;
+  display: block;
+}
+.welcome div .box.centered {
+  margin: auto;
+  display: block;
+}
+.welcome div .box.join {
+  margin-top: 50px;
+}
+.welcome div ::-webkit-input-placeholder {
+  color: white;
+  font-style: italic;
+  font-weight: 100;
+}
+.welcome div ::-moz-placeholder {
+  color: white;
+  font-style: italic;
+  font-weight: 100;
+}
+.welcome div :-ms-input-placeholder {
+  color: white;
+  font-style: italic;
+  font-weight: 100;
+}
+.welcome #under13 h2 {
+  color: white;
+  font-weight: 100;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.welcome #under13 p {
+  font-size: 16px;
+  padding: 0 40px 20px;
+}
+.welcome #under13 a {
+  margin-top: 40px;
+}
+.welcome img.back-arrow {
+  width: 30px;
+  position: fixed;
+  bottom: 25px;
+  left: 20px;
+  padding: 0;
+}
+.removeable-card {
+  transform: translateZ(0);
+  perspective: 1000px;
+  backface-visibility: hidden;
+  min-height: 70px;
+  overflow-y: hidden;
+  position: relative;
+}
+.removeable-card > div:nth-child(2) {
+  padding: 10px 20px;
+  min-height: 50px;
+  position: relative;
+  border-bottom: 1px solid #d6d6d6;
+  background-color: #f2f2f2;
+}
+.removeable-card .info {
+  display: inline-block;
+  position: relative;
+  min-height: 50px;
+  padding-left: 10px;
+  border-left: 1px solid #9d9d9d;
+  width: 90%;
+}
+.removeable-card .title {
+  font-size: 16px;
+  margin-top: -3px;
+  font-weight: 100;
+  overflow-x: hidden;
+}
+.removeable-card .course {
+  font-size: 12px;
+  margin-top: -15px;
+  color: #808080;
+}
+.removeable-card .info {
+  padding-left: 0;
+  border: none;
+  padding-top: 15px;
+}
+.removeable-card .reveal img {
+  padding: 22px 5px;
+}
+.removeable-card .putBackable span {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.removeable-card .course {
+  margin-top: 10px;
+  font-weight: bold;
+  font-style: italic;
+}
+.removeable-card .full {
+  height: 100%;
+}
+.removeable-card .helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+.infinity-loader.reached-infinity {
+  display: none;
+}
+.infinity-loader .in-viewport {
+  height: 100px;
+}
+.infinity-loader .in-viewport .fa {
+  left: 50%;
+  display: inline-block;
+  position: absolute;
+  margin-left: -35px;
+  margin-top: 8vw;
+  font-size: 60px;
+  color: #666666;
+}
+.bootstrap-switch-container {
+  background-color: white;
+}
+.bootstrap-switch.bootstrap-switch-focused {
+  border-color: #cccccc;
+  box-shadow: none;
+}
+/*
+ * This file was edited by us
+ */
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.2 (03 March 2011)
+
+Dual licensed under MIT and GNU GPLv2 Nicolas Gallagher
+------------------------------------------ */
+/* NOTE: Some declarations use longhand notation so that it can be clearly
+explained what specific properties or values do and what their relationship
+is to other properties or values in creating the effect */
+/* ============================================================================================================================
+== GENERAL STYLES
+** ============================================================================================================================ */
+/* ============================================================================================================================
+== BUBBLE WITH AN ISOCELES TRIANGLE
+** ============================================================================================================================ */
+/* THE SPEECH BUBBLE
+------------------------------------------------------------------------------------------------------------------------------- */
+.triangle-isosceles {
+  position: relative;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background: #4fc2d5;
+  /* default background for browsers without gradient support */
+  /* css3 */
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  margin: 20px 10px 10px 10px;
+}
+/* Variant : for top positioned triangle
+------------------------------------------ */
+.triangle-isosceles.top {
+  background: #4fc2d5;
+}
+/* Variant : for left/right positioned triangle
+------------------------------------------ */
+.triangle-isosceles.left {
+  margin-left: 50px;
+  background: #4fc2d5;
+}
+/* Variant : for right positioned triangle
+------------------------------------------ */
+.triangle-isosceles.right {
+  margin-right: 50px;
+  background: #4fc2d5;
+}
+/* THE TRIANGLE
+------------------------------------------------------------------------------------------------------------------------------- */
+/* creates triangle */
+.triangle-isosceles:after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  /* value = - border-top-width - border-bottom-width */
+  left: 50px;
+  /* controls horizontal position */
+  border-width: 15px 15px 0;
+  /* vary these values to change the angle of the vertex */
+  border-style: solid;
+  border-color: #4fc2d5 transparent;
+}
+/* Variant : top
+------------------------------------------ */
+.triangle-isosceles.topright:after {
+  top: -15px;
+  /* value = - border-top-width - border-bottom-width */
+  right: 50px;
+  /* controls horizontal position */
+  bottom: auto;
+  left: auto;
+  border-width: 0 15px 15px;
+  /* vary these values to change the angle of the vertex */
+  border-color: #4fc2d5 transparent;
+}
+/* Variant : topleft
+------------------------------------------ */
+.triangle-isosceles.topleft:after {
+  top: -15px;
+  /* value = - border-top-width - border-bottom-width */
+  right: auto;
+  /* controls horizontal position */
+  bottom: auto;
+  left: 50px;
+  border-width: 0 15px 15px;
+  /* vary these values to change the angle of the vertex */
+  border-color: #4fc2d5 transparent;
+}
+/* Variant : left
+------------------------------------------ */
+.triangle-isosceles.left:after {
+  top: 16px;
+  /* controls vertical position */
+  left: -50px;
+  /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  border-width: 10px 50px 10px 0;
+  border-color: transparent #4fc2d5;
+}
+/* Variant : right
+------------------------------------------ */
+.triangle-isosceles.right:after {
+  top: 16px;
+  /* controls vertical position */
+  right: -50px;
+  /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  left: auto;
+  border-width: 10px 0 10px 50px;
+  border-color: transparent #4fc2d5;
+}
