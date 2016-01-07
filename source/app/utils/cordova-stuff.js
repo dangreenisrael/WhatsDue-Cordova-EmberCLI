@@ -64,12 +64,9 @@ export default function () {
     document.addEventListener("pause", onPause, false);
 
     window.initializeBranch = function(){
-        alert('starting branch');
         window.branch.init(ENV.branchKey, function(err, data) {
-            alert(err, data);
             if (!err && data.data) {
                 var parsed_data = JSON.parse(data.data);
-                window.trackJs.track("Branch:" + parsed_data);
                 var courseCode = parsed_data['course_code'];
                 if (courseCode) {
                     window.addCourse(courseCode);

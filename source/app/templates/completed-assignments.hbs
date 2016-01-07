@@ -1,13 +1,20 @@
 <div id="completedAssignments">
-    <div class="assignments-list">
-        {{#each filteredData as |assignment|}}
-            {{removeable-card
-                item=assignment
-                title=assignment.assignment_name
-                text=assignment.course_id.course_name
-                icon="back"
-                remove='unRemoveAssignment'
-            }}
-        {{/each}}
-    </div>
+
+    {{#if filteredData}}
+        <div class="assignments-list">
+            {{#each filteredData as |assignment|}}
+                {{removeable-card
+                    item=assignment
+                    title=assignment.assignment_name
+                    text=assignment.course_id.course_name
+                    icon="back"
+                    remove='unRemoveAssignment'
+                }}
+            {{/each}}
+        </div>
+    {{else}}
+        <h2 class="static-content">
+            You have no completed assignments.
+        </h2>
+    {{/if}}
 </div>

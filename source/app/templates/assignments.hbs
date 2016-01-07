@@ -15,33 +15,36 @@
         </div>
     </nav>
     <div>
-        <div id="assignments-due" class="{{showDue}}">
-            <div class="arrow-up"></div>
-            {{#each groupedCards as |day|}}
-                <div class="day-divider">{{day.value}}</div>
-                {{#each day.items as |assignment|}}
-                    <div>
-                        {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-                    </div>
+        {{#if showDue}}
+            <div id="assignments-due">
+                <div class="arrow-up"></div>
+                {{#each groupedCards as |day|}}
+                    <div class="day-divider">{{day.value}}</div>
+                    {{#each day.items as |assignment|}}
+                        <div>
+                            {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                        </div>
+                    {{/each}}
                 {{/each}}
-            {{/each}}
-            {{#infinity-loader infinityModel=model destroyOnInfinity=true developmentMode=false}}
-                <div class="in-viewport">
-                    <i class="fa fa-spinner fa-spin fa-pulse"></i>
-                </div>
-            {{/infinity-loader}}
-        </div>
-        <div id="assignments-overdue" class="{{showOverdue}}">
-            <div class="arrow-up"></div>
-            {{#if stuffOverdue}}
-                <div class="day-divider">
-                    Overdue
-                </div>
-            {{/if}}
-            {{#each overdue as |assignment|}}
-                {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
-            {{/each}}
-        </div>
+                {{#infinity-loader infinityModel=model destroyOnInfinity=true developmentMode=false}}
+                    <div class="in-viewport">
+                        <i class="fa fa-spinner fa-spin fa-pulse"></i>
+                    </div>
+                {{/infinity-loader}}
+            </div>
+        {{else}}
+            <div id="assignments-overdue">
+                <div class="arrow-up"></div>
+                {{#if stuffOverdue}}
+                    <div class="day-divider">
+                        Overdue
+                    </div>
+                {{/if}}
+                {{#each overdue as |assignment|}}
+                    {{assignment-card assignment=assignment toggleModal='toggleModal' removeAssignment='removeAssignment'}}
+                {{/each}}
+            </div>
+        {{/if}}
     </div>
     {{#unless stuffDue}}
         <div class="static-content nothing-due {{stuffDue}}">

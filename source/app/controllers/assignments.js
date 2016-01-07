@@ -5,6 +5,7 @@ import ENV from 'whats-due-cordova/config/environment';
 /* global device, localforage */
 export default Ember.Controller.extend({
     groupedCards: groupBy('due', 'daysAway'),
+    showDue: true,
     due:function() {
         return this.store.peekAll('assignment')
             .filterBy('completed',false)
@@ -80,12 +81,10 @@ export default Ember.Controller.extend({
             this.getUpdates();
         },
         showDue: function(){
-            this.set('showDue', null);
-            this.set('showOverdue', "hidden");
+            this.set('showDue', true);
         },
         showOverdue: function(){
-            this.set('showOverdue', null);
-            this.set('showDue', "hidden");
+            this.set('showDue', false);
         },
         removeAssignment: function(assignment) {
             assignment.set('completed', true);

@@ -4,7 +4,7 @@ import InfinityRoute from "ember-infinity/mixins/route";
 
 export default Ember.Route.extend(InfinityRoute,{
     model: function() {
-        return this.infinityModel("assignment", {perPage: 10, startingPage: 1}).then(function (data) {
+        return this.infinityModel("assignment", {perPage: 5, startingPage: 1}).then(function (data) {
             localforage.setItem('assignmentTimestamp', data.get('meta').timestamp);
             return data;
         });
