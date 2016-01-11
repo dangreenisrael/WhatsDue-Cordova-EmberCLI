@@ -65,9 +65,11 @@ export default function () {
 
     window.initializeBranch = function(){
         window.branch.init(ENV.branchKey, function(err, data) {
+            console.log(data);
             if (!err && data.data) {
                 var parsed_data = JSON.parse(data.data);
                 var courseCode = parsed_data['course_code'];
+                console.log(courseCode);
                 if (courseCode) {
                     window.addCourse(courseCode);
                 }

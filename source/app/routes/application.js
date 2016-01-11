@@ -34,7 +34,7 @@ export default Ember.Route.extend({
                     updateModel();
                     if (window.cordova){
                         navigator.notification.alert(
-                            "All of your tasks will appear here. \n\n When you finish a task, just tap on it and mark it as done!",
+                            "All of your tasks will appear here. \n\nWhen you finish a task, just tap on it and mark it as done!",
                             function(){},
                             "You just joined " + courseName,
                             "Got It");
@@ -67,4 +67,3 @@ export default Ember.Route.extend({
         alert(message);
     }
 });
-

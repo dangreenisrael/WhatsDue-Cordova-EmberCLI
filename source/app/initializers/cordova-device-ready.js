@@ -82,17 +82,23 @@ export function initialize(App) {
 
         };
         if (window.cordova){
-            let startItUp = function(){
-                if (navigator.onLine){
-                    handlePush().then(success, fail);
-                } else{
-                    navigator.notification.alert(
-                        "Please check your internet connection and hit OK",
-                        startItUp,
-                        'No Internet');
-                }
+            let verifyInternet = function(){
+                Ember.$.get('http://admin.whatsdueapp.com/api/v1/student/students')
+                    .done(function(){
+                        handlePush().then(success, fail);
+                    })
+                    .fail(function(){
+                        navigator.notification.alert(
+                            "Please make sure you're connected to the internet and tap OK",
+                            verifyInternet,
+                            'Internet Check');
+                    });
             };
-            startItUp();
+            if (navigator.onLine){
+                handlePush().then(success, fail);
+            } else{
+                verifyInternet();
+            }
         } else{
             console.log('Testing in browser');
             var postData = {
