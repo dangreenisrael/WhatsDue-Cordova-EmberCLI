@@ -1,0 +1,11 @@
+{
+  "android": {
+    "release": {
+      "keystore": "whatsdue.keystore",
+      "storePassword": "Ezonics3228",
+      "alias": "whatsdue",
+      "password" : "Ezonics3228",
+      "keystoreType": ""
+    }
+  }
+}
