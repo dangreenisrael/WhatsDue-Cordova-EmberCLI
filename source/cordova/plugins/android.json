@@ -7,7 +7,8 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-customurlscheme": {
+            "URL_SCHEME": "whatsdue",
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-datepicker": {
@@ -17,6 +18,9 @@
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-disable-bitcode": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-inappbrowser": {
@@ -31,20 +35,16 @@
         "cordova-plugin-transport-security": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
-        "phonegap-plugin-push": {
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "io.branch.sdk": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "cordova-plugin-disable-bitcode": {
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "cordova-plugin-customurlscheme": {
-            "URL_SCHEME": "whatsdue",
+        "phonegap-plugin-push": {
             "PACKAGE_NAME": "com.whatsdue.app"
         }
     },

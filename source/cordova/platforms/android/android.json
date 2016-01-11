@@ -9,7 +9,7 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "xml": "<feature name=\"LaunchMyApp\"><param name=\"android-package\" value=\"nl.xservices.plugins.LaunchMyApp\" /></feature>",
                             "count": 1
                         },
                         {
@@ -37,15 +37,15 @@
                             "count": 1
                         },
                         {
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
                             "xml": "<feature name=\"Keyboard\"><param name=\"android-package\" value=\"io.ionic.keyboard.IonicKeyboard\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
                         {
                             "xml": "<feature name=\"PushNotification\"><param name=\"android-package\" value=\"com.adobe.phonegap.push.PushPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"LaunchMyApp\"><param name=\"android-package\" value=\"nl.xservices.plugins.LaunchMyApp\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -53,6 +53,12 @@
             },
             "AndroidManifest.xml": {
                 "parents": {
+                    "/*/application/activity": [
+                        {
+                            "xml": "<intent-filter><data android:scheme=\"whatsdue\" /><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /></intent-filter>",
+                            "count": 1
+                        }
+                    ],
                     "/manifest": [
                         {
                             "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
@@ -104,12 +110,6 @@
                             "xml": "<service android:exported=\"false\" android:name=\"com.adobe.phonegap.push.RegistrationIntentService\"></service>",
                             "count": 1
                         }
-                    ],
-                    "/*/application/activity": [
-                        {
-                            "xml": "<intent-filter><data android:scheme=\"whatsdue\" /><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /></intent-filter>",
-                            "count": 1
-                        }
                     ]
                 }
             },
@@ -126,7 +126,8 @@
         }
     },
     "installed_plugins": {
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-customurlscheme": {
+            "URL_SCHEME": "whatsdue",
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-datepicker": {
@@ -136,6 +137,9 @@
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.whatsdue.app"
+        },
+        "cordova-plugin-disable-bitcode": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "cordova-plugin-inappbrowser": {
@@ -150,30 +154,28 @@
         "cordova-plugin-transport-security": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.whatsdue.app"
-        },
-        "phonegap-plugin-push": {
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
         "io.branch.sdk": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "cordova-plugin-disable-bitcode": {
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.whatsdue.app"
         },
-        "cordova-plugin-customurlscheme": {
-            "URL_SCHEME": "whatsdue",
+        "phonegap-plugin-push": {
             "PACKAGE_NAME": "com.whatsdue.app"
         }
     },
     "dependent_plugins": {},
     "modules": [
         {
-            "file": "plugins/cordova-plugin-whitelist/whitelist.js",
-            "id": "cordova-plugin-whitelist.whitelist",
-            "pluginId": "cordova-plugin-whitelist",
-            "runs": true
+            "file": "plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js",
+            "id": "cordova-plugin-customurlscheme.LaunchMyApp",
+            "pluginId": "cordova-plugin-customurlscheme",
+            "clobbers": [
+                "window.plugins.launchmyapp"
+            ]
         },
         {
             "file": "plugins/cordova-plugin-datepicker/www/android/DatePicker.js",
@@ -233,6 +235,21 @@
             ]
         },
         {
+            "file": "plugins/cordova-plugin-whitelist/whitelist.js",
+            "id": "cordova-plugin-whitelist.whitelist",
+            "pluginId": "cordova-plugin-whitelist",
+            "runs": true
+        },
+        {
+            "file": "plugins/io.branch.sdk/dist/build.min.js",
+            "id": "io.branch.sdk.branch",
+            "pluginId": "io.branch.sdk",
+            "clobbers": [
+                "branch",
+                "Branch"
+            ]
+        },
+        {
             "file": "plugins/ionic-plugin-keyboard/www/android/keyboard.js",
             "id": "ionic-plugin-keyboard.keyboard",
             "pluginId": "ionic-plugin-keyboard",
@@ -248,38 +265,21 @@
             "clobbers": [
                 "PushNotification"
             ]
-        },
-        {
-            "file": "plugins/io.branch.sdk/dist/build.min.js",
-            "id": "io.branch.sdk.branch",
-            "pluginId": "io.branch.sdk",
-            "clobbers": [
-                "branch",
-                "Branch"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js",
-            "id": "cordova-plugin-customurlscheme.LaunchMyApp",
-            "pluginId": "cordova-plugin-customurlscheme",
-            "clobbers": [
-                "window.plugins.launchmyapp"
-            ]
         }
     ],
     "plugin_metadata": {
-        "cordova-plugin-whitelist": "1.2.0",
+        "cordova-plugin-customurlscheme": "4.0.0",
         "cordova-plugin-datepicker": "0.9.3",
         "cordova-plugin-device": "1.1.0",
         "cordova-plugin-dialogs": "1.2.0",
+        "cordova-plugin-disable-bitcode": "1.2.1",
         "cordova-plugin-inappbrowser": "1.1.1",
         "cordova-plugin-mixpanel": "2.1.0",
         "cordova-plugin-splashscreen": "3.0.0",
         "cordova-plugin-transport-security": "0.1.1",
-        "ionic-plugin-keyboard": "1.0.8",
-        "phonegap-plugin-push": "1.5.2",
+        "cordova-plugin-whitelist": "1.2.0",
         "io.branch.sdk": "1.8.0",
-        "cordova-plugin-disable-bitcode": "1.2.1",
-        "cordova-plugin-customurlscheme": "4.0.0"
+        "ionic-plugin-keyboard": "1.0.8",
+        "phonegap-plugin-push": "1.5.2"
     }
 }

@@ -1,10 +1,12 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "file": "plugins/cordova-plugin-whitelist/whitelist.js",
-        "id": "cordova-plugin-whitelist.whitelist",
-        "pluginId": "cordova-plugin-whitelist",
-        "runs": true
+        "file": "plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js",
+        "id": "cordova-plugin-customurlscheme.LaunchMyApp",
+        "pluginId": "cordova-plugin-customurlscheme",
+        "clobbers": [
+            "window.plugins.launchmyapp"
+        ]
     },
     {
         "file": "plugins/cordova-plugin-datepicker/www/android/DatePicker.js",
@@ -64,6 +66,21 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/cordova-plugin-whitelist/whitelist.js",
+        "id": "cordova-plugin-whitelist.whitelist",
+        "pluginId": "cordova-plugin-whitelist",
+        "runs": true
+    },
+    {
+        "file": "plugins/io.branch.sdk/dist/build.min.js",
+        "id": "io.branch.sdk.branch",
+        "pluginId": "io.branch.sdk",
+        "clobbers": [
+            "branch",
+            "Branch"
+        ]
+    },
+    {
         "file": "plugins/ionic-plugin-keyboard/www/android/keyboard.js",
         "id": "ionic-plugin-keyboard.keyboard",
         "pluginId": "ionic-plugin-keyboard",
@@ -79,41 +96,24 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
-    },
-    {
-        "file": "plugins/io.branch.sdk/dist/build.min.js",
-        "id": "io.branch.sdk.branch",
-        "pluginId": "io.branch.sdk",
-        "clobbers": [
-            "branch",
-            "Branch"
-        ]
-    },
-    {
-        "file": "plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js",
-        "id": "cordova-plugin-customurlscheme.LaunchMyApp",
-        "pluginId": "cordova-plugin-customurlscheme",
-        "clobbers": [
-            "window.plugins.launchmyapp"
-        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "cordova-plugin-whitelist": "1.2.0",
+    "cordova-plugin-customurlscheme": "4.0.0",
     "cordova-plugin-datepicker": "0.9.3",
     "cordova-plugin-device": "1.1.0",
     "cordova-plugin-dialogs": "1.2.0",
+    "cordova-plugin-disable-bitcode": "1.2.1",
     "cordova-plugin-inappbrowser": "1.1.1",
     "cordova-plugin-mixpanel": "2.1.0",
     "cordova-plugin-splashscreen": "3.0.0",
     "cordova-plugin-transport-security": "0.1.1",
-    "ionic-plugin-keyboard": "1.0.8",
-    "phonegap-plugin-push": "1.5.2",
+    "cordova-plugin-whitelist": "1.2.0",
     "io.branch.sdk": "1.8.0",
-    "cordova-plugin-disable-bitcode": "1.2.1",
-    "cordova-plugin-customurlscheme": "4.0.0"
+    "ionic-plugin-keyboard": "1.0.8",
+    "phonegap-plugin-push": "1.5.2"
 }
 // BOTTOM OF METADATA
 });
